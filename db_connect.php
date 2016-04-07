@@ -1,7 +1,7 @@
 <?php
 
-/**
- * A class file to connect to database
+/*
+ * Connect to database
  */
 class DB_CONNECT {
 
