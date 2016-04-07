@@ -18,7 +18,7 @@ if (mysqli_connect_errno()) {
 // Get a list of songs
 $result = mysqli_query(
     $con,
-    "SELECT * FROM whistles
+    "SELECT * FROM whistles"
 ) or die(mysqli_error());
 
 // Check for empty result
