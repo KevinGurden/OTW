@@ -29,18 +29,12 @@ if (mysqli_connect_errno()) {
     // Check for empty result
     if (mysqli_num_rows($result) > 0) {
         // Loop through all results
-        $response["queryresult"] = mysqli_fetch_all($result);
-        $response["whistles"] = array();
-
+        $whistles = array();
         
-        while ($row = mysqli_fetch_array($result)) {
-            $whistle = array();
-            $whistle["id"] = $row["id"];
-            $whistle["title"] = $row["title"];
-
-            // Push single link into final response array
-            array_push($response["whistles"], $whistle);
+        while ($whisle = mysqli_fetch_assoc($result)) {
+            $whistles[] = $whistle;
         }
+        $response["whistles"] = $whistles;
 
         // Success
         $response["success"] = 1;
