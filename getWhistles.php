@@ -10,7 +10,7 @@ $response = array();
 
 require_once __DIR__ . '/db_config.php';
 // Connect to db
-$con = mysqli_connect(DB_SERVER, DB_USER, DB_PASSWORD, DB_DATABASE);
+$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (mysqli_connect_errno()) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
     $response["success"] = 0;
