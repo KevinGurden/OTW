@@ -1,7 +1,14 @@
 <?php
 /*
- * Get a list of whjistles
- * See bottom for useful commands
+Get a list of whjistles from the encol database.
+
+Return:
+    status: 200 for success, 400+ for error
+    message: High level error message
+    sqlerror: detailed sql error
+    whistles: an array of whistle objects
+
+See bottom for useful commands
  */
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -14,7 +21,7 @@ require_once __DIR__ . '/db_config.php';
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (mysqli_connect_errno()) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    $response["success"] = 0;
+    $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
@@ -22,9 +29,10 @@ if (mysqli_connect_errno()) {
 
     // Get a list of whistles
     $result = mysqli_query(
-        $con,
-        "SELECT * FROM whistles"
-    ) or die(mysqli_error($con));
+        $con, "SELECT * FROM whistles"
+    ) or die(
+        mysqli_error($con)
+    );
 
     // Check for empty result
     if (mysqli_num_rows($result) > 0) {
@@ -32,19 +40,20 @@ if (mysqli_connect_errno()) {
         $whistles = array();
         
         while ($whistle = mysqli_fetch_assoc($result)) {
-            $response["row"] = $whistle;
             $whistles[] = $whistle;
         }
         $response["whistles"] = $whistles;
 
         // Success
-        $response["success"] = 1;
+        $response["status"] = 200;
+        $response["message"] = "Success";
+        $response["sqlerror"] = "";
 
         // Echoing JSON response
         echo json_encode($response);
     } else {
-        // no songs found
-        $response["success"] = 0;
+        // no whistles found
+        $response["status"] = 200;
         $response["message"] = "No whistles found";
 
         // echo no users JSON
