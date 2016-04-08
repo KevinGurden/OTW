@@ -31,7 +31,8 @@ if (mysqli_connect_errno()) {
         // Loop through all results
         $whistles = array();
         
-        while ($whisle = mysqli_fetch_assoc($result)) {
+        while ($whistle = mysqli_fetch_assoc($result)) {
+            $response["row"] = $whistle;
             $whistles[] = $whistle;
         }
         $response["whistles"] = $whistles;
