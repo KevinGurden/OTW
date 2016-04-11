@@ -1,6 +1,6 @@
 <?php
 /*
-Get a list of whjistles from the encol database.
+Get a list of whistles from the encol database.
 
 Return:
     status: 200 for success, 400+ for error
@@ -17,7 +17,7 @@ header('Access-Control-Allow-Origin: *');
 // Array for JSON response
 $response = array();
 
-require_once __DIR__ . '/db_config.php';
+// require_once __DIR__ . '/db_config.php';
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (mysqli_connect_errno()) {
@@ -30,7 +30,7 @@ if (mysqli_connect_errno()) {
 
     // Get a list of whistles
     $result = mysqli_query(
-        $con, "SELECT * FROM whistles"
+        $con, "SELECTx * FROM whistles"
     ) or die(
         mysqli_error($con)
     );
