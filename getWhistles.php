@@ -30,7 +30,7 @@ if (mysqli_connect_errno()) {
 
     // Get a list of whistles
     $result = mysqli_query(
-        $con, "SELECTx * FROM whistles"
+        $con, "SELECT * FROM whistles"
     ) or die(
         mysqli_error($con)
     );
