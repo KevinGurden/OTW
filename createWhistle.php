@@ -49,7 +49,7 @@ if (mysqli_connect_errno()) {
 	    
 	// Issue the database create
 	$cols = "title, id, description, status, cat, subdate, date, type_selected, type_policy, ";
-	$vals = "'$title', '$id', '$description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy'";
+	$vals = "'$title', '$id', '$description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
 	$cols = $cols . "location_main, location_detail, user, anon";
 	$vals = $vals . "'$location_main','$location_detail', '$user', '$anon'";
