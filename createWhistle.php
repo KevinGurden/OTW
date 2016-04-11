@@ -29,6 +29,8 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
+	$rest_json = file_get_contents("php://input");
+	$_POST = json_decode($rest_json, true);
 	echo var_dump($_POST);
 	// Escape the values to ensure no injection
 	$title = mysqli_real_escape_string($con, $_POST['title']);
