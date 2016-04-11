@@ -29,7 +29,9 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
+	var_dump($_POST);
 	// Escape the values to ensure no injection
+	$response["post"] = $_POST;
 	$title = mysqli_real_escape_string($con, $_POST['title']);
 	$id = mysqli_real_escape_string($con, $_POST['id']);
 	$description = mysqli_real_escape_string($con, $_POST['description']);
