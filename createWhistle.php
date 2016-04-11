@@ -52,7 +52,7 @@ if (mysqli_connect_errno()) {
 	$vals = $vals . "'$location_main','$location_detail', '$user', '$anon'";
 
 	$insert = "INSERT INTO whistles($cols) VALUES($vals)";
-	$result = mysqli_query($con, $insert) or die(mysqli_error($con));
+	$result = mysqli_query($con, $insert);
 	if ($result) { // Success
         $response["status"] = 200;
         $response["message"] = "Whistle created";

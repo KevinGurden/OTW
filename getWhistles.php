@@ -31,10 +31,8 @@ if (mysqli_connect_errno()) {
     // Get a list of whistles
     $result = mysqli_query(
         $con, "SELECT * FROM whistles"
-    ) or die(
-        mysqli_error($con)
     );
-
+    
     // Check for empty result
     if (mysqli_num_rows($result) > 0) {
         // Loop through all results
