@@ -49,7 +49,11 @@ if (mysqli_connect_errno()) {
 	} else {
 		$user = '';
 	};
-	$anon = mysqli_real_escape_string($con, $_POST['anon']);
+	if (isset($_POST['anon'])) {
+		$anon = mysqli_real_escape_string($con, $_POST['anon']);
+	} else {
+		$anon = '0';
+	};
 	    
 	// Issue the database create
 	$cols = "title, description, status, cat, subdate, date, type_selected, type_policy, ";
