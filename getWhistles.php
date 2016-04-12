@@ -32,7 +32,7 @@ if (mysqli_connect_errno()) {
     $result = mysqli_query(
         $con, "SELECT * FROM whistles"
     );
-    
+
     // Check for empty result
     if (mysqli_num_rows($result) > 0) {
         // Loop through all results
@@ -66,7 +66,7 @@ Useful stuff:
         chmod 400 otwkey.pem to encrypt key. Do this in the otwkey directory
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
-        cat getwhistlesphp-error.log | more to show the error log
+        sudo cat getwhistlesphp-error.log | more to show the error log
  */
 
 ?>

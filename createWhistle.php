@@ -34,7 +34,7 @@ if (mysqli_connect_errno()) {
 	echo var_dump($_POST);
 	// Escape the values to ensure no injection
 	$title = mysqli_real_escape_string($con, $_POST['title']);
-	$id = mysqli_real_escape_string($con, $_POST['id']);
+	//$id = mysqli_real_escape_string($con, $_POST['id']);
 	$description = mysqli_real_escape_string($con, $_POST['description']);
 	$status = mysqli_real_escape_string($con, $_POST['status']);
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
@@ -44,12 +44,16 @@ if (mysqli_connect_errno()) {
 	$type_policy = mysqli_real_escape_string($con, $_POST['type_policy']);
 	$location_main = mysqli_real_escape_string($con, $_POST['location_main']);
 	$location_detail = mysqli_real_escape_string($con, $_POST['location_detail']);
-	$user = mysqli_real_escape_string($con, $_POST['user']);
+	if (isset($_POST['user'])) {
+		$user = mysqli_real_escape_string($con, $_POST['user']);
+	} else {
+		$user = '';
+	};
 	$anon = mysqli_real_escape_string($con, $_POST['anon']);
 	    
 	// Issue the database create
-	$cols = "title, id, description, status, cat, subdate, date, type_selected, type_policy, ";
-	$vals = "'$title', '$id', '$description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
+	$cols = "title, description, status, cat, subdate, date, type_selected, type_policy, ";
+	$vals = "'$title', $description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
 	$cols = $cols . "location_main, location_detail, user, anon";
 	$vals = $vals . "'$location_main','$location_detail', '$user', '$anon'";
@@ -74,6 +78,6 @@ Useful stuff:
         chmod 400 otwkey.pem to encrypt key. Do this in the otwkey directory
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
-        cat getwhistlesphp-error.log | more to show the error log
+        sudo cat getwhistlesphp-error.log | more to show the error log
  */
 ?>
