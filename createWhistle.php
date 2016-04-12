@@ -12,8 +12,8 @@ Return:
 
 See bottom for useful commands
 */
-header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+//header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 // Array for JSON response
@@ -70,6 +70,7 @@ if (mysqli_connect_errno()) {
         $response["message"] = "Create whistle failed";
         $response["sqlerror"] = "";
     };
+    echo json_encode($response);
 };
 
 /* 
