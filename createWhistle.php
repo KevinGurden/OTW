@@ -12,7 +12,7 @@ Return:
 
 See bottom for useful commands
 */
-//header('Content-Type: application/json');
+header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
@@ -75,7 +75,7 @@ if (mysqli_connect_errno()) {
 		error_log("$result: from $insert");
         $response["status"] = 402;
         $response["message"] = "Create whistle failed";
-        $response["sqlerror"] = $result;
+        $response["sqlerror"] = mysqli_error($con);
     };
     echo json_encode($response);
 };
