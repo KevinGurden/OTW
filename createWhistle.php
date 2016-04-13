@@ -12,7 +12,6 @@ Return:
 
 See bottom for useful commands
 */
-header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
@@ -27,15 +26,14 @@ if (mysqli_connect_errno()) {
     $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
     $response["sqlerror"] = mysqli_connect_error();
+    header('Content-Type: application/json');
     echo json_encode($response);
 } else {
 	$rest_json = file_get_contents("php://input");
 	$_POST = json_decode($rest_json, true);
-	$response["dump"] = var_dump($_POST);
-	echo "Before";
-	echo var_dump($_POST);
-	echo "After";
-	// Escape the values to ensure no injection
+	$response["received"] = $_POST;
+
+	// Escape the values to ensure no injection vunerability
 	$title = mysqli_real_escape_string($con, $_POST['title']);
 	$description = mysqli_real_escape_string($con, $_POST['description']);
 	$status = mysqli_real_escape_string($con, $_POST['status']);
@@ -77,6 +75,7 @@ if (mysqli_connect_errno()) {
         $response["message"] = "Create whistle failed";
         $response["sqlerror"] = mysqli_error($con);
     };
+    header('Content-Type: application/json');
     echo json_encode($response);
 };
 
