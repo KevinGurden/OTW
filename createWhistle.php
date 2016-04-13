@@ -31,7 +31,10 @@ if (mysqli_connect_errno()) {
 } else {
 	$rest_json = file_get_contents("php://input");
 	$_POST = json_decode($rest_json, true);
+	$response["dump"] = var_dump($_POST);
+	echo "Before";
 	echo var_dump($_POST);
+	echo "After";
 	// Escape the values to ensure no injection
 	$title = mysqli_real_escape_string($con, $_POST['title']);
 	$description = mysqli_real_escape_string($con, $_POST['description']);
@@ -72,7 +75,7 @@ if (mysqli_connect_errno()) {
 		error_log("$result: from $insert");
         $response["status"] = 402;
         $response["message"] = "Create whistle failed";
-        $response["sqlerror"] = "";
+        $response["sqlerror"] = $result;
     };
     echo json_encode($response);
 };

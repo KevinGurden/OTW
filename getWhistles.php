@@ -55,7 +55,7 @@ if (mysqli_connect_errno()) {
         $response["status"] = 200;
         $response["message"] = "No whistles found";
 
-        // echo no users JSON
+        // echo no whistles JSON
         echo json_encode($response);
     };
 };
