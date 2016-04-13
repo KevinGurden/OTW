@@ -34,7 +34,6 @@ if (mysqli_connect_errno()) {
 	echo var_dump($_POST);
 	// Escape the values to ensure no injection
 	$title = mysqli_real_escape_string($con, $_POST['title']);
-	//$id = mysqli_real_escape_string($con, $_POST['id']);
 	$description = mysqli_real_escape_string($con, $_POST['description']);
 	$status = mysqli_real_escape_string($con, $_POST['status']);
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
@@ -57,7 +56,7 @@ if (mysqli_connect_errno()) {
 	    
 	// Issue the database create
 	$cols = "title, description, status, cat, subdate, date, type_selected, type_policy, ";
-	$vals = "'$title', $description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
+	$vals = "'$title', '$description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
 	$cols = $cols . "location_main, location_detail, user, anon";
 	$vals = $vals . "'$location_main','$location_detail', '$user', '$anon'";
@@ -67,6 +66,7 @@ if (mysqli_connect_errno()) {
 	if ($result) { // Success
         $response["status"] = 200;
         $response["message"] = "Whistle created";
+        $response["id"] = mysqli_insert_id($con); // Return the id of the record added
         $response["sqlerror"] = "";
 	} else { // Failure
 		error_log("$result: from $insert");
