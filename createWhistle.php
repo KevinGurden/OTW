@@ -42,8 +42,8 @@ if (mysqli_connect_errno()) {
 	$date = mysqli_real_escape_string($con, $_POST['date']);
 	$type_selected = mysqli_real_escape_string($con, $_POST['type_selected']);
 	$type_policy = mysqli_real_escape_string($con, $_POST['type_policy']);
-	$location_main = mysqli_real_escape_string($con, $_POST['location_main']);
-	$location_detail = mysqli_real_escape_string($con, $_POST['location_detail']);
+	$location_main = mysqli_real_escape_string($con, $_POST['loc_main']);
+	$location_detail = mysqli_real_escape_string($con, $_POST['loc_detail']);
 	if (isset($_POST['user'])) {
 		$user = mysqli_real_escape_string($con, $_POST['user']);
 	} else {
@@ -59,8 +59,8 @@ if (mysqli_connect_errno()) {
 	$cols = "title, description, status, cat, subdate, date, type_selected, type_policy, ";
 	$vals = "'$title', '$description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
-	$cols = $cols . "location_main, location_detail, user, anon";
-	$vals = $vals . "'$location_main','$location_detail', '$user', '$anon'";
+	$cols = $cols . "loc_main, loc_detail, user, anon";
+	$vals = $vals . "'$loc_main','$loc_detail', '$user', '$anon'";
 
 	$insert = "INSERT INTO whistles($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
