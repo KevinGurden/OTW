@@ -26,7 +26,7 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
-    if {isset( $_GET['id'] ) and isset( $_GET['for'] ) {
+    if ( isset($_GET['id']) and isset($_GET['for']) ) {
         // Escape the values to ensure no injection vunerability
         $id = mysqli_real_escape_string($con, $_GET['id']);
         $for = mysqli_real_escape_string($con, $_GET['for']);
