@@ -18,7 +18,6 @@ header('Access-Control-Allow-Origin: *');
 // Array for JSON response
 $response = array();
 
-// require_once __DIR__ . '/db_config.php';
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (!$con) {
