@@ -26,13 +26,13 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
-    if ( isset($_GET['id']) and isset($_GET['cat']) ) {
+    if ( isset($_GET['catid']) and isset($_GET['cat']) ) {
         // Escape the values to ensure no injection vunerability
-        $id = mysqli_real_escape_string($con, $_GET['id']);
+        $id = mysqli_real_escape_string($con, $_GET['catid']);
         $cat = mysqli_real_escape_string($con, $_GET['cat']);
 
         // Get a list of activity
-        $query = "SELECT * FROM activity WHERE id=$id AND cat='$cat'";
+        $query = "SELECT * FROM activity WHERE catid=$catid AND cat='$cat'";
         $result = mysqli_query($con, $query);
 
         // Check for empty result
@@ -64,7 +64,7 @@ if (mysqli_connect_errno()) {
     } else {
         error_log("'id' and 'for' must be provided");
         $response["status"] = 402;
-        $response["message"] = "'id' and 'for' must be provided";
+        $response["message"] = "'cat' and 'catid' must be provided";
         $response["sqlerror"] = "";
         echo json_encode($response);
     };
