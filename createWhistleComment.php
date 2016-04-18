@@ -16,9 +16,9 @@ header('Access-Control-Allow-Origin: *');
 $response = array();
 
 // Connect to db
-error_log("createWhistleComment: ");
+error_log("createWhistleComment: Start");
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (mysqli_connect_errno()) {
+if (!$con) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
     $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
@@ -26,10 +26,11 @@ if (mysqli_connect_errno()) {
     header('Content-Type: application/json');
     echo json_encode($response);
 } else {
+	error_log("createWhistleComment: 1 POST=" . $_POST);
 	$rest_json = file_get_contents("php://input");
 	$_POST = json_decode($rest_json, true);
 	$response["received"] = $_POST;
-	error_log("createWhistleComment: " . $_POST);
+	error_log("createWhistleComment: 2 POST=" . $_POST);
 
 	// Escape the values to ensure no injection vunerability
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
