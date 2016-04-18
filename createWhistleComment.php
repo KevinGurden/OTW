@@ -11,6 +11,7 @@ See bottom for useful commands
 */
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
 
 // Array for JSON response
 $response = array();
@@ -26,13 +27,8 @@ if (!$con) {
     header('Content-Type: application/json');
     echo json_encode($response);
 } else {
-	header('Content-Type: application/json');
-	error_log("createWhistleComment: 1 POST=" . $_POST['cat']);
-	$rest_json = file_get_contents("php://input");
-	error_log("createWhistleComment: rest_json=" . $rest_json);
-	$_POST = json_decode($rest_json, true);
+	$_POST = json_decode(file_get_contents('php://input'), true);
 	$response["received"] = $_POST;
-	error_log("createWhistleComment: 2 POST=" . $_POST['cat']);
 
 	// Escape the values to ensure no injection vunerability
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);

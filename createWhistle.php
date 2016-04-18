@@ -14,6 +14,7 @@ See bottom for useful commands
 */
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
 
 // Array for JSON response
 $response = array();
@@ -28,9 +29,11 @@ if (!$con) {
     header('Content-Type: application/json');
     echo json_encode($response);
 } else {
-	$rest_json = file_get_contents("php://input");
-	$_POST = json_decode($rest_json, true);
-	$response["received"] = $_POST;
+	$_POST = json_decode(file_get_contents('php://input'), true);
+
+	// $rest_json = file_get_contents("php://input");
+	// $_POST = json_decode($rest_json, true);
+	// $response["received"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
 	$title = mysqli_real_escape_string($con, $_POST['title']);
