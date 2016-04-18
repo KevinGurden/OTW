@@ -26,13 +26,13 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
-    if ( isset($_GET['id']) and isset($_GET['for']) ) {
+    if ( isset($_GET['id']) and isset($_GET['cat']) ) {
         // Escape the values to ensure no injection vunerability
         $id = mysqli_real_escape_string($con, $_GET['id']);
-        $for = mysqli_real_escape_string($con, $_GET['for']);
+        $cat = mysqli_real_escape_string($con, $_GET['cat']);
 
         // Get a list of activity
-        $query = "SELECT * FROM activity WHERE id=$id AND for=$for";
+        $query = "SELECT * FROM activity WHERE id=$id AND cat='$cat'";
         $result = mysqli_query($con, $query);
 
         // Check for empty result
