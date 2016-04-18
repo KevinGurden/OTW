@@ -27,8 +27,8 @@ if (!$con) {
     echo json_encode($response);
 } else {
 	error_log("createWhistleComment: 1 POST=" . $_POST);
-	$rest_json = file_get_contents("php://input");
-	$_POST = json_decode($rest_json, true);
+	// $rest_json = file_get_contents("php://input");
+	// $_POST = json_decode($rest_json, true);
 	$response["received"] = $_POST;
 	error_log("createWhistleComment: 2 POST=" . $_POST);
 
