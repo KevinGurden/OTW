@@ -2,6 +2,10 @@
 /*
 Get a list of activity records a particular type(for) and a particular instance(id) from the encol database.
 
+Parameters:
+    cat: the category object that we want activity for e.g. 'whistle'. String
+    catid: the identifier within the category. String
+
 Return:
     status: 200 for success, 400+ for error
     message: High level error message
@@ -28,11 +32,11 @@ if (mysqli_connect_errno()) {
 } else {
     if ( isset($_GET['catid']) and isset($_GET['cat']) ) {
         // Escape the values to ensure no injection vunerability
-        $id = mysqli_real_escape_string($con, $_GET['catid']);
+        $catid = mysqli_real_escape_string($con, $_GET['catid']);
         $cat = mysqli_real_escape_string($con, $_GET['cat']);
 
         // Get a list of activity
-        $query = "SELECT * FROM activity WHERE catid=$catid AND cat='$cat'";
+        $query = "SELECT * FROM activity WHERE catid='$catid' AND cat='$cat'";
         $result = mysqli_query($con, $query);
 
         // Check for empty result
