@@ -66,7 +66,7 @@ if (mysqli_connect_errno()) {
             echo json_encode($response);
         };
     } else {
-        error_log("'id' and 'for' must be provided");
+        error_log("'catid' and 'cat' must be provided");
         $response["status"] = 402;
         $response["message"] = "'cat' and 'catid' must be provided";
         $response["sqlerror"] = "";

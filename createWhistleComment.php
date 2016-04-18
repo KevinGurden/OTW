@@ -2,9 +2,6 @@
 /*
 Create a new whistle comment in the encol database.
 
-Data passed:
-	tba
-
 Return:
     status: 200 for success, 400+ for error
     message: High level error message
@@ -19,6 +16,7 @@ header('Access-Control-Allow-Origin: *');
 $response = array();
 
 // Connect to db
+error_log("createWhistleComment: ");
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (mysqli_connect_errno()) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
@@ -31,6 +29,7 @@ if (mysqli_connect_errno()) {
 	$rest_json = file_get_contents("php://input");
 	$_POST = json_decode($rest_json, true);
 	$response["received"] = $_POST;
+	error_log("createWhistleComment: " . $_POST);
 
 	// Escape the values to ensure no injection vunerability
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
@@ -46,11 +45,13 @@ if (mysqli_connect_errno()) {
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, from, date, anon";
-	$vals = "'whistle', $catid, 'comment', '$content', '$from', '$date', '$anon'";
+	$vals = "'whistle', '$catid', 'comment', '$content', '$from', '$date', '$anon'";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
+	error_log("createWhistleComment: inset=" . $insert);
 	$result = mysqli_query($con, $insert);
 	if ($result) { // Success
+		error_log("createWhistleComment: success");
         $response["status"] = 200;
         $response["message"] = "Comment created";
         $response["id"] = mysqli_insert_id($con); // Return the id of the record added
