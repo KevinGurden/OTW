@@ -45,8 +45,8 @@ if (mysqli_connect_errno()) {
 	};
 	    
 	// Issue the database create
-	$cols = "cat, catid, type, comment, from, date, anon";
-	$vals = "'whistle', $catid, 'comment', '$comment', '$from', '$date', '$anon'";
+	$cols = "cat, catid, type, content, from, date, anon";
+	$vals = "'whistle', $catid, 'comment', '$content', '$from', '$date', '$anon'";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
