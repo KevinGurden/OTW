@@ -32,9 +32,8 @@ if (mysqli_connect_errno()) {
         $for = mysqli_real_escape_string($con, $_GET['for']);
 
         // Get a list of activity
-        $result = mysqli_query(
-            $con, "SELECT * FROM activity WHERE id=$id AND for=$for"
-        );
+        $query = "SELECT * FROM activity WHERE id=$id AND for=$for";
+        $result = mysqli_query($con, $query);
 
         // Check for empty result
         if (mysqli_num_rows($result) > 0) {
@@ -56,6 +55,7 @@ if (mysqli_connect_errno()) {
         } else {
             // no activity found
             $response["status"] = 200;
+            $response["query"] = $query;
             $response["message"] = "No activity found";
 
             // echo no whistles JSON
