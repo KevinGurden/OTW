@@ -27,8 +27,29 @@ if (!$con) {
     header('Content-Type: application/json');
     echo json_encode($response);
 } else {
-	$_POST = json_decode(file_get_contents('php://input'), true);
-	$response["received"] = $_POST;
+	$nonjson = file_get_contents("php://input", true);
+	error_log("nonjson true double: " . $nonjson);
+	$_POST = json_decode($nonjson, true);
+	error_log("json true double: " . $_POST);
+	$response["received1d"] = $_POST;
+
+	$nonjson = file_get_contents("php://input", false);
+	error_log("nonjson false double: " . $nonjson);
+	$_POST = json_decode($nonjson, true);
+	error_log("json false double: " . $_POST);
+	$response["received0d"] = $_POST;
+
+	$nonjson = file_get_contents('php://input', true);
+	error_log("nonjson true single: " . $nonjson);
+	$_POST = json_decode($nonjson, true);
+	error_log("json true single: " . $_POST);
+	$response["received1s"] = $_POST;
+
+	$nonjson = file_get_contents('php://input', false);
+	error_log("nonjson false single: " . $nonjson);
+	$_POST = json_decode($nonjson, true);
+	error_log("json false single: " . $_POST);
+	$response["received0s"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
