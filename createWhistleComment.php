@@ -9,10 +9,19 @@ Return:
 
 See bottom for useful commands
 */
+
+function get_content($URL){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_URL, $URL);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
+}
+
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 //header('Content-Type: application/json');
-phpinfo();
 
 // Array for JSON response
 $response = array();
@@ -28,6 +37,9 @@ if (!$con) {
     //header('Content-Type: application/json');
     echo json_encode($response);
 } else {
+	echo get_content('php://input');
+	echo json_encode(get_content('php://input'));
+
 	$nonjson = file_get_contents("php://input", true);
 	error_log("nonjson true double: " . $nonjson);
 	$_POST = json_decode($nonjson, true);
