@@ -57,7 +57,7 @@ if (!$con) {
 	};
 	    
 	// Issue the database create
-	$cols = "cat, catid, type, content, from, date, anon";
+	$cols = "cat, catid, type, content, fromuser, date, anon";
 	$vals = "'whistle', $catid, 'comment', '$content', '$from', '$date', '$anon'";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
