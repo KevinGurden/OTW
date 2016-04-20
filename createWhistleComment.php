@@ -12,6 +12,7 @@ See bottom for useful commands
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 //header('Content-Type: application/json');
+phpinfo();
 
 // Array for JSON response
 $response = array();
