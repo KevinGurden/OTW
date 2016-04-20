@@ -10,7 +10,7 @@ Return:
 See bottom for useful commands
 */
 
-function get_content($URL){
+function get_content($URL) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_URL, $URL);
@@ -34,35 +34,12 @@ if (!$con) {
     $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
     $response["sqlerror"] = mysqli_connect_error();
-    //header('Content-Type: application/json');
+    header('Content-Type: application/json');
     echo json_encode($response);
 } else {
-	echo get_content('php://input');
-	echo json_encode(get_content('php://input'));
-
 	$nonjson = file_get_contents("php://input", true);
-	error_log("nonjson true double: " . $nonjson);
-	$_POST = json_decode($nonjson, true);
-	error_log("json true double: " . $_POST);
-	$response["received1d"] = $_POST;
-
-	$nonjson = file_get_contents("php://input", false);
-	error_log("nonjson false double: " . $nonjson);
-	$_POST = json_decode($nonjson, true);
-	error_log("json false double: " . $_POST);
-	$response["received0d"] = $_POST;
-
-	$nonjson = file_get_contents('php://input', true);
-	error_log("nonjson true single: " . $nonjson);
-	$_POST = json_decode($nonjson, true);
-	error_log("json true single: " . $_POST);
-	$response["received1s"] = $_POST;
-
-	$nonjson = file_get_contents('php://input', false);
-	error_log("nonjson false single: " . $nonjson);
-	$_POST = json_decode($nonjson, true);
-	error_log("json false single: " . $_POST);
-	$response["received0s"] = $_POST;
+	$_POST = json_decode($nonjson);
+	$response["received"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
@@ -78,7 +55,7 @@ if (!$con) {
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, from, date, anon";
-	$vals = "'whistle', '$catid', 'comment', '$content', '$from', '$date', '$anon'";
+	$vals = "'whistle', $catid, 'comment', '$content', '$from', '$date', '$anon'";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	error_log("createWhistleComment: inset=" . $insert);
@@ -96,7 +73,7 @@ if (!$con) {
         $response["query"] = "$insert";
         $response["sqlerror"] = mysqli_error($con);
     };
-    //header('Content-Type: application/json');
+    header('Content-Type: application/json');
     echo json_encode($response);
 };
 
