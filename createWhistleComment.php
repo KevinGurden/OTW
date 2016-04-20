@@ -24,7 +24,7 @@ if (!$con) {
     $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
     $response["sqlerror"] = mysqli_connect_error();
-    header('Content-Type: application/json');
+    //header('Content-Type: application/json');
     echo json_encode($response);
 } else {
 	$nonjson = file_get_contents("php://input", true);
@@ -83,7 +83,7 @@ if (!$con) {
         $response["query"] = "$insert";
         $response["sqlerror"] = mysqli_error($con);
     };
-    header('Content-Type: application/json');
+    //header('Content-Type: application/json');
     echo json_encode($response);
 };
 
