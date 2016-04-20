@@ -38,8 +38,10 @@ if (!$con) {
     header('Content-Type: application/json');
     echo json_encode($response);
 } else {
-	$nonjson = file_get_contents("php://input", true);
-	$_POST = json_decode($nonjson);
+	// $nonjson = file_get_contents("php://input", true);
+	// $_POST = json_decode($nonjson);
+	
+	$_POST = json_decode(file_get_contents('php://input'), true);
 	$response["received"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
