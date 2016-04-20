@@ -20,8 +20,9 @@ function get_content($URL) {
 }
 
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
+header('Access-Control-Allow-Headers: Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With');
 header('Access-Control-Allow-Origin: *');
-//header('Content-Type: application/json');
+header('Content-Type: application/json');
 
 // Array for JSON response
 $response = array();
