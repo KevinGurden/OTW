@@ -44,8 +44,15 @@ if (!$con) {
 	$date = mysqli_real_escape_string($con, $_POST['date']);
 	$type_selected = mysqli_real_escape_string($con, $_POST['type_selected']);
 	$type_policy = mysqli_real_escape_string($con, $_POST['type_policy']);
-	$location_main = mysqli_real_escape_string($con, $_POST['loc_main']);
-	$location_detail = mysqli_real_escape_string($con, $_POST['loc_detail']);
+	if (isset($_POST['loc_main'])) {
+		$loc_main = mysqli_real_escape_string($con, $_POST['loc_main']);
+	} else {
+		$loc_main = '';
+	};if (isset($_POST['loc_detail'])) {
+		$loc_detail = mysqli_real_escape_string($con, $_POST['loc_detail']);
+	} else {
+		$loc_detail = '';
+	};
 	if (isset($_POST['user'])) {
 		$user = mysqli_real_escape_string($con, $_POST['user']);
 	} else {
