@@ -48,7 +48,7 @@ if (!$con) {
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
 	$catid = mysqli_real_escape_string($con, $_POST['catid']);
 	$content = mysqli_real_escape_string($con, $_POST['content']);
-	$from = mysqli_real_escape_string($con, $_POST['from']);
+	$fromuser = mysqli_real_escape_string($con, $_POST['fromuser']);
 	$date = mysqli_real_escape_string($con, $_POST['date']);
 	if (isset($_POST['anon'])) {
 		$anon = mysqli_real_escape_string($con, $_POST['anon']);
@@ -58,7 +58,7 @@ if (!$con) {
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, fromuser, date, anon";
-	$vals = "'whistle', $catid, 'comment', '$content', '$from', '$date', '$anon'";
+	$vals = "'whistle', $catid, 'comment', '$content', '$fromuser', '$date', '$anon'";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	error_log("createWhistleComment: inset=" . $insert);
