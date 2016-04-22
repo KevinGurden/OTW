@@ -63,13 +63,18 @@ if (!$con) {
 	} else {
 		$anon = '0';
 	};
+	if (isset($_POST['company_id'])) {
+		$company_id = mysqli_real_escape_string($con, $_POST['company_id']);
+	} else {
+		$company_id = 0; // Default to 0-Unknown
+	};
 	    
 	// Issue the database create
 	$cols = "title, description, status, cat, subdate, date, type_selected, type_policy, ";
 	$vals = "'$title', '$description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
-	$cols = $cols . "loc_main, loc_detail, user, anon";
-	$vals = $vals . "'$loc_main','$loc_detail', '$user', '$anon'";
+	$cols = $cols . "loc_main, loc_detail, user, anon, company_id";
+	$vals = $vals . "'$loc_main','$loc_detail', '$user', '$anon', $company_id";
 
 	$insert = "INSERT INTO whistles($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);

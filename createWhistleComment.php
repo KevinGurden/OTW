@@ -55,10 +55,15 @@ if (!$con) {
 	} else {
 		$anon = '0';
 	};
+	if (isset($_POST['company_id'])) {
+		$company_id = mysqli_real_escape_string($con, $_POST['company_id']);
+	} else {
+		$company_id = 0; // Default to 0-Unknown
+	};
 	    
 	// Issue the database create
-	$cols = "cat, catid, type, content, fromuser, date, anon";
-	$vals = "'whistle', $catid, 'comment', '$content', '$fromuser', '$date', '$anon'";
+	$cols = "cat, catid, type, content, fromuser, date, anon, company_id";
+	$vals = "'whistle', $catid, 'comment', '$content', '$fromuser', '$date', '$anon', $company_id";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	error_log("createWhistleComment: inset=" . $insert);
