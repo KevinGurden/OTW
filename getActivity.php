@@ -30,14 +30,13 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
-    if ( isset($_GET['catid']) and isset($_GET['cat']) and isset($_GET['company_id']) ) {
+    if ( isset($_GET['catid']) and isset($_GET['cat']) ) {
         // Escape the values to ensure no injection vunerability
         $catid = mysqli_real_escape_string($con, $_GET['catid']);
         $cat = mysqli_real_escape_string($con, $_GET['cat']);
-        $company_id = mysqli_real_escape_string($con, $_GET['company_id']);
 
         // Get a list of activity
-        $query = "SELECT * FROM activity WHERE catid='$catid' AND cat='$cat' AND company_id='$company_id'";
+        $query = "SELECT * FROM activity WHERE catid='$catid' AND cat='$cat'";
         $result = mysqli_query($con, $query);
 
         // Check for empty result
