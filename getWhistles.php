@@ -27,35 +27,42 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
+    if (isset($_GET['id'])) {
+        $id = mysqli_real_escape_string($con, $_GET['id']); // Escape to avoid injection vunerability
+    
+        // Get a list of whistles
+        $result = mysqli_query(
+            $con, "SELECT * FROM whistles WHERE company_id=$id"
+        );
 
-    // Get a list of whistles
-    $result = mysqli_query(
-        $con, "SELECT * FROM whistles"
-    );
+        // Check for empty result
+        if (mysqli_num_rows($result) > 0) {
+            // Loop through all results
+            $whistles = array();
+            
+            while ($whistle = mysqli_fetch_assoc($result)) {
+                $whistles[] = $whistle;
+            }
+            $response["whistles"] = $whistles;
 
-    // Check for empty result
-    if (mysqli_num_rows($result) > 0) {
-        // Loop through all results
-        $whistles = array();
-        
-        while ($whistle = mysqli_fetch_assoc($result)) {
-            $whistles[] = $whistle;
-        }
-        $response["whistles"] = $whistles;
+            // Success
+            $response["status"] = 200;
+            $response["message"] = "Success";
+            $response["sqlerror"] = "";
 
-        // Success
-        $response["status"] = 200;
-        $response["message"] = "Success";
-        $response["sqlerror"] = "";
+            // Echoing JSON response
+            echo json_encode($response);
+        } else {
+            // no whistles found
+            $response["status"] = 200;
+            $response["message"] = "No whistles found for company '$id'";
 
-        // Echoing JSON response
-        echo json_encode($response);
-    } else {
-        // no whistles found
-        $response["status"] = 200;
-        $response["message"] = "No whistles found";
-
-        // echo no whistles JSON
+            // echo no whistles JSON
+            echo json_encode($response);
+        };
+    } else { // no id present
+        $response["status"] = 402;
+        $response["message"] = "Missing id parameter";
         echo json_encode($response);
     };
 };
