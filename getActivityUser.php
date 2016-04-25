@@ -39,14 +39,13 @@ if (mysqli_connect_errno()) {
 
         // Get a list of activity. Select any table record that has the correct user defined and return any activity associiated with that user.
         if ($table == 'whistles') { // Add whistle title
-            $query = "SELECT a., t.title AS 'cat_title' FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
+            $query = "SELECT a.*, t.title AS 'cat_title' FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
         } else {
             $query = "SELECT a.* FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
         };
         $result = mysqli_query($con, $query);
-
-        // Check for empty result
-        if (mysqli_num_rows($result) > 0) {
+        
+        if (mysqli_num_rows($result) > 0) { // Check for empty result
             // Loop through all results
             $activity = array();
             
