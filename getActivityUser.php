@@ -38,7 +38,11 @@ if (mysqli_connect_errno()) {
         $table = mysqli_real_escape_string($con, $_GET['table']);
 
         // Get a list of activity. Select any table record that has the correct user defined and return any activity associiated with that user.
-        $query = "SELECT * FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
+        if ($table == 'whistles') { // Add whistle title
+            $query = "SELECT a., t.title AS 'w_title' FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
+        } else {
+            $query = "SELECT a.* FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
+        };
         $result = mysqli_query($con, $query);
 
         // Check for empty result
