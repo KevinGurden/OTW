@@ -15,6 +15,14 @@ header('Access-Control-Allow-Headers: Cache-Control, Pragma, Origin, Authorizati
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+function escape($con, $field, $default) {
+    if (isset($_POST[$field])) {
+    	return mysqli_real_escape_string($con, $_POST[$field]);
+    } else {
+    	return $default;
+    };
+};
+
 // Array for JSON response
 $response = array();
 
@@ -29,28 +37,17 @@ if (!$con) {
     header('Content-Type: application/json');
     echo json_encode($response);
 } else {
-	// $nonjson = file_get_contents("php://input", true);
-	// $_POST = json_decode($nonjson);
-	
 	$_POST = json_decode(file_get_contents('php://input'), true);
 	$response["received"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
-	$cat = mysqli_real_escape_string($con, $_POST['cat']);
-	$catid = mysqli_real_escape_string($con, $_POST['catid']);
-	$content = mysqli_real_escape_string($con, $_POST['content']);
-	$fromuser = mysqli_real_escape_string($con, $_POST['fromuser']);
-	$date = mysqli_real_escape_string($con, $_POST['date']);
-	if (isset($_POST['anon'])) {
-		$anon = mysqli_real_escape_string($con, $_POST['anon']);
-	} else {
-		$anon = '0';
-	};
-	if (isset($_POST['company_id'])) {
-		$company_id = mysqli_real_escape_string($con, $_POST['company_id']);
-	} else {
-		$company_id = 0; // Default to 0-Unknown
-	};
+	$cat = escape($con, 'cat', '');
+	$catid = escape($con, 'catid', 0);
+	$content = escape($con, 'content');
+	$fromuser = escape($con, 'fromuser', '');
+	$date = escape($con, 'date', '');
+	$anon = escape($con, 'anon', 0);
+	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, fromuser, date, anon, company_id";
