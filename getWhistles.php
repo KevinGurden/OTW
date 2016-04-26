@@ -34,7 +34,7 @@ if (mysqli_connect_errno()) {
         $user = mysqli_real_escape_string($con, $_GET['user']); // Escape to avoid injection vunerability
     
         // Get a list of whistles
-        $select = "SELECT * FROM whistles WHERE user='$user' company_id=$id";
+        $select = "SELECT * FROM whistles WHERE user='$user' AND company_id=$id";
         $result = mysqli_query($con, $select);
         $response["query"] = "$select";
 
