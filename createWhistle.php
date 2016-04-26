@@ -42,7 +42,7 @@ if (!$con) {
 	// Escape the values to ensure no injection vunerability
 	$title = escape($con, 'title', '');
 	$description = escape($con, 'description', '');
-	$recomendation = escape($con, 'recomendation', '');
+	$recommendation = escape($con, 'recommendation', '');
 	$status = escape($con, 'status', '');
 	$cat = escape($con, 'cat','');
 	$subdate = escape($con, 'subdate', '');
@@ -56,8 +56,8 @@ if (!$con) {
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
 	// Issue the database create
-	$cols = "title, description, status, cat, subdate, date, type_selected, type_policy, ";
-	$vals = "'$title', '$description', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
+	$cols = "title, description, recommendation, status, cat, subdate, date, type_selected, type_policy, ";
+	$vals = "'$title', '$description', '$recommendation', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
 	$cols = $cols . "loc_main, loc_detail, user, anon, company_id";
 	$vals = $vals . "'$loc_main','$loc_detail', '$user', '$anon', $company_id";
