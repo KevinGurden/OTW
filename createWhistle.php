@@ -40,7 +40,7 @@ if (!$con) {
 	$_POST = json_decode(file_get_contents('php://input'), true);
 
 	// Escape the values to ensure no injection vunerability
-	$title = escape('title', '');
+	$title = escape($con, 'title', '');
 	$description = escape($con, 'description', '');
 	$status = escape($con, 'status', '');
 	$cat = escape($con, 'cat','');
