@@ -16,7 +16,7 @@ header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-function escape($field, $default) {
+function escape($con, $field, $default) {
     if (isset($_POST[$field])) {
     	return mysqli_real_escape_string($con, $_POST[$field]);
     } else {
@@ -39,19 +39,15 @@ if (!$con) {
 } else {
 	$_POST = json_decode(file_get_contents('php://input'), true);
 
-	// $rest_json = file_get_contents("php://input");
-	// $_POST = json_decode($rest_json, true);
-	// $response["received"] = $_POST;
-
 	// Escape the values to ensure no injection vunerability
 	$title = escape('title', '');
-	$description = escape('description', '');
-	$status = escape('status', '');
-	$cat = escape('cat','');
-	$subdate = escape('subdate', '');
-	$date = escape('date', '');
-	$type_selected = escape('type_selected', '');
-	$type_policy = escape('type_policy', '');
+	$description = escape($con, 'description', '');
+	$status = escape($con, 'status', '');
+	$cat = escape($con, 'cat','');
+	$subdate = escape($con, 'subdate', '');
+	$date = escape($con, 'date', '');
+	$type_selected = escape($con, 'type_selected', '');
+	$type_policy = escape($con, 'type_policy', '');
 	if (isset($_POST['loc_main'])) {
 		$loc_main = mysqli_real_escape_string($con, $_POST['loc_main']);
 	} else {
