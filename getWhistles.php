@@ -35,8 +35,7 @@ if (mysqli_connect_errno()) {
     
         // Get a list of whistles
         $select = "SELECT * FROM whistles WHERE user='$user' company_id=$id";
-        $result = mysqli_query($con, $query)
-        );
+        $result = mysqli_query($con, $query);
         $response["query"] = "$select";
 
         // Check for empty result
