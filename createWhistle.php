@@ -44,14 +44,14 @@ if (!$con) {
 	// $response["received"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
-	$title = mysqli_real_escape_string($con, $_POST['title']);
+	$title = escape('title', '');
 	$description = escape('description', '');
-	$status = mysqli_real_escape_string($con, $_POST['status']);
-	$cat = mysqli_real_escape_string($con, $_POST['cat']);
-	$subdate = mysqli_real_escape_string($con, $_POST['subdate']);
-	$date = mysqli_real_escape_string($con, $_POST['date']);
-	$type_selected = mysqli_real_escape_string($con, $_POST['type_selected']);
-	$type_policy = mysqli_real_escape_string($con, $_POST['type_policy']);
+	$status = escape('status', '');
+	$cat = escape('cat','');
+	$subdate = escape('subdate', '');
+	$date = escape('date', '');
+	$type_selected = escape('type_selected', '');
+	$type_policy = escape('type_policy', '');
 	if (isset($_POST['loc_main'])) {
 		$loc_main = mysqli_real_escape_string($con, $_POST['loc_main']);
 	} else {
