@@ -16,6 +16,14 @@ header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+function escape($field, $default) {
+    if (isset($_POST[$field])) {
+    	return mysqli_real_escape_string($con, $_POST[$field]);
+    } else {
+    	return $default;
+    };
+}
+
 // Array for JSON response
 $response = array();
 
@@ -37,7 +45,7 @@ if (!$con) {
 
 	// Escape the values to ensure no injection vunerability
 	$title = mysqli_real_escape_string($con, $_POST['title']);
-	$description = mysqli_real_escape_string($con, $_POST['description']);
+	$description = escape('description', '');
 	$status = mysqli_real_escape_string($con, $_POST['status']);
 	$cat = mysqli_real_escape_string($con, $_POST['cat']);
 	$subdate = mysqli_real_escape_string($con, $_POST['subdate']);

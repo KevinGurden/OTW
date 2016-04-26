@@ -10,15 +10,6 @@ Return:
 See bottom for useful commands
 */
 
-function get_content($URL) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_URL, $URL);
-    $data = curl_exec($ch);
-    curl_close($ch);
-    return $data;
-}
-
 header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Headers: Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With');
 header('Access-Control-Allow-Origin: *');

@@ -71,7 +71,7 @@ if (mysqli_connect_errno()) {
             echo json_encode($response);
         };
     } else {
-        error_log("'user', 'table' and 'cat' must be provided");
+        error_log("getActivityUser: 'user', 'table' and 'cat' must be provided");
         $response["status"] = 402;
         $response["message"] = "'user', 'table' and 'cat' must be provided";
         $response["sqlerror"] = "";
