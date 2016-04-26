@@ -42,36 +42,18 @@ if (!$con) {
 	// Escape the values to ensure no injection vunerability
 	$title = escape($con, 'title', '');
 	$description = escape($con, 'description', '');
+	$recomendation = escape($con, 'recomendation', '');
 	$status = escape($con, 'status', '');
 	$cat = escape($con, 'cat','');
 	$subdate = escape($con, 'subdate', '');
 	$date = escape($con, 'date', '');
 	$type_selected = escape($con, 'type_selected', '');
 	$type_policy = escape($con, 'type_policy', '');
-	if (isset($_POST['loc_main'])) {
-		$loc_main = mysqli_real_escape_string($con, $_POST['loc_main']);
-	} else {
-		$loc_main = '';
-	};if (isset($_POST['loc_detail'])) {
-		$loc_detail = mysqli_real_escape_string($con, $_POST['loc_detail']);
-	} else {
-		$loc_detail = '';
-	};
-	if (isset($_POST['user'])) {
-		$user = mysqli_real_escape_string($con, $_POST['user']);
-	} else {
-		$user = '';
-	};
-	if (isset($_POST['anon'])) {
-		$anon = mysqli_real_escape_string($con, $_POST['anon']);
-	} else {
-		$anon = '0';
-	};
-	if (isset($_POST['company_id'])) {
-		$company_id = mysqli_real_escape_string($con, $_POST['company_id']);
-	} else {
-		$company_id = 0; // Default to 0-Unknown
-	};
+	$loc_main = escape($con, 'loc_main', '');
+	$loc_detail = escape($con, 'loc_detail', '');
+	$user = escape($con, 'user', '');
+	$anon = escape($con, 'anon', 0);
+	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
 	// Issue the database create
 	$cols = "title, description, status, cat, subdate, date, type_selected, type_policy, ";
