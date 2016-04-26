@@ -2,6 +2,10 @@
 /*
 Get a list of whistles from the encol database.
 
+Parameters:
+    id: company identifier. Integer
+    user: username. String
+
 Return:
     status: 200 for success, 400+ for error
     message: High level error message
@@ -17,8 +21,6 @@ header('Access-Control-Allow-Origin: *');
 // Array for JSON response
 $response = array();
 
-// require_once __DIR__ . '/db_config.php';
-// Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (mysqli_connect_errno()) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
@@ -27,12 +29,13 @@ if (mysqli_connect_errno()) {
     $response["sqlerror"] = mysqli_connect_error();
     echo json_encode($response);
 } else {
-    if (isset($_GET['id'])) {
+    if (isset($_GET['id']) && isset($_GET['user'])) {
         $id = mysqli_real_escape_string($con, $_GET['id']); // Escape to avoid injection vunerability
+        $user = mysqli_real_escape_string($con, $_GET['user']); // Escape to avoid injection vunerability
     
         // Get a list of whistles
         $result = mysqli_query(
-            $con, "SELECT * FROM whistles WHERE company_id=$id"
+            $con, "SELECT * FROM whistles WHERE user='$user' company_id=$id"
         );
 
         // Check for empty result
@@ -55,14 +58,14 @@ if (mysqli_connect_errno()) {
         } else {
             // no whistles found
             $response["status"] = 200;
-            $response["message"] = "No whistles found for company '$id'";
+            $response["message"] = "No whistles found for user '$user' and company '$id'";
 
             // echo no whistles JSON
             echo json_encode($response);
         };
-    } else { // no id present
+    } else { // no id or user present
         $response["status"] = 402;
-        $response["message"] = "Missing id parameter";
+        $response["message"] = "Missing 'id' or 'user' parameter";
         echo json_encode($response);
     };
 };
