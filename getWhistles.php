@@ -34,9 +34,10 @@ if (mysqli_connect_errno()) {
         $user = mysqli_real_escape_string($con, $_GET['user']); // Escape to avoid injection vunerability
     
         // Get a list of whistles
-        $result = mysqli_query(
-            $con, "SELECT * FROM whistles WHERE user='$user' company_id=$id"
+        $select = "SELECT * FROM whistles WHERE user='$user' company_id=$id";
+        $result = mysqli_query($con, $query)
         );
+        $response["query"] = "$select";
 
         // Check for empty result
         if (mysqli_num_rows($result) > 0) {
