@@ -43,6 +43,7 @@ if (!$con) {
 	// Escape the values to ensure no injection vunerability
 	$cat = escape($con, 'cat', '');
 	$catid = escape($con, 'catid', 0);
+	$type = escape($con, 'type', 'comment');
 	$content = escape($con, 'content');
 	$fromuser = escape($con, 'fromuser', '');
 	$date = escape($con, 'date', '');
@@ -51,10 +52,9 @@ if (!$con) {
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, fromuser, date, anon, company_id";
-	$vals = "'whistle', $catid, 'comment', '$content', '$fromuser', '$date', '$anon', $company_id";
+	$vals = "'whistle', $catid, '$type', '$content', '$fromuser', '$date', $anon, $company_id";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
-	error_log("createWhistleComment: inset=" . $insert);
 	$result = mysqli_query($con, $insert);
 	if ($result) { // Success
 		error_log("createWhistleComment: success");
