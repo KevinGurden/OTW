@@ -27,7 +27,6 @@ function escape($con, $field, $default) {
 $response = array();
 
 // Connect to db
-error_log("createWhistleComment: Start");
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (!$con) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
@@ -44,7 +43,7 @@ if (!$con) {
 	$cat = escape($con, 'cat', '');
 	$catid = escape($con, 'catid', 0);
 	$type = escape($con, 'type', 'comment');
-	$content = escape($con, 'content');
+	$content = escape($con, 'content', '');
 	$fromuser = escape($con, 'fromuser', '');
 	$date = escape($con, 'date', '');
 	$anon = escape($con, 'anon', 0);
