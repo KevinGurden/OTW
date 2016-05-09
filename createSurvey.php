@@ -24,6 +24,16 @@ function escape($con, $field, $default) {
     };
 }
 
+function create($con, $cat, $id, $value, $sdate, $user, $anon, $cid) {
+    // Issue the database create
+    $cols = "cat, id, value, subdate, user, anon, cid";
+    $vals = "'$cat', $id, '$value', '$sdate', '$user', $anon, '$cid'";
+
+    $insert = "INSERT INTO answers($cols) VALUES($vals)";
+    $result = mysqli_query($con, $insert);
+    return $result;
+}
+
 // Array for JSON response
 $response = array();
 
@@ -46,25 +56,24 @@ if (!$con) {
 	$user = escape($con, 'user', '');
 	$anon = escape($con, 'anon', 0);
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
-	    
-	// Issue the database create
-	$cols = "title, description, recommendation, status, cat, subdate, date, type_selected, type_policy, ";
-	$vals = "'$title', '$description', '$recommendation', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
-	$cols = $cols . "loc_main, loc_detail, user, anon, company_id";
-	$vals = $vals . "'$loc_main','$loc_detail', '$user', '$anon', $company_id";
+    $total_created = 0;
+    while ($answer = mysqli_fetch_assoc($result)) {
+        $created = create($con, $answer.cat, $answer.value, $subdate, $user, $anon, $company_id);
+        if ($created) {
+            $total_created +$total_created + 1;
+        } else {
+            $response["sqlerror"] = mysqli_error($con);
+        };
+    }
 
-	$insert = "INSERT INTO whistles($cols) VALUES($vals)";
-	$result = mysqli_query($con, $insert);
-	if ($result) { // Success
+    if ($total_created == mysqli_num_rows($result)) { // Did we successfully create all records?
         $response["status"] = 200;
-        $response["message"] = "Whistle created";
-        $response["id"] = mysqli_insert_id($con); // Return the id of the record added
+        $response["message"] = "$total_created answers created";
         $response["sqlerror"] = "";
-	} else { // Failure
-		error_log("$result: from $insert");
+    } else { // Failure
         $response["status"] = 402;
-        $response["message"] = "Create whistle failed";
+        $response["message"] = "One or more creates failed";
         $response["sqlerror"] = mysqli_error($con);
     };
     header('Content-Type: application/json');
