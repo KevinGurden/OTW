@@ -24,10 +24,10 @@ function escape($con, $field, $default) {
     };
 }
 
-function create($con, $cat, $id, $value, $sdate, $user, $anon, $cid) {
+function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     // Issue the database create
-    $cols = "cat, id, value, subdate, user, anon, cid";
-    $vals = "'$cat', $id, '$value', '$sdate', '$user', $anon, '$cid'";
+    $cols = "cat, id, value, location, subdate, user, anon, company_id";
+    $vals = "'$cat', $id, '$value', '$loc', $sdate', '$user', $anon, '$cid'";
 
     $insert = "INSERT INTO answers($cols) VALUES($vals)";
     $result = mysqli_query($con, $insert);
@@ -52,6 +52,7 @@ if (!$con) {
 
 	// Escape the values to ensure no injection vunerability
 	$answers = escape($con, 'answers', array());
+    $loc = escape($con, 'location', '');
 	$subdate = escape($con, 'subdate', '');
 	$user = escape($con, 'user', '');
 	$anon = escape($con, 'anon', 0);
@@ -59,7 +60,7 @@ if (!$con) {
 
     $total_created = 0;
     while ($answer = mysqli_fetch_assoc($result)) {
-        $created = create($con, $answer.cat, $answer.id, $answer.value, $subdate, $user, $anon, $company_id);
+        $created = create($con, $answer.cat, $answer.id, $answer.value, $loc, $subdate, $user, $anon, $company_id);
         if ($created) {
             $total_created +$total_created + 1;
         } else {
