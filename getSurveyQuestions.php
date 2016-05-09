@@ -29,8 +29,8 @@ if (mysqli_connect_errno()) {
     echo json_encode($response);
 } else {
     // if (isset($_GET['id']) && isset($_GET['user'])) {
-        $id = mysqli_real_escape_string($con, $_GET['id']); // Escape to avoid injection vunerability
-        $user = mysqli_real_escape_string($con, $_GET['user']); // Escape to avoid injection vunerability
+        //$id = mysqli_real_escape_string($con, $_GET['id']); // Escape to avoid injection vunerability
+        //$user = mysqli_real_escape_string($con, $_GET['user']); // Escape to avoid injection vunerability
     
         // Get a list of questions
         $select = "SELECT * FROM questions";
