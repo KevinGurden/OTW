@@ -31,7 +31,8 @@ if (mysqli_connect_errno()) {
     // if (isset($_GET['id']) && isset($_GET['user'])) {
         //$id = mysqli_real_escape_string($con, $_GET['id']); // Escape to avoid injection vunerability
         //$user = mysqli_real_escape_string($con, $_GET['user']); // Escape to avoid injection vunerability
-    
+        mysqli_set_charset($con, "utf8");
+
         // Get a list of questions
         $select = "SELECT * FROM questions";
         $result = mysqli_query($con, $select);
