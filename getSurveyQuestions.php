@@ -44,8 +44,9 @@ if (mysqli_connect_errno()) {
             
             while ($question = mysqli_fetch_assoc($result)) {
                 $questions[] = $question;
+                $response["lastquestion"] = $question;
             }
-            $response["questions"] = $question;
+            $response["questions"] = $questions;
 
             // Success
             $response["status"] = 200;
@@ -59,7 +60,7 @@ if (mysqli_connect_errno()) {
             $response["status"] = 200;
             $response["message"] = "No questions found";
 
-            // echo no whistles JSON
+            // echo no questions JSON
             echo json_encode($response);
         };
     // } else { // no id or user present
