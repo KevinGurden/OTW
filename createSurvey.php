@@ -59,7 +59,7 @@ if (!$con) {
 
     $total_created = 0;
     while ($answer = mysqli_fetch_assoc($result)) {
-        $created = create($con, $answer.cat, $answer.value, $subdate, $user, $anon, $company_id);
+        $created = create($con, $answer.cat, $answer.id, $answer.value, $subdate, $user, $anon, $company_id);
         if ($created) {
             $total_created +$total_created + 1;
         } else {
