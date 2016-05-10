@@ -58,7 +58,7 @@ if (!$con) {
     $loc = escape($con, 'location', '');
 	$subdate = escape($con, 'subdate', '');
 	$user = escape($con, 'user', '');
-	$anon = escape($con, 'anon', 0);
+	$anon = escape($con, 'anon', '0');
     error_log("anon: $anon");
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
@@ -67,7 +67,8 @@ if (!$con) {
         error_log("answer: $answer");
         $created = create($con, $answer['cat'], $answer['id'], $answer['value'], $loc, $subdate, $user, $anon, $company_id);
         if ($created) {
-            $total_created +$total_created + 1;
+            $total_created = $total_created + 1;
+            error_log("success so total_created: $total_created");
         } else {
             $response["sqlerror"] = mysqli_error($con);
         };
