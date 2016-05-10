@@ -22,7 +22,15 @@ function escape($con, $field, $default) {
     } else {
     	return $default;
     };
-}
+};
+
+function got_int($field, $default) {
+    if (isset($_POST[$field])) {
+        return $_POST[$field];
+    } else {
+        return $default;
+    };
+};
 
 function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     // Issue the database create
@@ -34,7 +42,7 @@ function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     $result = mysqli_query($con, $insert);
     error_log("INSERT result: $result");
     return $result;
-}
+};
 
 // Array for JSON response
 $response = array();
@@ -54,11 +62,10 @@ if (!$con) {
 
 	// Escape the values to ensure no injection vunerability
 	$answers = $_POST['answers'];
-    error_log("answers: $answers");
     $loc = escape($con, 'location', '');
 	$subdate = escape($con, 'subdate', '');
 	$user = escape($con, 'user', '');
-	$anon = escape($con, 'anon', '0');
+	$anon = got_int('anon', 0);
     error_log("anon: $anon");
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
