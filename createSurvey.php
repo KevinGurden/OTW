@@ -35,7 +35,7 @@ function got_int($field, $default) {
 function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     // Issue the database create
     $cols = "cat, id, value, location, subdate, user, anon, company_id";
-    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', '$anon', '$cid'";
+    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, '$cid'";
 
     $insert = "INSERT INTO answers($cols) VALUES($vals)";
     error_log("INSERT: $insert");
@@ -65,8 +65,9 @@ if (!$con) {
     $loc = escape($con, 'location', '');
 	$subdate = escape($con, 'subdate', '');
 	$user = escape($con, 'user', '');
+    error_log("1 anon: " . $_POST['anon']);
 	$anon = got_int('anon', 0);
-    error_log("anon: $anon");
+    error_log("2 anon: " . $anon);
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
     $total_created = 0;
