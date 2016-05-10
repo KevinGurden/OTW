@@ -53,7 +53,7 @@ if (!$con) {
 	$_POST = json_decode(file_get_contents('php://input'), true);
 
 	// Escape the values to ensure no injection vunerability
-	$answers = escape($con, 'answers', array());
+	$answers = $_POST['answers'];
     error_log("answers: $answers");
     $loc = escape($con, 'location', '');
 	$subdate = escape($con, 'subdate', '');
