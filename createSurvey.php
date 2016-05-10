@@ -59,6 +59,7 @@ if (!$con) {
 	$subdate = escape($con, 'subdate', '');
 	$user = escape($con, 'user', '');
 	$anon = escape($con, 'anon', 0);
+    error_log("anon: $anon");
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
     $total_created = 0;
