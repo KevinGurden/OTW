@@ -59,16 +59,16 @@ if (!$con) {
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
     $total_created = 0;
-    while ($answer = mysqli_fetch_assoc($result)) {
+    foreach ($answers as $answer) {
         $created = create($con, $answer.cat, $answer.id, $answer.value, $loc, $subdate, $user, $anon, $company_id);
         if ($created) {
             $total_created +$total_created + 1;
         } else {
             $response["sqlerror"] = mysqli_error($con);
         };
-    }
+    };
 
-    if ($total_created == mysqli_num_rows($result)) { // Did we successfully create all records?
+    if ($total_created == count($answers)) { // Did we successfully create all records?
         $response["status"] = 200;
         $response["message"] = "$total_created answers created";
         $response["sqlerror"] = "";
