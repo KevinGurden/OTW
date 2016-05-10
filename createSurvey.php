@@ -27,7 +27,7 @@ function escape($con, $field, $default) {
 function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     // Issue the database create
     $cols = "cat, id, value, location, subdate, user, anon, company_id";
-    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, '$cid'";
+    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', '$anon', '$cid'";
 
     $insert = "INSERT INTO answers($cols) VALUES($vals)";
     error_log("INSERT: $insert");
