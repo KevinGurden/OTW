@@ -64,7 +64,7 @@ if (!$con) {
     $total_created = 0;
     foreach ($answers as $answer) {
         error_log("answer: $answer");
-        $created = create($con, $answer.cat, $answer.id, $answer.value, $loc, $subdate, $user, $anon, $company_id);
+        $created = create($con, $answer['cat'], $answer['id'], $answer['value'], $loc, $subdate, $user, $anon, $company_id);
         if ($created) {
             $total_created +$total_created + 1;
         } else {
