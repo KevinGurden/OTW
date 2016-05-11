@@ -32,14 +32,16 @@ function weight($cat, $effect, $ans, $day_health, $el) {
         error_log("weight: $cat, $day, $cid");
     };
     $value = $ans['value100'];
-    $el_score = $day_health[$el.'_score'];
-    $el_count = $day_health[$el.'_count'];
+    $score_label = $el.'_score';
+    $count_label = $el.'_count';
+    $el_score = $day_health[$score_label];
+    $el_count = $day_health[$count_label];
     if ($ans['cat'] == $cat) {
         $new_value = $effect/100 * $value;
-        $day_health[$el.'_score'] = (($el_score * $el_count) + $new_value) / $el_count + 1;
-        $day_health[$el.'_count'] = $el_count + 1;
+        $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
+        $day_health[$count_label] = $el_count + 1;
         if ($el == 'e1') {
-            error_log("$value, $day_health[$el.'_score'], $new_value");
+            error_log("$value, $day_health[$score_label], $new_value");
         };
     }; 
 };
