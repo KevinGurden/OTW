@@ -54,27 +54,27 @@ function weightSurvey($ans, $dH) {
 
     weight('Vital Base', 10, $ans, $dH, 'c1');      // C1: Committment
     weight('Vital Base', 20, $ans, $dH, 'c2');      // C2: Communication
-    weight('Vital Base', 20, $ans, $dH, 'c3']);     // C3: Care
-    weight('Vital Base', 20, $ans, $dH, 'e1']);     // E1: Environment
-    weight('Vital Base', 20, $ans, $dH, 'v1']);     // V1: Vision
-    weight('Vital Base', 20, $ans, $dH, 'v2']);     // V2: Values
-    weight('Vital Base', 20, $ans, $dH, 'v3']);     // V3: Value
-    weight('Vital Base', 20, $ans, $dH, 'v4']);     // V4: Vulnerability
-    weight('Vital Base', 10, $ans, $dH, 'v5']);     // V5: Victory
-    weight('Vital Base', 20, $ans, $dH, 'v6']);     // V6: Vitality
-    weight('Vital Base', 100, $ans, $dH 'v7']);     // V7: Vital Base
+    weight('Vital Base', 20, $ans, $dH, 'c3');      // C3: Care
+    weight('Vital Base', 20, $ans, $dH, 'e1');      // E1: Environment
+    weight('Vital Base', 20, $ans, $dH, 'v1');      // V1: Vision
+    weight('Vital Base', 20, $ans, $dH, 'v2');      // V2: Values
+    weight('Vital Base', 20, $ans, $dH, 'v3');      // V3: Value
+    weight('Vital Base', 20, $ans, $dH, 'v4');      // V4: Vulnerability
+    weight('Vital Base', 10, $ans, $dH, 'v5');      // V5: Victory
+    weight('Vital Base', 20, $ans, $dH, 'v6');      // V6: Vitality
+    weight('Vital Base', 100, $ans, $dH 'v7');      // V7: Vital Base
 
-    weight('Vision', 10, $ans, $dH, 'c1');   // C1: Committment
-    weight('Vision', 20, $ans, $dH, 'c2');   // C2: Communication
-    weight('Vision', 20, $ans, $dH, 'c3');   // C3: Care
-    weight('Vision', 10, $ans, $dH, 'e1');   // E1: Environment
-    weight('Vision', 100, $ans, $dH, 'v1');  // V1: Vision
-    weight('Vision', 25, $ans, $dH, 'v2');   // V2: Values
-    weight('Vision', 20, $ans, $dH, 'v3');   // V3: Value
-    weight('Vision', 10, $ans, $dH, 'v4');   // V4: Vulnerability
-    weight('Vision', 0, $ans, $dH, 'v5');    // V5: Victory
-    weight('Vision', 20, $ans, $dH, 'v6');   // V6: Vitality
-    weight('Vision', 20, $ans, $dH, 'v7');   // V7: Vital Base
+    weight('Vision', 10, $ans, $dH, 'c1');          // C1: Committment
+    weight('Vision', 20, $ans, $dH, 'c2');          // C2: Communication
+    weight('Vision', 20, $ans, $dH, 'c3');          // C3: Care
+    weight('Vision', 10, $ans, $dH, 'e1');          // E1: Environment
+    weight('Vision', 100, $ans, $dH, 'v1');         // V1: Vision
+    weight('Vision', 25, $ans, $dH, 'v2');          // V2: Values
+    weight('Vision', 20, $ans, $dH, 'v3');          // V3: Value
+    weight('Vision', 10, $ans, $dH, 'v4');          // V4: Vulnerability
+    weight('Vision', 0, $ans, $dH, 'v5');           // V5: Victory
+    weight('Vision', 20, $ans, $dH, 'v6');          // V6: Vitality
+    weight('Vision', 20, $ans, $dH, 'v7');          // V7: Vital Base
 };
 
 // Array for JSON response
