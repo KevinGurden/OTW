@@ -28,7 +28,9 @@ function getHealth($con, $day, $cid) { // Get a day score
 };
 
 function weight($cat, $effect, $ans, $day_health, $el) {
-    if ($el == 'e1') {error_log("weight: $cat, $day, $cid")};
+    if ($el == 'e1') {
+        error_log("weight: $cat, $day, $cid");
+    };
     $value = $ans['value100'];
     $el_score = $day_health[$el.'_score'];
     $el_count = $day_health[$el.'_count'];
