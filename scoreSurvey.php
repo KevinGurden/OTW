@@ -38,7 +38,9 @@ function weight($cat, $effect, $ans, $day_health, $el) {
         $new_value = $effect/100 * $value;
         $day_health[$el.'_score'] = (($el_score * $el_count) + $new_value) / $el_count + 1;
         $day_health[$el.'_count'] = $el_count + 1;
-        if ($el == 'e1') {error_log("$value, $day_health[$el.'_score'], $new_value")};
+        if ($el == 'e1') {
+            error_log("$value, $day_health[$el.'_score'], $new_value");
+        };
     }; 
 };
 
