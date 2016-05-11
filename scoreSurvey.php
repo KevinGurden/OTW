@@ -83,7 +83,7 @@ $response = array();
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
     $result = getHealth($con, $day, $company_id); // Get the current day score
-    if (mysqli_num_rows($result) = 0) { // No record so create one
+    if (mysqli_num_rows($result) == 0) { // No record so create one
         error_log("no record");
         $response["status"] = 400;
         $response["message"] = "No health for that day for company '$company_id'";
