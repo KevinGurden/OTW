@@ -21,6 +21,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
+include 'fn_escape.php';
 
 function getHealth($con, $day, $cid) { // Get a day score
     $select = "SELECT * FROM health WHERE when='$day' AND company_id=$cid";
@@ -32,12 +33,12 @@ function weight($cat, $effect, $ans, $dh, $el) {
     if ($el == 'e1') {
         error_log("weight: $cat, $day, $cid");
     };
-    $value = $ans['value100'];
-    $score_label = $el.'_score';
-    $count_label = $el.'_count';
-    $el_score = $dh[$score_label];
-    $el_count = $dh[$count_label];
-    if ($ans['cat'] == $cat) {
+    $value = $ans['value100'];      // Answer value (0-100)
+    $score_label = $el.'_score';    // Score field label in the 'health' table
+    $count_label = $el.'_count';    // Count field label in the 'health' table
+    $el_score = $dh[$score_label];  // Current score 
+    $el_count = $dh[$count_label];  // Current count
+    if ($ans['cat'] == $cat) {      // Are we the correct category
         $new_value = $effect/100 * $value;
         $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
         $day_health[$count_label] = $el_count + 1;
@@ -63,7 +64,7 @@ function weightSurvey($ans, $day_health) {
     weight('Vital Base', 20, $ans, $day_health, 'v4');      // V4: Vulnerability
     weight('Vital Base', 10, $ans, $day_health, 'v5');      // V5: Victory
     weight('Vital Base', 20, $ans, $day_health, 'v6');      // V6: Vitality
-    weight('Vital Base', 100, $ans, $day_health, 'v7');      // V7: Vital Base
+    weight('Vital Base', 100, $ans, $day_health, 'v7');     // V7: Vital Base
 
     weight('Vision', 10, $ans, $day_health, 'c1');          // C1: Committment
     weight('Vision', 20, $ans, $day_health, 'c2');          // C2: Communication
@@ -82,6 +83,14 @@ function weightSurvey($ans, $day_health) {
 $response = array();
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8");
+    $_POST = json_decode(file_get_contents('php://input'), true);
+
+    // Escape the values to ensure no injection vunerability
+    $answers = $_POST['answers'];
+    $day = escape($con, 'day', '');
+    $company_id = got_int('company_id', 0);
+    
     $result = getHealth($con, $day, $company_id); // Get the current day score
     if (mysqli_num_rows($result) == 0) { // No record so create one
         error_log("no record");
