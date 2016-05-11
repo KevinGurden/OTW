@@ -24,7 +24,8 @@ include 'fn_connected.php';
 
 function getHealth($con, $day, $cid) { // Get a day score
     $select = "SELECT * FROM health WHERE when='$day' AND company_id=$cid";
-    return mysqli_query($con, $select);
+    $res = mysqli_query($con, $select);
+    return $res;
 };
 
 function weight($cat, $effect, $ans, $dh, $el) {
