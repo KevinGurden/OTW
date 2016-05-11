@@ -49,7 +49,8 @@ function weight($cat, $effect, $ans, $day_health, $el) {
 function weightSurvey($ans, $dH) {
     // Table of weighting effects:
     // e.g. 'c1_score' has a 10% effect on C1 (Committment) given a 'Vital Base' answer
-    error_log("weightSurvey: $ans['id']");
+    $id = $ans['id'];
+    error_log("weightSurvey: $id");
 
     weight('Vital Base', 10, $ans, $dH, 'c1');      // C1: Committment
     weight('Vital Base', 20, $ans, $dH, 'c2');      // C2: Communication
