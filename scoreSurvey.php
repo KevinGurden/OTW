@@ -29,6 +29,18 @@ function getHealth($con, $day, $cid) { // Get a day score
     return $res;
 };
 
+function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
+    // Issue the database create
+    $cols = "cat, id, value, location, subdate, user, anon, company_id";
+    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, '$cid'";
+
+    $insert = "INSERT INTO answers($cols) VALUES($vals)";
+    error_log("INSERT: $insert");
+    $result = mysqli_query($con, $insert);
+    error_log("INSERT result: $result");
+    return $result;
+};
+
 function weight($cat, $effect, $ans, $dh, $el) {
     if ($el == 'e1') {
         error_log("weight: $cat, $day, $cid");
@@ -40,8 +52,14 @@ function weight($cat, $effect, $ans, $dh, $el) {
     $el_count = $dh[$count_label];  // Current count
     if ($ans['cat'] == $cat) {      // Are we the correct category
         $new_value = $effect/100 * $value;
-        $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
-        $day_health[$count_label] = $el_count + 1;
+
+        if ($el_count == 0) { // Ignore current score if this is a new record
+            $day_health[$score_label] = $new_value;
+            $day_health[$count_label] = 1;
+        } else { // We have a non-zero count to calculate the combined average
+            $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
+            $day_health[$count_label] = $el_count + 1;
+        };
         if ($el == 'e1') {
             error_log("$value, $day_health[$score_label], $new_value");
         };

@@ -16,21 +16,7 @@ header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-function escape($con, $field, $default) {
-    if (isset($_POST[$field])) {
-    	return mysqli_real_escape_string($con, $_POST[$field]);
-    } else {
-    	return $default;
-    };
-};
-
-function got_int($field, $default) {
-    if (isset($_POST[$field])) {
-        return $_POST[$field];
-    } else {
-        return $default;
-    };
-};
+include 'fn_escape.php';
 
 function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     // Issue the database create
