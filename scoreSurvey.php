@@ -59,7 +59,8 @@ function weight($cat, $effect, $ans, $dh, $el) {
     
     if ($ans['cat'] == $cat) {      // Are we the correct category
         error_log("weight 1: $cat, $effect, $value, $el");
-    
+
+        global $day_health;
         $new_value = $effect/100 * $value;
 
         $score_label = $el.'_score';    // Score field label in the 'health' table

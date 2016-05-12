@@ -21,7 +21,7 @@ include 'fn_escape.php';
 
 function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     // Issue the database create
-    $cols = "cat, id, value, location, subdate, user, anon, company_id";
+    $cols = "cat, id, value100, location, subdate, user, anon, company_id";
     $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, '$cid'";
 
     $insert = "INSERT INTO answers($cols) VALUES($vals)";
@@ -38,7 +38,7 @@ $response = array();
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (!$con) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    http_response_code(401);
+    // http_response_code(401);
     $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
     $response["sqlerror"] = mysqli_connect_error();
@@ -60,23 +60,21 @@ if (!$con) {
 
     $total_created = 0;
     foreach ($answers as $answer) {
-        // error_log("answer: $answer");
         $created = create($con, $answer['cat'], $answer['id'], $answer['value100'], $loc, $subdate, $user, $anon, $company_id);
         if ($created) {
             $total_created = $total_created + 1;
-            // error_log("success so total_created: $total_created");
         } else {
             $response["sqlerror"] = mysqli_error($con);
         };
     };
 
     if ($total_created == count($answers)) { // Did we successfully create all records?
-        http_response_code(200);
+        // http_response_code(200);
         $response["status"] = 200;
         $response["message"] = "$total_created answers created";
         $response["sqlerror"] = "";
     } else { // Failure
-        http_response_code(402);
+        // http_response_code(402);
         $response["status"] = 402;
         $response["message"] = "One or more creates failed";
         $response["sqlerror"] = mysqli_error($con);
