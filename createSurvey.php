@@ -51,9 +51,9 @@ if (!$con) {
     $loc = escape($con, 'location', '');
 	$subdate = escape($con, 'subdate', '');
 	$user = escape($con, 'user', '');
-    error_log("1 anon: " . $_POST['anon']);
+    // error_log("1 anon: " . $_POST['anon']);
 	$anon = got_int('anon', 0);
-    error_log("2 anon: " . $anon);
+    // error_log("2 anon: " . $anon);
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
     $total_created = 0;

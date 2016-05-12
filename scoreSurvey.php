@@ -29,7 +29,7 @@ function getHealth($con, $day, $cid) { // Get a day score
     return $res;
 };
 
-function insert($con, $dh, $elements, $cid) { // Insert a new record into 'health'
+function insert($con, $dh, $cid, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
     $cols = ''; $vals = '';
     foreach($elements as $el) {
@@ -38,10 +38,12 @@ function insert($con, $dh, $elements, $cid) { // Insert a new record into 'healt
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_score';
             $el_score = $dh[$el_score_label];
-            $cols = $cols . $el_count_label . $el_score_label;  // Add the new column names
-            $vals = $vals . $el_count . $el_score;              // Add the new column values
+            $cols = $cols . ', ' . $el_count_label . ', ' . $el_score_label;  // Add the new column names
+            $vals = $vals . ', ' . $el_count . ', ' . $el_score;              // Add the new column values
         };
     };
+    $cols = $cols . ', company_id';
+    $vals = $vals . ', ' . $cid;
 
     $insert = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
     error_log("INSERT: $insert");
