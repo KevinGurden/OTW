@@ -21,7 +21,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
-include 'fn_http_status.php';
+include 'fn_http_response.php';
 include 'fn_escape.php';
 
 function getHealth($con, $day, $cid) { // Get a day score

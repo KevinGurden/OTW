@@ -16,7 +16,7 @@ header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-include 'fn_http_status.php';
+include 'fn_http_response.php';
 include 'fn_escape.php';
 
 // Array for JSON response
