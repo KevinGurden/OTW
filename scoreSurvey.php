@@ -51,27 +51,25 @@ function insert($con, $dh, $elements, $cid) { // Insert a new record into 'healt
 };
 
 function weight($cat, $effect, $ans, $dh, $el) {
-    if ($el == 'e1') {
-        error_log("weight: $cat, $day, $cid");
-    };
     $value = $ans['value100'];      // Answer value (0-100)
-    $score_label = $el.'_score';    // Score field label in the 'health' table
-    $count_label = $el.'_count';    // Count field label in the 'health' table
-    $el_score = $dh[$score_label];  // Current score 
-    $el_count = $dh[$count_label];  // Current count
+    
     if ($ans['cat'] == $cat) {      // Are we the correct category
+        error_log("weight 1: $cat, $day, $cid");
+    
         $new_value = $effect/100 * $value;
 
+        $score_label = $el.'_score';    // Score field label in the 'health' table
+        $count_label = $el.'_count';    // Count field label in the 'health' table
+        $el_count = $dh[$count_label];  // Current count
         if ($el_count == 0) { // Ignore current score if this is a new record
             $day_health[$score_label] = $new_value;
             $day_health[$count_label] = 1;
         } else { // We have a non-zero count to calculate the combined average
+            $el_score = $dh[$score_label];  // Current score 
             $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
             $day_health[$count_label] = $el_count + 1;
         };
-        if ($el == 'e1') {
-            error_log("$value, $day_health[$score_label], $new_value");
-        };
+        error_log("weight 2: $value, $day_health[$score_label], $new_value");
     }; 
 };
 
