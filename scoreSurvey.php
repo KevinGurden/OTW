@@ -40,8 +40,9 @@ function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_score';
             $el_score = $dh[$el_score_label];
-            $cols = $cols . ', $el_count_label, $el_score_label';  // Add the new column names
-            $vals = $vals . ', $el_count, $el_score';              // Add the new column values
+            $cols = $cols.','.$el_count_label.','.$el_score_label;  // Add the new column names
+            $vals = $vals.','.$el_count.','.$el_score;              // Add the new column values
+            error_log("INSERT: cols: $cols");
         };
     };
     $cols = $cols . ', when, company_id';
@@ -249,13 +250,13 @@ if (connected($con, $response)) {
 
     if ($result) {
         // Success
-        http_response_code(200);
+        //http_response_code(200);
         $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
     } else {
         // Failure
-        http_response_code(403);
+        //http_response_code(403);
         $response["status"] = 403;
         $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = "";
