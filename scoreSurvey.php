@@ -21,6 +21,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
+include 'fn_http_status.php';
 include 'fn_escape.php';
 
 function getHealth($con, $day, $cid) { // Get a day score
@@ -68,7 +69,7 @@ function weight($cat, $effect, $ans, $dh, $el) {
             $day_health[$score_label] = $new_value;
             $day_health[$count_label] = 1;
             error_log("weight 2: $new_value 1");
-            error_log(print_r($day_health));
+            error_log(var_dump($day_health));
         } else { // We have a non-zero count to calculate the combined average
             $el_score = $dh[$score_label];  // Current score 
             $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
