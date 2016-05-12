@@ -44,7 +44,7 @@ function insert($con, $dh, $cid, $elements) { // Insert a new record into 'healt
         };
     };
     $cols = $cols . ', when, company_id';
-    $vals = $vals . ', ' . $day . ', ' $cid;
+    $vals = $vals . ", '$day', $cid";
 
     $insert = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
     error_log("INSERT: $insert");
@@ -57,7 +57,7 @@ function weight($cat, $effect, $ans, $dh, $el) {
     $value = $ans['value100'];      // Answer value (0-100)
     
     if ($ans['cat'] == $cat) {      // Are we the correct category
-        error_log("weight 1: $cat, $day, $cid");
+        error_log("weight 1: $cat, $effect, $value, $el");
     
         $new_value = $effect/100 * $value;
 
