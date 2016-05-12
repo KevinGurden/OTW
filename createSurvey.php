@@ -37,6 +37,7 @@ $response = array();
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (!$con) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
+    http_response_code(401);
     $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
     $response["sqlerror"] = mysqli_connect_error();
@@ -69,10 +70,12 @@ if (!$con) {
     };
 
     if ($total_created == count($answers)) { // Did we successfully create all records?
+        http_response_code(200);
         $response["status"] = 200;
         $response["message"] = "$total_created answers created";
         $response["sqlerror"] = "";
     } else { // Failure
+        http_response_code(402);
         $response["status"] = 402;
         $response["message"] = "One or more creates failed";
         $response["sqlerror"] = mysqli_error($con);

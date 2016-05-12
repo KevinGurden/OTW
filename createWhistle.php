@@ -31,6 +31,7 @@ $response = array();
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (!$con) {
     error_log("Failed to connect to MySQL: " . mysqli_connect_error());
+    http_response_code(401);
     $response["status"] = 401;
     $response["message"] = "Failed to connect to DB";
     $response["sqlerror"] = mysqli_connect_error();
@@ -65,12 +66,14 @@ if (!$con) {
 	$insert = "INSERT INTO whistles($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
 	if ($result) { // Success
+        http_response_code(200);
         $response["status"] = 200;
         $response["message"] = "Whistle created";
         $response["id"] = mysqli_insert_id($con); // Return the id of the record added
         $response["sqlerror"] = "";
 	} else { // Failure
 		error_log("$result: from $insert");
+        http_response_code(402);
         $response["status"] = 402;
         $response["message"] = "Create whistle failed";
         $response["sqlerror"] = mysqli_error($con);

@@ -247,11 +247,13 @@ if (connected($con, $response)) {
 
     if ($result) {
         // Success
+        http_response_code(200);
         $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
     } else {
         // Failure
+        http_response_code(403);
         $response["status"] = 403;
         $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = "";
