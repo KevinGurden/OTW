@@ -29,7 +29,7 @@ function getHealth($con, $day, $cid) { // Get a day score
     return $res;
 };
 
-function insert($con, $dh, $cid, $elements) { // Insert a new record into 'health'
+function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
     $cols = ''; $vals = '';
     foreach($elements as $el) {
@@ -39,8 +39,8 @@ function insert($con, $dh, $cid, $elements) { // Insert a new record into 'healt
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_score';
             $el_score = $dh[$el_score_label];
-            $cols = $cols . ', ' . $el_count_label . ', ' . $el_score_label;  // Add the new column names
-            $vals = $vals . ', ' . $el_count . ', ' . $el_score;              // Add the new column values
+            $cols = $cols . ', $el_count_label, $el_score_label';  // Add the new column names
+            $vals = $vals . ', $el_count, $el_score';              // Add the new column values
         };
     };
     $cols = $cols . ', when, company_id';
@@ -68,6 +68,7 @@ function weight($cat, $effect, $ans, $dh, $el) {
             $day_health[$score_label] = $new_value;
             $day_health[$count_label] = 1;
             error_log("weight 2: $new_value 1");
+            error_log(print_r($day_health));
         } else { // We have a non-zero count to calculate the combined average
             $el_score = $dh[$score_label];  // Current score 
             $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
@@ -234,9 +235,11 @@ if (connected($con, $response)) {
         
     foreach ($answers as $answer) {
         weightSurvey($answer, $day_health); // Adjust for an individual answer
+        error_log('foreach:');
+        error_log(print_r($day_health));
     };
     if ($insert) {
-        $result = insert($con, $day_health, $company_id, $elements);
+        $result = insert($con, $day_health, $company_id, $day, $elements);
     } else {
         error_log("pretend update");
         // $result = update();
