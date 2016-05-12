@@ -29,12 +29,21 @@ function getHealth($con, $day, $cid) { // Get a day score
     return $res;
 };
 
-function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
-    // Issue the database create
-    $cols = "cat, id, value, location, subdate, user, anon, company_id";
-    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, '$cid'";
+function insert($con, $dh, $elements, $cid) { // Insert a new record into 'health'
+    // Which fields are affected?
+    $cols = ''; $vals = '';
+    foreach($elements as $el) {
+        $el_count_label = $el.'_count'; // e.g. c1_count
+        $el_count = $dh[$el_count_label];
+        if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
+            $el_score_label = $el.'_score';
+            $el_score = $dh[$el_score_label];
+            $cols = $cols . $el_count_label . $el_score_label;  // Add the new column names
+            $vals = $vals . $el_count . $el_score;              // Add the new column values
+        };
+    };
 
-    $insert = "INSERT INTO answers($cols) VALUES($vals)";
+    $insert = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
     error_log("INSERT: $insert");
     $result = mysqli_query($con, $insert);
     error_log("INSERT result: $result");
@@ -109,21 +118,39 @@ if (connected($con, $response)) {
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
     
+    $elements = array('c1','c2','c3','e1','v1','v2','v3','v4','v5','v6','v7');
+
     $result = getHealth($con, $day, $company_id); // Get the current day score
     if (mysqli_num_rows($result) == 0) { // No record so create one
-        error_log("no record");
-        $response["status"] = 400;
-        $response["message"] = "No health for that day for company '$company_id'";
-        $response["sqlerror"] = "";
-    } else { // We found at least 1 record
-        $day_health = mysqli_fetch_assoc($result); // Just take the first
-        foreach ($answers as $answer) {
-            weightSurvey($answer, $day_health); // Adjust for an individual answer
+        $insert = true;
+        foreach($elements as $e) {
+            $label = $e.'_count';
+            $day_health[$label] = 0;
         };
+    } else { // We found at least 1 record
+        $insert = false;
+        $day_health = mysqli_fetch_assoc($result); // Just take the first
+    };
+        
+    foreach ($answers as $answer) {
+        weightSurvey($answer, $day_health); // Adjust for an individual answer
+    };
+    if ($insert) {
+        $result = insert($con, $day_health, $company_id, $elements);
+    } else {
+        error_log("pretend update");
+        // $result = update();
+    };
 
+    if ($result) {
         // Success
         $response["status"] = 200;
         $response["message"] = "Success";
+        $response["sqlerror"] = "";
+    } else {
+        // Failure
+        $response["status"] = 403;
+        $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = "";
     };
 
