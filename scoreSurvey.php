@@ -21,7 +21,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
-include 'fn_http_response.php';
+// include 'fn_http_response.php';
 include 'fn_escape.php';
 
 function getHealth($con, $day, $cid) { // Get a day score
@@ -32,27 +32,25 @@ function getHealth($con, $day, $cid) { // Get a day score
 
 function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
-    $cols = ''; $vals = '';
+    $cols = 'when, company_id'; $vals = "'$day', $cid";
     foreach($elements as $el) {
         $el_count_label = $el.'_count'; // e.g. c1_count
         $el_count = $dh[$el_count_label];
-        error_log("INSERT: $el_count_label $el_count");
+        // error_log("INSERT: $el_count_label $el_count");
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_score';
             $el_score = $dh[$el_score_label];
             $cols = $cols.','.$el_count_label.','.$el_score_label;  // Add the new column names
             $vals = $vals.','.$el_count.','.$el_score;              // Add the new column values
-            error_log("INSERT: cols: $cols");
+            // error_log("INSERT: cols: $cols");
         };
     };
-    $cols = $cols . ', when, company_id';
-    $vals = $vals . ", '$day', $cid";
 
-    $insert = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
-    error_log("INSERT: $insert");
-    $result = mysqli_query($con, $insert);
-    error_log("INSERT result: $result");
-    return $result;
+    $insert_into = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
+    error_log("insert: $insert_into");
+    $insert_result = mysqli_query($con, $insert_into);
+    // error_log("INSERT result: $insert_result");
+    return $insert_result;
 };
 
 function weight($cat, $effect, $ans, $dh, $el) {
@@ -210,8 +208,7 @@ function weightSurvey($ans, $day_health) {
     weight('Environment', 20, $ans, $day_health, 'v7');     // V7: Vital Base
 };
 
-// Array for JSON response
-$response = array();
+$response = array(); // Array for JSON response
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8");
@@ -224,8 +221,10 @@ if (connected($con, $response)) {
     
     $elements = array('c1','c2','c3','e1','v1','v2','v3','v4','v5','v6','v7');
 
-    $result = getHealth($con, $day, $company_id); // Get the current day score
-    if (mysqli_num_rows($result) == 0) { // No record so create one
+    // $result = getHealth($con, $day, $company_id); // Get the current day score
+    $select = "SELECT * FROM health WHERE when='$day' AND company_id=$cid";
+    $result = mysqli_query($con, $select);
+    if ($result === FALSE || mysqli_num_rows($result) == 0) { // No record so create one
         $insert = true;
         foreach($elements as $e) {
             $label = $e.'_count';
@@ -239,16 +238,17 @@ if (connected($con, $response)) {
     foreach ($answers as $answer) {
         weightSurvey($answer, $day_health); // Adjust for an individual answer
         error_log('foreach:');
-        error_log(print_r($day_health));
+        //error_log(print_r($day_health));
     };
     if ($insert) {
-        $result = insert($con, $day_health, $company_id, $day, $elements);
+        $insert_create_result = insert($con, $day_health, $company_id, $day, $elements);
     } else {
         error_log("pretend update");
-        // $result = update();
+        $insert_create_result = TRUE;
+        // $insert_create_result = update();
     };
 
-    if ($result) {
+    if ($insert_create_result) {
         // Success
         //http_response_code(200);
         $response["status"] = 200;
