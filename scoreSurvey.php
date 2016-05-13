@@ -222,7 +222,7 @@ if (connected($con, $response)) {
     $elements = array('c1','c2','c3','e1','v1','v2','v3','v4','v5','v6','v7');
 
     // $result = getHealth($con, $day, $company_id); // Get the current day score
-    $select = "SELECT * FROM health WHERE when='$day' AND company_id=$cid";
+    $select = "SELECT * FROM health WHERE when='$day' AND company_id=$company_id";
     $result = mysqli_query($con, $select);
     if ($result === FALSE || mysqli_num_rows($result) == 0) { // No record so create one
         $insert = true;
