@@ -239,15 +239,36 @@ if (connected($con, $response)) {
         weightSurvey($answer, $day_health); // Adjust for an individual answer
     };
     if ($tinsert) {
-        $insert_create_result = insert($con, $day_health, $company_id, $day, $elements);
-        error_log('insert_c_r: ' . $insert_create_result);
+        // $insert_create_result = insert($con, $day_health, $company_id, $day, $elements);
+        
+        // Which fields are affected?
+        $cols = 'when, company_id'; $vals = "'$day', $company_id";
+        foreach($elements as $el) {
+            $el_count_label = $el.'_count'; // e.g. c1_count
+            $el_count = $day_health[$el_count_label];
+            // error_log("INSERT: $el_count_label $el_count");
+            if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
+                $el_score_label = $el.'_score';
+                $el_score = $day_health[$el_score_label];
+                $cols = $cols.', '.$el_count_label.', '.$el_score_label;  // Add the new column names
+                $vals = $vals.', '.$el_count.', '.$el_score;              // Add the new column values
+                // error_log("INSERT: cols: $cols");
+            };
+        };
+
+        $insert_into = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
+        error_log("insert: $insert_into");
+        $insert_result = mysqli_query($con, $insert_into);
+        // error_log("INSERT result: $insert_result");
+        
+        error_log('insert_result: ' . $insert_result);
     } else {
         error_log("pretend update");
-        $insert_create_result = true;
+        $insert_result = true;
         // $insert_create_result = update();
     };
 
-    if ($insert_create_result) {
+    if ($insert_result) {
         // Success
         //http_response_code(200);
         $response["status"] = 200;
