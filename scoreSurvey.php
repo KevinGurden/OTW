@@ -57,7 +57,7 @@ function weight($cat, $effect, $ans, $dh, $el) {
     $value = $ans['value100'];      // Answer value (0-100)
     
     if ($ans['cat'] == $cat) {      // Are we the correct category
-        error_log("weight 1: $cat, $effect, $value, $el");
+        // error_log("weight 1: $cat, $effect, $value, $el");
 
         global $day_health;
         $new_value = $effect/100 * $value;
@@ -68,16 +68,16 @@ function weight($cat, $effect, $ans, $dh, $el) {
         if ($el_count == 0) { // Ignore current score if this is a new record
             $day_health[$score_label] = $new_value;
             $day_health[$count_label] = 1;
-            error_log("weight 2: $new_value 1");
-            error_log(var_dump($day_health));
+            // error_log("weight 2: $new_value 1");
+            // error_log(var_dump($day_health));
         } else { // We have a non-zero count to calculate the combined average
             $el_score = $dh[$score_label];  // Current score 
             $day_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
             $day_health[$count_label] = $el_count + 1;
-            $one = $day_health[$score_label]; $two = $day_health[$count_label];
-            error_log("weight 3: $one $two");
+            // $one = $day_health[$score_label]; $two = $day_health[$count_label];
+            // error_log("weight 3: $one $two");
         };
-        error_log("weight 4: $value, $day_health[$score_label], $new_value");
+        // error_log("weight 4: $value, $day_health[$score_label], $new_value");
     }; 
 };
 
@@ -85,7 +85,7 @@ function weightSurvey($ans, $day_health) {
     // Table of weighting effects:
     // e.g. 'c1_score' has a 10% effect on C1 (Committment) given a 'Vital Base' answer
     $id = $ans['id'];
-    error_log("weightSurvey: $id");
+    // error_log("weightSurvey: $id");
 
     weight('Vital Base', 10, $ans, $day_health, 'c1');      // C1: Commitment
     weight('Vital Base', 20, $ans, $day_health, 'c2');      // C2: Communication
@@ -225,23 +225,22 @@ if (connected($con, $response)) {
     $select = "SELECT * FROM health WHERE when='$day' AND company_id=$company_id";
     $result = mysqli_query($con, $select);
     if ($result === FALSE || mysqli_num_rows($result) == 0) { // No record so create one
-        $insert = true;
+        $insert = TRUE;
         foreach($elements as $e) {
             $label = $e.'_count';
             $day_health[$label] = 0;
         };
     } else { // We found at least 1 record
-        $insert = false;
+        $insert = FALSE;
         $day_health = mysqli_fetch_assoc($result); // Just take the first
     };
         
     foreach ($answers as $answer) {
         weightSurvey($answer, $day_health); // Adjust for an individual answer
-        error_log('foreach:');
-        //error_log(print_r($day_health));
     };
     if ($insert) {
         $insert_create_result = insert($con, $day_health, $company_id, $day, $elements);
+        error_log('insert_c_r: $insert_create_result');
     } else {
         error_log("pretend update");
         $insert_create_result = TRUE;
@@ -254,15 +253,18 @@ if (connected($con, $response)) {
         $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
+        error_log('success');
     } else {
         // Failure
         //http_response_code(403);
         $response["status"] = 403;
         $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = "";
+        error_log('failure');
     };
 
     // Echoing JSON response
+    error_log('echo');
     echo json_encode($response);
 }; 
 
