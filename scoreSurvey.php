@@ -268,7 +268,7 @@ if (connected($con, $response)) {
         foreach($elements as $el) {
             $el_count_label = $el.'_count'; // e.g. c1_count
             $el_old_count = $old_health[$el_count_label]; $el_new_count = $new_health[$el_count_label]; 
-            if ($el_new_count < $el_old_count) { // One of the elements that were affected by an answer's weighting
+            if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
                 $el_score_label = $el.'_score';
                 $el_new_score = $new_health[$el_score_label];
                 if ($sets == '') {
