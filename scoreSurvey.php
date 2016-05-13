@@ -69,7 +69,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
             };
         };
     };
-    $update = "UPDATE health $sets.' WHERE day='$day' AND company_id='$company_id'"; // Issue the database update
+    $update = "UPDATE health $sets WHERE day='$day' AND company_id='$cid'"; // Issue the database update
     error_log("update: $update");
     $update_result = mysqli_query($con, $update);
     return $update_result;
