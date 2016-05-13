@@ -40,8 +40,8 @@ function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_score';
             $el_score = $dh[$el_score_label];
-            $cols = $cols.','.$el_count_label.','.$el_score_label;  // Add the new column names
-            $vals = $vals.','.$el_count.','.$el_score;              // Add the new column values
+            $cols = $cols.', '.$el_count_label.', '.$el_score_label;  // Add the new column names
+            $vals = $vals.', '.$el_count.', '.$el_score;              // Add the new column values
             // error_log("INSERT: cols: $cols");
         };
     };
@@ -224,26 +224,26 @@ if (connected($con, $response)) {
     // $result = getHealth($con, $day, $company_id); // Get the current day score
     $select = "SELECT * FROM health WHERE when='$day' AND company_id=$company_id";
     $result = mysqli_query($con, $select);
-    if ($result === FALSE || mysqli_num_rows($result) == 0) { // No record so create one
-        $insert = TRUE;
+    if ($result === false || mysqli_num_rows($result) == 0) { // No record so create one
+        $tinsert = true;
         foreach($elements as $e) {
             $label = $e.'_count';
             $day_health[$label] = 0;
         };
     } else { // We found at least 1 record
-        $insert = FALSE;
+        $tinsert = false;
         $day_health = mysqli_fetch_assoc($result); // Just take the first
     };
         
     foreach ($answers as $answer) {
         weightSurvey($answer, $day_health); // Adjust for an individual answer
     };
-    if ($insert) {
+    if ($tinsert) {
         $insert_create_result = insert($con, $day_health, $company_id, $day, $elements);
-        error_log('insert_c_r: $insert_create_result');
+        error_log('insert_c_r: ' . $insert_create_result);
     } else {
         error_log("pretend update");
-        $insert_create_result = TRUE;
+        $insert_create_result = true;
         // $insert_create_result = update();
     };
 
