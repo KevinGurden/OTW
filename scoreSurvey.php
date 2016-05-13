@@ -53,6 +53,27 @@ function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 
     return $insert_result;
 };
 
+function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
+    // Which fields are affected?
+    $sets = '';
+    foreach($elements as $el) {
+        $el_count_label = $el.'_count'; // e.g. c1_count
+        $el_old_count = $old_h[$el_count_label]; $el_new_count = $new_h[$el_count_label]; 
+        if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
+            $el_score_label = $el.'_score';
+            $el_new_score = $new_h[$el_score_label];
+            if ($sets == '') {
+                $sets = 'SET '.$el_count_label.'='.$el_new_score;  // Add the first set=xyz's
+            } else {
+                $sets = $sets.', '.$el_count_label.'='.$el_new_score;  // Add the new set=xyz's
+            };
+        };
+    };
+    $update = "UPDATE health $sets.' WHERE day='$day' AND company_id='$company_id'"; // Issue the database update
+    error_log("update: $update");
+    $update_result = mysqli_query($con, $update);
+    return $update_result;
+
 function weight($cat, $effect, $ans, $olddh, $el) {
     $value = $ans['value100'];      // Answer value (0-100)
     
@@ -228,18 +249,20 @@ if (connected($con, $response)) {
         $tinsert = true;
         foreach($elements as $e) {
             $label = $e.'_count';
-            $new_health[$label] = 0;
+            $old_health[$label] = 0;
         };
     } else { // We found at least 1 record
         $tinsert = false;
-        $new_health = mysqli_fetch_assoc($result); // Just take the first
+        $old_health = mysqli_fetch_assoc($result); // Just take the first
     };
-        
+    
+    $new_health = array(); 
     foreach ($answers as $answer) {
-        weightSurvey($answer, $new_health, $old_health); // Adjust for an individual answer
+        weightSurvey($answer, $old_health); // Adjust for an individual answer
     };
+    
     if ($tinsert) {
-        $update_result = insert($con, $new_health, $company_id, $day, $elements);
+        $db_result = insert($con, $new_health, $company_id, $day, $elements);
         
         // Which fields are affected?
         // $cols = 'day, company_id'; $vals = "'$day', $company_id";
@@ -260,30 +283,12 @@ if (connected($con, $response)) {
         // error_log("insert: $insert_into");
         // $insert_result = mysqli_query($con, $insert_into);
         // // error_log("INSERT result: $insert_result");
-        
-        error_log('update_result: ' . $update_result);
     } else {
-        // Which fields are affected?
-        $sets = '';
-        foreach($elements as $el) {
-            $el_count_label = $el.'_count'; // e.g. c1_count
-            $el_old_count = $old_health[$el_count_label]; $el_new_count = $new_health[$el_count_label]; 
-            if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
-                $el_score_label = $el.'_score';
-                $el_new_score = $new_health[$el_score_label];
-                if ($sets == '') {
-                    $sets = 'SET '.$el_count_label.'='.$el_new_score;  // Add the first set=xyz's
-                } else {
-                    $sets = $sets.', '.$el_count_label.'='.$el_new_score;  // Add the new set=xyz's
-                };
-            };
-        };
-        $update = "UPDATE health $sets.' WHERE day='$day' AND company_id='company_id'"; // Issue the database update
-        error_log("update: $update");
-        $update_result = mysqli_query($con, $update);
+        $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
     };
+    error_log('db_result: ' . $db_result);
 
-    if ($update_result) {
+    if ($db_result) {
         // Success
         //http_response_code(200);
         $response["status"] = 200;
