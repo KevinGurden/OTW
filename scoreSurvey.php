@@ -73,6 +73,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     error_log("update: $update");
     $update_result = mysqli_query($con, $update);
     return $update_result;
+};
 
 function weight($cat, $effect, $ans, $olddh, $el) {
     $value = $ans['value100'];      // Answer value (0-100)
