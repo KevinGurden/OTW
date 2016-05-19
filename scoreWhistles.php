@@ -38,9 +38,9 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
         );
     */
     $whistles_open = "SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND status != 'closed' AND cat = 'whistle'";
-    $insert = "INSERT INTO health SET day=$day, whistle_open = ($whistles_open) ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
+    $insert = "INSERT INTO health SET day='$day', whistle_open = ($whistles_open) ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
     error_log("insert: $insert");
-    $insert_result = mysqli_query($con, $update);
+    $insert_result = mysqli_query($con, $insert);
     return $insert_result;
 };
 
@@ -84,5 +84,7 @@ Useful stuff:
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
         sudo cat getwhistlesphp-error.log | more to show the error log
+    GIT commands
+        'git status' then 'git add <file>.php' then 'git commit -m 'message'' then 'git push origin master'
  */
 ?>

@@ -21,7 +21,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
-// include 'fn_http_response.php';
+include 'fn_http_response.php';
 include 'fn_escape.php';
 
 function getHealth($con, $day, $cid) { // Get a day score
@@ -291,14 +291,14 @@ if (connected($con, $response)) {
 
     if ($db_result) {
         // Success
-        //http_response_code(200);
+        http_response_code(200);
         $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
         error_log('success');
     } else {
         // Failure
-        //http_response_code(403);
+        http_response_code(403);
         $response["status"] = 403;
         $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = "";
