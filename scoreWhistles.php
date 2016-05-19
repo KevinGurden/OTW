@@ -19,12 +19,14 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
+include 'fn_http_response.php';
 include 'fn_get_escape.php';
 
 function insert($con, $cid, $day) { // Insert a new record into 'health' or update if it already exists
     /* 
     INSERT INTO health  
-        SET day=$day,
+        SET day='$day',
+            key=$cid:$day,'
             whistle_open = (
                 SELECT 
                     COUNT(*) FROM whistles
@@ -37,8 +39,9 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
                 WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle'
         );
     */
+    $key = '$cid:$day';
     $whistles_open = "SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND status != 'closed' AND cat = 'whistle'";
-    $insert = "INSERT INTO health SET day='$day', whistle_open = ($whistles_open) ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
+    $insert = "INSERT INTO health SET day='$day', key='$key', whistle_open = ($whistles_open) ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
     error_log("insert: $insert");
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
@@ -58,17 +61,17 @@ if (connected($con, $response)) {
 
     if ($db_result) {
         // Success
-        //http_response_code(200);
-        $response["status"] = 200;
+        http_response_code(200);
+        // $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
         error_log('success');
     } else {
         // Failure
-        //http_response_code(403);
-        $response["status"] = 403;
+        http_response_code(304);
+        // $response["status"] = 304;
         $response["message"] = "Failed to create/update record";
-        $response["sqlerror"] = "";
+        $response["sqlerror"] = mysqli_connect_error();
         error_log('failure');
     };
 

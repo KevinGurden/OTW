@@ -264,26 +264,6 @@ if (connected($con, $response)) {
     
     if ($tinsert) {
         $db_result = insert($con, $new_health, $company_id, $day, $elements);
-        
-        // Which fields are affected?
-        // $cols = 'day, company_id'; $vals = "'$day', $company_id";
-        // foreach($elements as $el) {
-        //     $el_count_label = $el.'_count'; // e.g. c1_count
-        //     $el_count = $day_health[$el_count_label];
-        //     // error_log("INSERT: $el_count_label $el_count");
-        //     if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
-        //         $el_score_label = $el.'_score';
-        //         $el_score = $day_health[$el_score_label];
-        //         $cols = $cols.', '.$el_count_label.', '.$el_score_label;  // Add the new column names
-        //         $vals = $vals.', '.$el_count.', '.$el_score;              // Add the new column values
-        //         // error_log("INSERT: cols: $cols");
-        //     };
-        // };
-
-        // $insert_into = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
-        // error_log("insert: $insert_into");
-        // $insert_result = mysqli_query($con, $insert_into);
-        // // error_log("INSERT result: $insert_result");
     } else {
         $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
     };
