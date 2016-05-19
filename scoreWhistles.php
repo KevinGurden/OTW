@@ -8,7 +8,7 @@ Parameters:
     company_id: company that this applies to. Integer
 
 Return:
-    status: 200 for success, 400+ for error
+    status: 200 for success, 300+ for error
     message: High level error message
     sqlerror: detailed sql error
 
@@ -74,11 +74,9 @@ if (connected($con, $response)) {
         $response["sqlerror"] = mysqli_connect_error();
         error_log('failure');
     };
-
-    // Echoing JSON response
-    error_log('echo');
-    echo json_encode($response);
 }; 
+
+echo json_encode($response); // Echo JSON response
 
 /* 
 Useful stuff:

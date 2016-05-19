@@ -6,7 +6,7 @@ Data passed:
 	tba
 
 Return:
-    status: 200 for success, 400+ for error
+    status: 200 for success, 300+ for error
     message: High level error message
     sqlerror: detailed sql error
 
@@ -69,13 +69,13 @@ if (!$con) {
     };
 
     if ($total_created == count($answers)) { // Did we successfully create all records?
-        // http_response_code(200);
-        $response["status"] = 200;
+        http_response_code(200);
+        // $response["status"] = 200;
         $response["message"] = "$total_created answers created";
         $response["sqlerror"] = "";
     } else { // Failure
-        // http_response_code(402);
-        $response["status"] = 402;
+        http_response_code(304);
+        // $response["status"] = 304;
         $response["message"] = "One or more creates failed";
         $response["sqlerror"] = mysqli_error($con);
     };

@@ -267,7 +267,6 @@ if (connected($con, $response)) {
     } else {
         $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
     };
-    error_log('db_result: ' . $db_result);
 
     if ($db_result) {
         // Success
@@ -275,20 +274,16 @@ if (connected($con, $response)) {
         $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
-        error_log('success');
     } else {
         // Failure
         http_response_code(403);
         $response["status"] = 403;
         $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = "";
-        error_log('failure');
     };
-
-    // Echoing JSON response
-    error_log('echo');
-    echo json_encode($response);
 }; 
+
+echo json_encode($response); // Echo JSON response
 
 /* 
 Useful stuff:
