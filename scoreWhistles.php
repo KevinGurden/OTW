@@ -26,7 +26,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     /* 
     INSERT INTO health  
         SET day='$day',
-            key=$cid:$day,'
+            lookup=$cid:$day,'
             whistle_open = (
                 SELECT 
                     COUNT(*) FROM whistles
@@ -39,9 +39,9 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
                 WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle'
         );
     */
-    $key = '$cid:$day';
+    $lookup = '$cid:$day';
     $whistles_open = "SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND status != 'closed' AND cat = 'whistle'";
-    $insert = "INSERT INTO health SET day='$day', key='$key', whistle_open = ($whistles_open) ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', whistle_open = ($whistles_open) ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
     error_log("insert: $insert");
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;

@@ -5,7 +5,7 @@ This should be executed after a survey has been submitted to the database.
 
 Parameters:
     day: The day to apply the scores. Date stamp
-    answers: An array of answers
+    answers: An array of answers. Can be []
     company_id: company that this applies to. Integer
 
 Return:
@@ -32,7 +32,7 @@ function getHealth($con, $day, $cid) { // Get a day score
 
 function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
-    $cols = 'key, day, company_id'; $vals = "'$company_id:$day', '$day', $cid";
+    $cols = 'lookup, day, company_id'; $vals = "'$company_id:$day', '$day', $cid";
     foreach($elements as $el) {
         $el_count_label = $el.'_count'; // e.g. c1_count
         $el_count = $dh[$el_count_label];
