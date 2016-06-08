@@ -81,7 +81,7 @@ function good_vs_bad($value, $good, $bad) {
 function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
     // Get the days' health row, calculate new values and write it back
     error_log("score_health...");
-    $select = "SELECT * FROM health WHERE company_id=$cid AND day=$day";
+    $select = "SELECT * FROM health WHERE company_id=$cid AND day='$day'";
     error_log("select: $select");
     
     $select_result = mysqli_query($con, $select);
