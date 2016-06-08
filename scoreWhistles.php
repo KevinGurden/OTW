@@ -50,7 +50,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     return $insert_result;
 };
 
-function good_vs_bad($value, $good, $bad) {
+function score_event($value, $good, $bad) {
     // Return a percentage score between $good (100%) and bad (0%).
     if (is_null($value)) {
         return $value;
@@ -78,6 +78,33 @@ function good_vs_bad($value, $good, $bad) {
     };
 };
 
+function score_survey($comp, $score) {
+    // Return the calculated survey score for component (C1, C2, etc) $comp
+    $survey_score = $comp.'_survey_score';
+    $survey_count = $comp.'_survey_count';
+    if (is_null($score[$survey_score]) || is_null($score[$survey_count])) {
+        return null;
+    } else {
+        return $score[$survey_score]/$score[$survey_count]*100;
+    };
+};
+
+function score_total($scores) {
+    // Create an average but remove nulls first
+    $count = 0; $total = 0;
+    foreach ($scores as $score) {
+        if (!is_null($score)) {
+            $count = $count + 1;
+            $total = $total + $score;
+        };
+    };
+    if ($count == 0) {
+        return null;
+    } else {
+        return $total/$count;
+    };
+};
+
 function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
     // Get the days' health row, calculate new values and write it back
     error_log("score_health...");
@@ -94,16 +121,34 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
         if (mysqli_num_rows($select_result) > 0) {
             // Just assume only 1 row for that day
             $score = mysqli_fetch_assoc($select_result);
-            error_log(var_dump($score));
 
-            $v4_wh_open_3m = good_vs_bad($score['whistle_open_3m'], 0, 20);
-            error_log("v4_whistle_open_3m:" . $score['whistle_open_3m'] . "0 20 $v4_wh_open_3m");
+            $v4_wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
+            $v4_survey = score_survey('v4', $score);
+            $v4_score = score_total([$v4_survey, $v4_wh_open_3m]); // /2!
 
-            $v5_gr_closed_met = good_vs_bad($score['grow_closed_met'], 15, 0);
-            error_log("v5_grow_closed_met:" . $score['grow_closed_met'] . "15 0 $v5_gr_closed_met");
+            $v5_gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
+            $v5_survey = score_survey('v5', $score);
+            $v5_score = $v5_survey + $v5_wh_open_3m; // /2!
 
-            $c1_survey = $score['c1_survey_score']/$score['c1_survey_count']*100;
+            $c1_survey = score_survey('c1', $score);
             error_log("c1_survey $c1_survey");
+            $c1_score = $c1_survey;
+
+            /* 
+            INSERT INTO health  
+                SET day='$day',lookup=$cid:$day,company_id=$cid,
+                    c1_score=$c1_score,v4_score=$v4_score,v5_score=$v5_score
+            ON DUPLICATE KEY 
+                UPDATE 
+                    c1_score=$c1_score,v4_score=$v4_score,v5_score=$v5_score
+            */
+            $lookup = $cid . ':' . $day;
+            $c123 = "c1_score=$c1_score";
+            $v1234567 = "v4_score=$v4_score,v5_score=$v5_score";
+            $on_dup = "ON DUPLICATE KEY UPDATE $c123,$v1234567";
+            $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $c123, $v1234567 $on_dup";
+            error_log("insert: $insert");
+            $insert_result = mysqli_query($con, $insert);
         } else {
             error_log('scoreWhistles: Nothing returned from health for $cid $day');
         };
