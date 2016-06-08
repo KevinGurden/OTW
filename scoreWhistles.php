@@ -62,12 +62,11 @@ function good_vs_bad($value, $good, $bad) {
             $low = $bad; $high = $good;
         };
 
-    
         if ($value < $low) {
-            $value = $low
+            $value = $low;
         };
         if ($value > $high) {
-            $value = $high
+            $value = $high;
         };
         $res = $value/($high - $low) * 100; 
 
