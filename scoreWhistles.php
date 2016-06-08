@@ -77,6 +77,7 @@ function good_vs_bad($value, $good, $bad) {
 
 function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
     // Get the days' health row, calculate new values and write it back
+    error_log("score_health...");
     $select = "SELECT * FROM health WHERE company_id=$cid AND day=$day";
     error_log("select: $select");
     
@@ -85,10 +86,12 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
         // select failed to run
         error_log("select failed");
     } else {
+        error_log("select success");
         // Check for empty result
         if (mysqli_num_rows($select_result) > 0) {
             // Just assume only 1 row for that day
             $score = mysqli_fetch_assoc($select_result);
+            error_log(var_dump($score));
 
             $v4_wh_open_3m = good_vs_bad($score['whistle_open_3m'], 0, 20);
             error_log("v4_whistle_open_3m", $score['whistle_open_3m'], 0, 20, $v4_wh_open_3m);
