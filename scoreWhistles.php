@@ -97,13 +97,15 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             error_log(var_dump($score));
 
             $v4_wh_open_3m = good_vs_bad($score['whistle_open_3m'], 0, 20);
-            error_log("v4_whistle_open_3m", $score['whistle_open_3m'], 0, 20, $v4_wh_open_3m);
+            error_log("v4_whistle_open_3m:" . $score['whistle_open_3m'] . "0 20 $v4_wh_open_3m");
 
             $v5_gr_closed_met = good_vs_bad($score['grow_closed_met'], 15, 0);
-            error_log("v5_grow_closed_met", $score['grow_closed_met'], 15, 0, $v5_gr_closed_met);
+            error_log("v5_grow_closed_met:" . $score['grow_closed_met'] . "15 0 $v5_gr_closed_met");
 
             $c1_survey = $score['c1_survey_score']/$score['c1_survey_count']*100;
-            error_log("c1_survey", $c1_survey);
+            error_log("c1_survey $c1_survey");
+        } else {
+            error_log('scoreWhistles: Nothing returned from health for $cid $day');
         };
     };
 };
