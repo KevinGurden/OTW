@@ -21,6 +21,7 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
+// include 'scoreHealth.php';
 
 function insert($con, $cid, $day) { // Insert a new record into 'health' or update if it already exists
     /* 
@@ -49,6 +50,58 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     return $insert_result;
 };
 
+function good_vs_bad($value, $good, $bad) {
+    // Return a percentage score between $good (100%) and bad (0%).
+    if (is_null($value)) {
+        return $value;
+    } else {
+
+        if ($good < $bad) {
+            $low = $good; $high = $bad; // It's a negative effect...
+        } else {
+            $low = $bad; $high = $good;
+        };
+
+    
+        if ($value < $low) {$value = $low};
+        if ($value > $high) {$value = $high};
+        $res = $value/($high - $low) * 100; 
+
+        if ($good < $bad) {
+            return 100 - res; // It's a negative effect...
+        } else {
+            return res; // Positive effect
+        };
+    };
+};
+
+function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
+    // Get the days' health row, calculate new values and write it back
+    $select = "SELECT * FROM health WHERE company_id=$cid AND day=$day";
+    error_log("select: $select");
+    
+    $select_result = mysqli_query($con, $select);
+    if ($select_result === false) { // Will either be false or an array
+        // select failed to run
+        error_log("select failed");
+    } else {
+        // Check for empty result
+        if (mysqli_num_rows($select_result) > 0) {
+            // Just assume only 1 row for that day
+            $score = mysqli_fetch_assoc($select_result);
+
+            $v4_wh_open_3m = good_vs_bad($score['whistle_open_3m'], 0, 20);
+            error_log("v4_whistle_open_3m", $score['whistle_open_3m'], 0, 20, $v4_wh_open_3m);
+
+            $v5_gr_closed_met = good_vs_bad($score['grow_closed_met'], 15, 0);
+            error_log("v5_grow_closed_met", $score['grow_closed_met'], 15, 0, $v5_gr_closed_met);
+
+            $c1_survey = $score['c1_survey_score']/$score['c1_survey_count']*100;
+            error_log("c1_survey", $c1_survey);
+        };
+    };
+};
+
 $response = array(); // Array for JSON response
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
@@ -68,6 +121,9 @@ if (connected($con, $response)) {
         $response["message"] = "Success";
         $response["sqlerror"] = "";
         error_log('success');
+
+        // Finally update the overall health scores
+        $health_result = score_health($con, $company_id, $day);
     } else {
         // Failure
         http_response_code(304);

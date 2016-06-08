@@ -28,7 +28,7 @@ if (connected($con, $response)) {
 
     $id = escape($con, 'id', 0); // Escape company id to avoid injection vunerability
 
-    // Get a list of whistles
+    // Get an arry of scores by day
     $select = "SELECT * FROM health WHERE company_id=$id";
     $result = mysqli_query($con, $select);
     $response["query"] = "$select";
