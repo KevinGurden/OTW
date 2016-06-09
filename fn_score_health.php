@@ -100,7 +100,7 @@ function score_component($comp, $score, $events) {
         };
     };
 
-    return $comp."_score=".$comp_score;
+    return array('set' => $comp."_score=".$comp_score, 'value' => $comp_score);
 };
 
 function score_contribution($comp, $cont, $events) {
@@ -122,7 +122,7 @@ function score_contribution($comp, $cont, $events) {
         $cont_score = 'NULL';
     };
 
-    return $comp."_".$cont."_score=".$cont_score;
+    return array('set' => $comp."_".$cont."_score=".$cont_score, 'value' => $cont_score);
 };
 
 
@@ -147,6 +147,11 @@ function send_day($con, $cid, $day) { // Send back the days results
         };
     };
 };
+
+function not_null($var) {
+    // Returns whether the input var is null
+    return !is_null($var);
+}
 
 function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
     // Get the days' health row, calculate new values and write it back
@@ -173,41 +178,49 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $gr_closed_not_met = score_event($score['grow_closed_not_met'], 0, 15);
 
             // Contributions
-            $set_c1_grow = score_contribution('c1', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $c1_grow = score_contribution('c1', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             // $set_v3_whistle = score_contribution('v3', 'whistle', array());
-            $set_v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open));
-            $set_v5_grow = score_contribution('v5', 'grow', array($gr_closed_met, $gr_closed_not_met));
-            $set_v6_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
-            $set_v7_grow = score_contribution('v7', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open));
+            $v5_grow = score_contribution('v5', 'grow', array($gr_closed_met, $gr_closed_not_met));
+            $v6_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $v7_grow = score_contribution('v7', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
 
             // Components
-            $set_c1 = score_component('c1', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
-            $set_c2 = score_component('c2', $score, array());
-            $set_c3 = score_component('c3', $score, array());
-            $set_e1 = score_component('e1', $score, array());
-            $set_v1 = score_component('v1', $score, array());
-            $set_v2 = score_component('v2', $score, array());
-            $set_v3 = score_component('v3', $score, array());
-            $set_v4 = score_component('v4', $score, array($wh_open_3m, $wh_open));
-            $set_v5 = score_component('v5', $score, array($gr_closed_met, $gr_closed_not_met));
-            $set_v6 = score_component('v6', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
-            $set_v7 = score_component('v7', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $c1 = score_component('c1', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $c2 = score_component('c2', $score, array());
+            $c3 = score_component('c3', $score, array());
+            $e1 = score_component('e1', $score, array());
+            $v1 = score_component('v1', $score, array());
+            $v2 = score_component('v2', $score, array());
+            $v3 = score_component('v3', $score, array());
+            $v4 = score_component('v4', $score, array($wh_open_3m, $wh_open));
+            $v5 = score_component('v5', $score, array($gr_closed_met, $gr_closed_not_met));
+            $v6 = score_component('v6', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $v7 = score_component('v7', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+
+            // Health
+            $all = array($c1['value'], $c2['value'], $c3['value'], $e1['value'],
+                        $v1['value'], $v2['value'], $v3['value'], $v4['value'], $v5['value'], $v6['value'], $v7['value']
+                    );  
+            $all_non_null = array_filter($all, "not_null");
+            $health = round(array_sum($all_non_null) / count($all_non_null));
 
             /* 
             INSERT INTO health  
                 SET day='$day',lookup=$cid:$day,company_id=$cid,
-                    c1_score=.. etc   , c1_grow_score=... etc
+                    health=.., c1_score=.. etc   , c1_grow_score=... etc
             ON DUPLICATE KEY 
                 UPDATE 
-                    c1_score=.. etc   , c1_grow_score=... etc
+                    health=.., c1_score=.. etc   , c1_grow_score=... etc
             */
             $lookup = $cid . ':' . $day;
-            $c123e1 = "$set_c1, $set_c2, $set_c3, $set_e1";
-            $c123e1 = "$c123e1, $set_c1_grow";
-            $v1234567 = "$set_v1, $set_v2, $set_v3, $set_v4, $set_v5, $set_v6, $set_v7";
-            $v1234567 = "$v1234567, $set_v4_whistle, $set_v5_grow, $set_v6_grow, $set_v7_grow";
-            $on_dup = "ON DUPLICATE KEY UPDATE $c123e1, $v1234567";
-            $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $c123e1, $v1234567 $on_dup";
+            $c123e1 = "$c1['set'], $c2['set'], $c3['set'], $e1['set']";
+            $c123e1 = "$c123e1, $c1_grow['set']";
+            $v1234567 = "$v1['set'], $v2['set'], $v3['set'], $v4['set'], $v5['set'], $v6['set'], $v7['set']";
+            $v1234567 = "$v1234567, $v4_whistle['set'], $v5_grow['set'], $v6_grow['set'], $v7_grow['set']";
+            $sets = "health=$health, $c123e1, $v1234567";
+            $on_dup = "ON DUPLICATE KEY UPDATE $sets";
+            $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $sets $on_dup";
             error_log("insert: $insert");
             $insert_result = mysqli_query($con, $insert);
 
