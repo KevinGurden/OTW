@@ -52,7 +52,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $lookup = $cid . ':' . $day;
     $grow_closed_met = "grow_closed_met = (SELECT COUNT(*) FROM goals WHERE company_id=$cid AND status='achieved')";
     $grow_closed_not_met = "grow_closed_not_met = (SELECT COUNT(*) FROM goals WHERE company_id=$cid AND status='fail')";
-    $grow_open_3m = "grow_open_3m = (SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'ongoing' AND submitted >= CURRENT_DATE() - INTERVAL 3 MONTH";
+    $grow_open_3m = "grow_open_3m = (SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'ongoing' AND submitted >= CURRENT_DATE() - INTERVAL 3 MONTH)";
     $grow_fields = "$grow_closed_met, $grow_closed_not_met, $grow_open_3m";
 
     $on_dup = "ON DUPLICATE KEY UPDATE $grow_fields";
