@@ -1,6 +1,7 @@
 <?php
 /*
     Functions to calculate and write the day's health score
+    Pass the days' results back in the response object as 'day'
  */
 
 function score_event($value, $good, $bad) {
@@ -64,6 +65,28 @@ function score_total($scores) {
     };
 };
 
+function send_day($con, $cid, $day) { // Send back the days results
+    error_log("score_health...");
+    $select = "SELECT * FROM health WHERE company_id=$cid AND day='$day'";
+    error_log("select: $select");
+    
+    $select_result = mysqli_query($con, $select);
+    if ($select_result === false) { // Will either be false or an array
+        // select failed to run
+        error_log("select day failed");
+    } else {
+        error_log("select day success");
+        
+        // Check for empty result
+        if (mysqli_num_rows($result) > 0) {
+            // Assume only one day
+            $response["day"] = mysqli_fetch_assoc($result);
+        } else {
+            http_response_code(404); // Didn't find it!
+            $response["message"] = "No scores found for company '$id' and day '$day'";
+        };
+};
+
 function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
     // Get the days' health row, calculate new values and write it back
     error_log("score_health...");
@@ -109,8 +132,14 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $c123, $v1234567 $on_dup";
             error_log("insert: $insert");
             $insert_result = mysqli_query($con, $insert);
+
+            if ($insert_result) {
+                send_day($con, $cid, $day);
+            } else {
+                error_log('fn_score_health: insert day failed');
+            };
         } else {
-            error_log('scoreWhistles: Nothing returned from health for $cid $day');
+            error_log('fn_score_health: Nothing returned from health for $cid $day');
         };
     };
 };

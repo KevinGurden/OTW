@@ -45,7 +45,6 @@ if (connected($con, $response)) {
         if (mysqli_num_rows($result) > 0) {
             // Loop through all results
             
-            
             while ($score = mysqli_fetch_assoc($result)) {
                 $scores[] = $score;
             };
