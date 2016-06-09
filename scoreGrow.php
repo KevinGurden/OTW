@@ -57,7 +57,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
 
     $on_dup = "ON DUPLICATE KEY UPDATE $grow_fields";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $grow_fields $on_dup";
-    error_log("insert: $insert");
+    error_log("insert grows: $insert");
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
 };
@@ -83,7 +83,7 @@ if (connected($con, $response)) {
         error_log('success');
 
         // Finally update the overall health scores
-        $health_result = score_health($con, $company_id, $day);
+        score_health($con, $company_id, $day);
     } else {
         // Failure
         http_response_code(304);
