@@ -103,6 +103,29 @@ function score_component($comp, $score, $events) {
     return $comp."_result=".$comp_score;
 };
 
+function score_contribution($comp, $cont, $events) {
+    // Create an average but remove nulls first
+    $count = 0; $total = 0;
+    foreach ($events as $event) {
+        if (is_null($event)) {
+            error_log('null');
+        } else {
+            error_log($event);
+            $count = $count + 1;
+            $total = $total + $event;
+        };
+    };
+    
+    if ($count > 0) { // Also got events
+        $cont_score = round($total/$count);
+    } else {
+        $cont_score = 'NULL';
+    };
+
+    return $comp."_".$cont."_result=".$cont_score;
+};
+
+
 function send_day($con, $cid, $day) { // Send back the days results
     error_log("score_health...");
     $select = "SELECT * FROM health WHERE company_id=$cid AND day='$day'";
@@ -149,8 +172,16 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
             $gr_closed_not_met = score_event($score['grow_closed_not_met'], 0, 15);
 
+            // Contributions
+            $set_c1_grow = score_contribution('c1', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            // $set_v3_whistle = score_contribution('v3', 'whistle', array());
+            $set_v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open));
+            $set_v5_grow = score_contribution('v5', 'grow', array($gr_closed_met, $gr_closed_not_met));
+            $set_v6_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $set_v7_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+
             // Components
-            $set_c1 = score_component('c1', $score, array($gr_open_3m, $gr_closed_met, $grow_closed_not_met));
+            $set_c1 = score_component('c1', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             $set_c2 = score_component('c2', $score, array());
             $set_c3 = score_component('c3', $score, array());
             $set_e1 = score_component('e1', $score, array());
@@ -158,45 +189,23 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $set_v2 = score_component('v2', $score, array());
             $set_v3 = score_component('v3', $score, array());
             $set_v4 = score_component('v4', $score, array($wh_open_3m, $wh_open));
-            $set_v5 = score_component('v5', $score, array($gr_closed_met, $grow_closed_not_met));
-            $set_v6 = score_component('v6', $score, array($gr_open_3m, $gr_closed_met, $grow_closed_not_met));
-            $set_v7 = score_component('v7', $score, array($gr_open_3m, $gr_closed_met, $grow_closed_not_met));
-            
-            // error_log("set_v4: $set_v4");
-            // $v4_wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
-            // $v4_survey = score_survey('v4', $score);
-            // error_log('score_total v4...');
-            // $v4_arr = array($v4_survey, $v4_wh_open_3m);
-            // $v4_score = score_total($v4_arr);
-            // if (is_null($v4_score)) {
-            //     $v4_score = 0;
-            // };
-
-            // $v5_gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
-            // $v5_survey = score_survey('v5', $score);
-            // $v5_score = $v5_survey + $v5_gr_closed_met; // /2!
-            // if (is_null($v5_score)) {
-            //     $v4_score = 0;
-            // };
-
-            // $c1_survey = score_survey('c1', $score);
-            // error_log("c1_survey $c1_survey");
-            // $c1_score = $c1_survey;
-            // if (is_null($c1_score)) {
-            //     $c1_score = 0;
-            // };
+            $set_v5 = score_component('v5', $score, array($gr_closed_met, $gr_closed_not_met));
+            $set_v6 = score_component('v6', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $set_v7 = score_component('v7', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
 
             /* 
             INSERT INTO health  
                 SET day='$day',lookup=$cid:$day,company_id=$cid,
-                    c1_score=$c1_score,v4_score=$v4_score,v5_score=$v5_score
+                    c1_score=.. etc   , c1_grow_score=... etc
             ON DUPLICATE KEY 
                 UPDATE 
-                    c1_score=$c1_score,v4_score=$v4_score,v5_score=$v5_score
+                    c1_score=.. etc   , c1_grow_score=... etc
             */
             $lookup = $cid . ':' . $day;
             $c123e1 = "$set_c1, $set_c2, $set_c3, $set_e1";
+            $c123e1 = "$c123e1, $set_c1_grow";
             $v1234567 = "$set_v1, $set_v2, $set_v3, $set_v4, $set_v5, $set_v6, $set_v7";
+            $v1234567 = "$v1234567, $set_v4_whistle, $set_v5_grow, $set_v6_grow, $set_v7_grow";
             $on_dup = "ON DUPLICATE KEY UPDATE $c123e1, $v1234567";
             $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $c123e1, $v1234567 $on_dup";
             error_log("insert: $insert");
