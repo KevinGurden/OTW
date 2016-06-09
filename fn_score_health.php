@@ -68,9 +68,7 @@ function score_total($scores) {
 };
 
 function score_component($comp, $score, $events) {
-    // $set_v5 = score_component('v5', $score, array($gr_closed_met, $grow_closed_not_met));
     // Create an average but remove nulls first
-    error_log('score_component ev0: ' . $events[0]);
     $count = 0; $total = 0;
     foreach ($events as $event) {
         if (is_null($event)) {
@@ -87,6 +85,11 @@ function score_component($comp, $score, $events) {
 
     if (is_null($survey_count) || $survey_count == 0 || is_null($survey_count) || $survey_count == 0) { 
         // No survey result so ignore this
+        if ($count > 0) { // But got events
+            $comp_score = round($total/$count);
+        } else {
+            $comp_score = 'NULL'; // Got nothing!
+        };
     } else { // Got survey result}
         $survey_score = $survey_total/$survey_count;
         if ($count > 0) { // Also got events
@@ -96,6 +99,7 @@ function score_component($comp, $score, $events) {
             $comp_score = $survey_score;
         };
     };
+
     return $comp."_result=".$comp_score;
 };
 
@@ -140,13 +144,23 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
 
             // Events
             $wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
+            $wh_open = score_event($score['whistle_open'], 200, 0);
+            $gr_open_3m = score_event($score['grow_open_3m'], 0, 20);
             $gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
             $gr_closed_not_met = score_event($score['grow_closed_not_met'], 0, 15);
 
             // Components
-            $set_c1 = score_component('c1', $score, array());
-            $set_v4 = score_component('v4', $score, array($wh_open_3m));
+            $set_c1 = score_component('c1', $score, array($gr_open_3m, $gr_closed_met, $grow_closed_not_met));
+            $set_c2 = score_component('c2', $score, array());
+            $set_c3 = score_component('c3', $score, array());
+            $set_e1 = score_component('e1', $score, array());
+            $set_v1 = score_component('v1', $score, array());
+            $set_v2 = score_component('v2', $score, array());
+            $set_v3 = score_component('v3', $score, array());
+            $set_v4 = score_component('v4', $score, array($wh_open_3m, $wh_open));
             $set_v5 = score_component('v5', $score, array($gr_closed_met, $grow_closed_not_met));
+            $set_v6 = score_component('v6', $score, array($gr_open_3m, $gr_closed_met, $grow_closed_not_met));
+            $set_v7 = score_component('v7', $score, array($gr_open_3m, $gr_closed_met, $grow_closed_not_met));
             
             // error_log("set_v4: $set_v4");
             // $v4_wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
@@ -181,10 +195,10 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
                     c1_score=$c1_score,v4_score=$v4_score,v5_score=$v5_score
             */
             $lookup = $cid . ':' . $day;
-            $c123 = $set_c1;
-            $v1234567 = $set_v4.', '.$set_v5;
-            $on_dup = "ON DUPLICATE KEY UPDATE $c123, $v1234567";
-            $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $c123, $v1234567 $on_dup";
+            $c123e1 = "$set_c1, $set_c2, $set_c3, $set_e1";
+            $v1234567 = "$set_v1, $set_v2, $set_v3, $set_v4, $set_v5, $set_v6, $set_v7";
+            $on_dup = "ON DUPLICATE KEY UPDATE $c123e1, $v1234567";
+            $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $c123e1, $v1234567 $on_dup";
             error_log("insert: $insert");
             $insert_result = mysqli_query($con, $insert);
 
