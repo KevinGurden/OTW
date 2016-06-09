@@ -100,7 +100,7 @@ function score_component($comp, $score, $events) {
         };
     };
 
-    return $comp."_result=".$comp_score;
+    return $comp."_score=".$comp_score;
 };
 
 function score_contribution($comp, $cont, $events) {
@@ -122,7 +122,7 @@ function score_contribution($comp, $cont, $events) {
         $cont_score = 'NULL';
     };
 
-    return $comp."_".$cont."_result=".$cont_score;
+    return $comp."_".$cont."_score=".$cont_score;
 };
 
 
