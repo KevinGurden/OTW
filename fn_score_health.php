@@ -216,8 +216,8 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $lookup = $cid . ':' . $day;
             $c123e1 = $c1['set'].','.$c2['set'].','.$c3['set'].','.$e1['set'];
             $c123e1 = $c123e1.','.$c1_grow['set'];
-            $v1234567 = "$v1['set'], $v2['set'], $v3['set'], $v4['set'], $v5['set'], $v6['set'], $v7['set']";
-            $v1234567 = "$v1234567, $v4_whistle['set'], $v5_grow['set'], $v6_grow['set'], $v7_grow['set']";
+            $v1234567 = $v1['set'].','.$v2['set'].','.$v3['set'].','.$v4['set'].','.$v5['set'].','.$v6['set'].','.$v7['set'];
+            $v1234567 = $v1234567.','.$v4_whistle['set'].','.$v5_grow['set'].','.$v6_grow['set'].','.$v7_grow['set'];
             $sets = "health=$health, $c123e1, $v1234567";
             $on_dup = "ON DUPLICATE KEY UPDATE $sets";
             $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $sets $on_dup";
