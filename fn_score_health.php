@@ -108,7 +108,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $v4_wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
             $v4_survey = score_survey('v4', $score);
             error_log('score_total v4...');
-            $v4_arr = [$v4_survey, $v4_wh_open_3m];
+            $v4_arr = array($v4_survey, $v4_wh_open_3m);
             $v4_score = score_total($v4_arr);
 
             $v5_gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
