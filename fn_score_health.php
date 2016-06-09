@@ -45,6 +45,8 @@ function score_survey($comp, $score) {
 
 function score_total($scores) {
     // Create an average but remove nulls first
+    error_log('arg0: $scores[0]');
+    error_log('arg0: $scores[1]');
     $count = 0; $total = 0;
     foreach ($scores as $score) {
         if (is_null($score)) {
@@ -63,6 +65,12 @@ function score_total($scores) {
         error_log('count !0 so return ' . $total/$count);
         return $total/$count;
     };
+};
+
+function score_component($score, $comp, $events) {
+    // Create an average but remove nulls first
+    error_log('ev0: $events[0]');
+    return ", v4_result=10";
 };
 
 function send_day($con, $cid, $day) { // Send back the days results
@@ -105,19 +113,25 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             // Just assume only 1 row for that day
             $score = mysqli_fetch_assoc($select_result);
 
+            $set_v4 = score_component('v4', $score, array('whistle_open_3m'));
+            error_log("set_v4: $set_v4");
             $v4_wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
             $v4_survey = score_survey('v4', $score);
             error_log('score_total v4...');
             $v4_arr = array($v4_survey, $v4_wh_open_3m);
             $v4_score = score_total($v4_arr);
+            if (is_null($v4_score)) {$v4_score = 0};
 
             $v5_gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
             $v5_survey = score_survey('v5', $score);
             $v5_score = $v5_survey + $v5_gr_closed_met; // /2!
+            if (is_null($v5_score)) {$v4_score = 0};
+
 
             $c1_survey = score_survey('c1', $score);
             error_log("c1_survey $c1_survey");
             $c1_score = $c1_survey;
+            if (is_null($c1_score)) {$c1_score = 0};
 
             /* 
             INSERT INTO health  
