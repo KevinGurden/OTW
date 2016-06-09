@@ -45,8 +45,8 @@ function score_survey($comp, $score) {
 
 function score_total($scores) {
     // Create an average but remove nulls first
-    error_log('arg0: $scores[0]');
-    error_log('arg0: $scores[1]');
+    error_log('arg0: ' . $scores[0]);
+    error_log('arg0: ' . $scores[1]);
     $count = 0; $total = 0;
     foreach ($scores as $score) {
         if (is_null($score)) {
@@ -69,7 +69,7 @@ function score_total($scores) {
 
 function score_component($score, $comp, $events) {
     // Create an average but remove nulls first
-    error_log('ev0: $events[0]');
+    error_log('ev0: ' . $events[0]);
     return ", v4_result=10";
 };
 
@@ -86,12 +86,11 @@ function send_day($con, $cid, $day) { // Send back the days results
         error_log("select day success");
         
         // Check for empty result
-        if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($select_result) > 0) {
             // Assume only one day
-            $response["day"] = mysqli_fetch_assoc($result);
+            return mysqli_fetch_assoc($select_result);
         } else {
-            http_response_code(404); // Didn't find it!
-            $response["message"] = "No scores found for company '$id' and day '$day'";
+            return null;
         };
     };
 };
@@ -155,12 +154,15 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $insert_result = mysqli_query($con, $insert);
 
             if ($insert_result) {
-                send_day($con, $cid, $day);
+                $send_result = send_day($con, $cid, $day);
+                return $send_result;
             } else {
                 error_log('fn_score_health: insert day failed');
+                return null;
             };
         } else {
             error_log('fn_score_health: Nothing returned from health for $cid $day');
+            return null;
         };
     };
 };
