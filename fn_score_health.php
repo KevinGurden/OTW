@@ -178,7 +178,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $set_v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open));
             $set_v5_grow = score_contribution('v5', 'grow', array($gr_closed_met, $gr_closed_not_met));
             $set_v6_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
-            $set_v7_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+            $set_v7_grow = score_contribution('v7', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
 
             // Components
             $set_c1 = score_component('c1', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
