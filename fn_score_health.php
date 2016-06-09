@@ -120,18 +120,23 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             error_log('score_total v4...');
             $v4_arr = array($v4_survey, $v4_wh_open_3m);
             $v4_score = score_total($v4_arr);
-            if (is_null($v4_score)) {$v4_score = 0};
+            if (is_null($v4_score)) {
+                $v4_score = 0
+            };
 
             $v5_gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
             $v5_survey = score_survey('v5', $score);
             $v5_score = $v5_survey + $v5_gr_closed_met; // /2!
-            if (is_null($v5_score)) {$v4_score = 0};
-
+            if (is_null($v5_score)) {
+                $v4_score = 0
+            };
 
             $c1_survey = score_survey('c1', $score);
             error_log("c1_survey $c1_survey");
             $c1_score = $c1_survey;
-            if (is_null($c1_score)) {$c1_score = 0};
+            if (is_null($c1_score)) {
+                $c1_score = 0
+            };
 
             /* 
             INSERT INTO health  
