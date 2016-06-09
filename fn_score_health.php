@@ -85,6 +85,7 @@ function send_day($con, $cid, $day) { // Send back the days results
             http_response_code(404); // Didn't find it!
             $response["message"] = "No scores found for company '$id' and day '$day'";
         };
+    };
 };
 
 function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
