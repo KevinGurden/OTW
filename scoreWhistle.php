@@ -100,9 +100,8 @@ if (connected($con, $response)) {
     if ($db_result1) { // Completed
         
         if ($types!='') { // Old apps didn't pass types so check first
-            $types_array = explode(',',types);
-
-            $db_result2 = insert_counts($con, $company_id, $day, $types);
+            $types_array = explode(',',$types);
+            $db_result2 = insert_counts($con, $company_id, $day, $types_array);
             error_log('db_result2: ' . $db_result2);
 
             if ($db_result2) { // Success
