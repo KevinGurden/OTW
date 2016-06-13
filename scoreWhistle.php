@@ -93,7 +93,7 @@ if (connected($con, $response)) {
     // Escape the values to ensure no injection vunerability
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
-    $types = escape('types', '');
+    $types = escape($con, 'types', '');
     
     $db_result1 = insert($con, $company_id, $day);
     error_log('db_result1: ' . $db_result1);
