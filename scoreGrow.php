@@ -57,7 +57,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
 
     $on_dup = "ON DUPLICATE KEY UPDATE $grow_fields";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $grow_fields $on_dup";
-    error_log("insert grows: $insert");
+    // error_log("insert grows: $insert");
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
 };
@@ -72,7 +72,7 @@ if (connected($con, $response)) {
     $company_id = got_int('company_id', 0);
     
     $db_result = insert($con, $company_id, $day);
-    error_log('db_result: ' . $db_result);
+    // error_log('db_result: ' . $db_result);
 
     if ($db_result) {
         // Success

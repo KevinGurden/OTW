@@ -98,7 +98,7 @@ if (connected($con, $response)) {
     error_log('db_result1: ' . $db_result1);
     if ($db_result1) { // Completed
         
-        if (count($types)>0)) { // Old apps didn't pass types so check first
+        if (count($types)>0) { // Old apps didn't pass types so check first
             $db_result2 = insert_counts($con, $company_id, $day, $types);
             error_log('db_result2: ' . $db_result2);
 
