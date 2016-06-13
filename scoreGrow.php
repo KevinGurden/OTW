@@ -80,7 +80,7 @@ if (connected($con, $response)) {
         // $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
-        error_log('success');
+        // error_log('success');
 
         // Finally update the overall health scores
         $response["day"] = score_health($con, $company_id, $day);

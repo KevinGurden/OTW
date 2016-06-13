@@ -45,17 +45,17 @@ function score_survey($comp, $score) {
 
 function score_total($scores) {
     // Create an average but remove nulls first
-    error_log('arg0: ' . $scores[0]);
-    error_log('arg0: ' . $scores[1]);
+    // error_log('arg0: ' . $scores[0]);
+    // error_log('arg0: ' . $scores[1]);
     $count = 0; $total = 0;
     foreach ($scores as $score) {
         if (is_null($score)) {
-            error_log('null');
+            // error_log('null');
         } else {
             error_log($score);
             $count = $count + 1;
             $total = $total + $score;
-            error_log('so... count: $count, total: $total');
+            // error_log('so... count: $count, total: $total');
         };
     };
     if ($count == 0) {
@@ -72,9 +72,9 @@ function score_component($comp, $score, $events) {
     $count = 0; $total = 0;
     foreach ($events as $event) {
         if (is_null($event)) {
-            error_log('null');
+            // error_log('null');
         } else {
-            error_log($event);
+            // error_log($event);
             $count = $count + 1;
             $total = $total + $event;
         };
@@ -110,7 +110,7 @@ function score_contribution($comp, $cont, $events) {
         if (is_null($event)) {
             error_log('null');
         } else {
-            error_log($event);
+            // error_log($event);
             $count = $count + 1;
             $total = $total + $event;
         };
@@ -127,16 +127,16 @@ function score_contribution($comp, $cont, $events) {
 
 
 function send_day($con, $cid, $day) { // Send back the days results
-    error_log("score_health...");
+    // error_log("score_health...");
     $select = "SELECT * FROM health WHERE company_id=$cid AND day='$day'";
-    error_log("select: $select");
+    // error_log("select: $select");
     
     $select_result = mysqli_query($con, $select);
     if ($select_result === false) { // Will either be false or an array
         // select failed to run
-        error_log("select day failed");
+        // error_log("select day failed");
     } else {
-        error_log("select day success");
+        // error_log("select day success");
         
         // Check for empty result
         if (mysqli_num_rows($select_result) > 0) {
@@ -155,16 +155,16 @@ function not_null($var) {
 
 function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
     // Get the days' health row, calculate new values and write it back
-    error_log("score_health...");
+    // error_log("score_health...");
     $select = "SELECT * FROM health WHERE company_id=$cid AND day='$day'";
-    error_log("select: $select");
+    // error_log("select: $select");
     
     $select_result = mysqli_query($con, $select);
     if ($select_result === false) { // Will either be false or an array
         // select failed to run
         error_log("select failed");
     } else {
-        error_log("select success");
+        // error_log("select success");
         // Check for empty result
         if (mysqli_num_rows($select_result) > 0) {
             // Just assume only 1 row for that day
@@ -221,7 +221,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $sets = "health=$health, $c123e1, $v1234567";
             $on_dup = "ON DUPLICATE KEY UPDATE $sets";
             $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $sets $on_dup";
-            error_log("insert: $insert");
+            // error_log("insert: $insert");
             $insert_result = mysqli_query($con, $insert);
 
             if ($insert_result) {
