@@ -67,8 +67,9 @@ function insert_counts($con, $cid, $day, $types) { // Update type counts into 'h
     $sets = '';
     $set_where = "WHERE company_id=".$cid." AND status != 'closed' AND cat = 'whistle'";
     $select = "SELECT COUNT(*) FROM whistles $set_where";
-    foreach($types as $i=>$type) {
-        $type_count_label = 'whistle_open_'.$i; // e.g. whistle_open_1
+    error_log("types[0]: ".$types[0]);
+    foreach($types as $ix=>$type) {
+        $type_count_label = 'whistle_open_'.$ix; // e.g. whistle_open_1
         $type_count = "($select AND type_selected=$type)";
         if ($sets == '') {
             $sets = 'SET '.$type_count_label.'='.$type_count;
