@@ -14,4 +14,12 @@ function got_int($field, $default) {
         return $default;
     };
 };
+
+function got_array($field, $default) {
+    if (isset($_GET[$field])) {
+        return $_GET[$field];
+    } else {
+        return $default;
+    };
+};
 ?>
