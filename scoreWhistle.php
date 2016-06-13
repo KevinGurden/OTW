@@ -6,7 +6,7 @@ This should be executed after a whistle has been submitted to the database.
 Parameters:
     day: The day to apply the scores. Date stamp
     company_id: company that this applies to. Integer
-    types: array of whistle type names. Array of strings
+    types: list of comma separated whistle type names
 
 Return:
     status: 200 for success, 300+ for error
@@ -93,13 +93,15 @@ if (connected($con, $response)) {
     // Escape the values to ensure no injection vunerability
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
-    $types = got_array('types', array());
+    $types = escape('types', '');
     
     $db_result1 = insert($con, $company_id, $day);
     error_log('db_result1: ' . $db_result1);
     if ($db_result1) { // Completed
         
-        if (count($types)>0) { // Old apps didn't pass types so check first
+        if ($types!='') { // Old apps didn't pass types so check first
+            $types_array = explode(',',types);
+
             $db_result2 = insert_counts($con, $company_id, $day, $types);
             error_log('db_result2: ' . $db_result2);
 
