@@ -79,7 +79,7 @@ function insert_counts($con, $cid, $day, $types) { // Update type counts into 'h
     };
 
     
-    $update = "UPDATE health $sets WHERE day='$day',company_id=$cid";
+    $update = "UPDATE health $sets WHERE day='$day' AND company_id=$cid";
     error_log("update: $update");
     $update_result = mysqli_query($con, $update);
     return $update_result;
