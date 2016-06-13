@@ -97,20 +97,28 @@ if (connected($con, $response)) {
     $db_result1 = insert($con, $company_id, $day);
     error_log('db_result1: ' . $db_result1);
     if ($db_result1) { // Completed
-        $db_result2 = insert_counts($con, $company_id, $day, $types);
-        error_log('db_result2: ' . $db_result2);
+        
+        if (count($types)>0)) { // Old apps didn't pass types so check first
+            $db_result2 = insert_counts($con, $company_id, $day, $types);
+            error_log('db_result2: ' . $db_result2);
 
-        if ($db_result2) { // Success
+            if ($db_result2) { // Success
+                http_response_code(200);
+                // $response["status"] = 200;
+                $response["message"] = "Success";
+                $response["sqlerror"] = "";
+                error_log('success');
+            } else { // Partial failure
+                http_response_code(304);
+                $response["message"] = "Partially failed to create/update record";
+                $response["sqlerror"] = mysqli_connect_error();
+                error_log('partial failure');
+            };
+        } else {
             http_response_code(200);
-            // $response["status"] = 200;
-            $response["message"] = "Success";
+            $response["message"] = "Success although types not passed";
             $response["sqlerror"] = "";
             error_log('success');
-        } else { // Partial failure
-            http_response_code(304);
-            $response["message"] = "Partially failed to create/update record";
-            $response["sqlerror"] = mysqli_connect_error();
-            error_log('partial failure');
         };
             
         // Finally update the overall health scores. This does not use insert_counts
