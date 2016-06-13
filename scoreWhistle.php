@@ -56,7 +56,7 @@ function insert_counts($con, $cid, $day, $types) { // Update type counts into 'h
     UPDATE health
         SET whistle_open_1=(
             SELECT COUNT(*) FROM whistles
-                WHERE company_id = $cid AND status != 'closed' AND cat = 'whistle' AND type_selected=$type
+                WHERE company_id = $cid AND status != 'closed' AND cat = 'whistle' AND type_selected='$type'
         ),
         etc
         WHERE day='$day',
@@ -70,7 +70,7 @@ function insert_counts($con, $cid, $day, $types) { // Update type counts into 'h
     error_log("types[0]: ".$types[0]);
     foreach($types as $ix=>$type) {
         $type_count_label = 'whistle_open_'.$ix; // e.g. whistle_open_1
-        $type_count = "($select AND type_selected=$type)";
+        $type_count = "($select AND type_selected='$type')";
         if ($sets == '') {
             $sets = 'SET '.$type_count_label.'='.$type_count;
         } else {
