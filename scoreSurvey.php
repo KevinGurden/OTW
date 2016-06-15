@@ -32,13 +32,13 @@ function getHealth($con, $day, $cid) { // Get a day score
 
 function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
-    $cols = 'lookup, day, company_id'; $vals = "'$company_id . ':' . $day', '$day', $cid";
+    $cols = 'lookup, day, company_id'; $vals = "'$cid . ':' . $day', '$day', $cid";
     foreach($elements as $el) {
         $el_count_label = $el.'_survey_count'; // e.g. c1_count
         $el_count = $dh[$el_count_label];
         // error_log("INSERT: $el_count_label $el_count");
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
-            $el_score_label = $el.'_score';
+            $el_score_label = $el.'_survey_score';
             $el_score = $dh[$el_score_label];
             $cols = $cols.', '.$el_count_label.', '.$el_score_label;  // Add the new column names
             $vals = $vals.', '.$el_count.', '.$el_score;              // Add the new column values
@@ -60,7 +60,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
         $el_count_label = $el.'_survey_count'; // e.g. c1_count
         $el_old_count = $old_h[$el_count_label]; $el_new_count = $new_h[$el_count_label]; 
         if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
-            $el_score_label = $el.'_score';
+            $el_score_label = $el.'_survey_score';
             $el_new_score = $new_h[$el_score_label];
             if ($sets == '') {
                 $sets = 'SET '.$el_count_label.'='.$el_new_score;  // Add the first set=xyz's
@@ -105,7 +105,7 @@ function weight($cat, $effect, $ans, $olddh, $el) {
 
 function weightSurvey($ans, $old_health) {
     // Table of weighting effects:
-    // e.g. 'c1_score' has a 10% effect on C1 (Commitment) given a 'Vital Base' answer
+    // e.g. 'c1_survey_score' has a 10% effect on C1 (Commitment) given a 'Vital Base' answer
     $id = $ans['id'];
     // error_log("weightSurvey: $id");
 
