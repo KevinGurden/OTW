@@ -34,7 +34,7 @@ function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 
     // Which fields are affected?
     $cols = 'lookup, day, company_id'; $vals = "'$company_id . ':' . $day', '$day', $cid";
     foreach($elements as $el) {
-        $el_count_label = $el.'_count'; // e.g. c1_count
+        $el_count_label = $el.'_survey_count'; // e.g. c1_count
         $el_count = $dh[$el_count_label];
         // error_log("INSERT: $el_count_label $el_count");
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
@@ -57,7 +57,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     // Which fields are affected?
     $sets = '';
     foreach($elements as $el) {
-        $el_count_label = $el.'_count'; // e.g. c1_count
+        $el_count_label = $el.'_survey_count'; // e.g. c1_count
         $el_old_count = $old_h[$el_count_label]; $el_new_count = $new_h[$el_count_label]; 
         if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_score';
@@ -261,7 +261,7 @@ if (connected($con, $response)) {
     if ($result === false || mysqli_num_rows($result) == 0) { // No record so create one
         $tinsert = true;
         foreach($elements as $e) {
-            $label = $e.'_count';
+            $label = $e.'_survey_count';
             $old_health[$label] = 0;
         };
     } else { // We found at least 1 record
