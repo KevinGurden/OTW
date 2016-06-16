@@ -232,7 +232,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
                 return null;
             };
         } else {
-            error_log('fn_score_health: Nothing returned from health for $cid $day');
+            error_log('fn_score_health: Nothing returned from health for ' . $cid . ' & ' . $day);
             return null;
         };
     };
