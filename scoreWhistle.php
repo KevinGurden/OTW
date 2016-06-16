@@ -91,13 +91,10 @@ if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     // Escape the values to ensure no injection vunerability
-    error_log('day');
+    error_log('day: ' . $day);
     $day = escape($con, 'day', '');
-    error_log('CId');
     $company_id = got_int('company_id', 0);
-    error_log('types');
     $types = escape($con, 'types', '');
-    error_log('end of escapes');
     
     $db_result1 = insert($con, $company_id, $day);
     error_log('db_result1: ' . $db_result1);
