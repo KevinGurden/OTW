@@ -22,7 +22,7 @@ header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_escape.php';
+include 'fn_get_escape.php';
 
 // Array for JSON response
 $response = array();
