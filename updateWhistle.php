@@ -39,9 +39,14 @@ if (connected($con, $response)) {
     $val2 = escape($con, 'val2', '');
 	    
 	// Issue the database update
+	/*
+	UPDATE whistles 
+		SET $field1=$val1,$field1=$val1 
+		WHERE id=$id
+	 */
 	$sets = "SET ".$field1."=".$val1;
 	if (isset($field2) && isset($val2)) {
-		$sets = $sets.",".$field2."=".$val2);
+		$sets = $sets.",".$field2."=".$val2;
 	};
 	$update = "UPDATE whistles ".$sets." WHERE id=$id";
 	
