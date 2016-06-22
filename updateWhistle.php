@@ -33,11 +33,13 @@ if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     // Escape the values to ensure no injection vunerability
+    error_log("input: $id $field1 $field2");
     $id = escape($con, 'id', '');
     $field1 = escape($con, 'field1', '');
     $val1 = escape($con, 'val1', '');
     $field2 = escape($con, 'field2', '');
     $val2 = escape($con, 'val2', '');
+    error_log("escaped: $id $field1 $field2");
 	    
 	// Issue the database update
 	/*
