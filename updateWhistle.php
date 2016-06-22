@@ -28,6 +28,7 @@ include 'fn_escape.php';
 $response = array();
 
 // Connect to db
+$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
@@ -56,7 +57,7 @@ if (connected($con, $response)) {
         $response["message"] = "Whistle updated";
         $response["sqlerror"] = "";
 	} else { // Failure
-		error_log("$result: from $insert");
+		error_log("$result: from $update");
         http_response_code(402);
         $response["status"] = 402;
         $response["message"] = "Update whistle failed";
