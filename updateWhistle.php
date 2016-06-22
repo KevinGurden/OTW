@@ -22,7 +22,7 @@ header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_get_escape.php';
+include 'fn_escape.php';
 
 // Array for JSON response
 $response = array();
@@ -33,7 +33,6 @@ if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     // Escape the values to ensure no injection vunerability
-    error_log("input: $id $field1 $field2");
     $id = escape($con, 'id', '');
     $field1 = escape($con, 'field1', '');
     $val1 = escape($con, 'val1', '');

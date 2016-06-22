@@ -92,12 +92,10 @@ if (connected($con, $response)) {
 
     // Escape the values to ensure no injection vunerability
     $day = escape($con, 'day', '');
-    error_log('day: ' . $day);
     $company_id = got_int('company_id', 0);
     $types = escape($con, 'types', '');
     
     $db_result1 = insert($con, $company_id, $day);
-    error_log('db_result1: ' . $db_result1);
     if ($db_result1) { // Completed
         
         if ($types!='') { // Old apps didn't pass types so check first
