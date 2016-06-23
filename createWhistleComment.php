@@ -15,6 +15,9 @@ header('Access-Control-Allow-Headers: Cache-Control, Pragma, Origin, Authorizati
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+include 'fn_connected.php';
+include 'fn_http_response.php';
+
 function escape($con, $field, $default) {
     if (isset($_POST[$field])) {
     	return mysqli_real_escape_string($con, $_POST[$field]);
@@ -26,44 +29,39 @@ function escape($con, $field, $default) {
 // Array for JSON response
 $response = array();
 
-// Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (!$con) {
-    error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    $response["status"] = 401;
-    $response["message"] = "Failed to connect to DB";
-    $response["sqlerror"] = mysqli_connect_error();
-    header('Content-Type: application/json');
-    echo json_encode($response);
-} else {
+if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8"); // Set the character set to use
+
 	$_POST = json_decode(file_get_contents('php://input'), true);
 	$response["received"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
 	$cat = escape($con, 'cat', '');
-	$catid = escape($con, 'catid', 0);
+	$catid = $anon = $_POST['catid'];
 	$type = escape($con, 'type', 'comment');
 	$content = escape($con, 'content', '');
 	$fromuser = escape($con, 'fromuser', '');
+    $fromnick = escape($con, 'fromnick', '');
 	$date = escape($con, 'date', '');
-	$anon = escape($con, 'anon', 0);
+	$anon = $_POST['anon'];
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
 	// Issue the database create
-	$cols = "cat, catid, type, content, fromuser, date, anon, company_id";
-	$vals = "'whistle', $catid, '$type', '$content', '$fromuser', '$date', $anon, $company_id";
+	$cols = "cat, catid, type, content, fromuser, fromnick, date, anon, company_id";
+	$vals = "'whistle', $catid, '$type', '$content', '$fromuser', '$fromnick', $date', $anon, $company_id";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
 	if ($result) { // Success
 		error_log("createWhistleComment: success");
-        $response["status"] = 200;
+        http_response_code(200);
         $response["message"] = "Comment created";
         $response["id"] = mysqli_insert_id($con); // Return the id of the record added
         $response["sqlerror"] = "";
 	} else { // Failure
 		error_log("$result: from $insert");
-        $response["status"] = 402;
+        http_response_code(402);
         $response["message"] = "Create comment failed";
         $response["query"] = "$insert";
         $response["sqlerror"] = mysqli_error($con);
