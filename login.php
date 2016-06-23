@@ -3,7 +3,7 @@
 Login and get any general info specific to the user's company from the encol database.
 
 Parameters:
-    username: the category object that we want activity for e.g. 'whistle'. String
+    username: the username e.g. 'test1'. String
     password: the identifier within the category. String
     force: (test only) force the return of a specific company information
 
@@ -19,22 +19,22 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
+include 'fn_connected.php';
+include 'fn_http_response.php';
+include 'fn_escape.php';
+
 // Array for JSON response
 $response = array();
 
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (mysqli_connect_errno()) {
-    error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    $response["status"] = 401;
-    $response["message"] = "Failed to connect to DB";
-    $response["sqlerror"] = mysqli_connect_error();
-    echo json_encode($response);
-} else {
+if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8"); // Set the character set to use
     if ( isset($_GET['username']) and isset($_GET['password']) ) {
         // Escape the values to ensure no injection vunerability
-        $username = mysqli_real_escape_string($con, $_GET['username']);
-        $password = mysqli_real_escape_string($con, $_GET['password']);
+        $username = escape($con, 'username', '');
+        $password = escape($con, 'password', '');
+
         // Assume username and password are ok
 
         // Get company defaults
@@ -42,13 +42,13 @@ if (mysqli_connect_errno()) {
             $name = mysqli_real_escape_string($con, $_GET['force']);
         } else {
             $name = 'Acme'; // Defualt to Acme
-        }
+        };
         $query = "SELECT * FROM company WHERE name='$name'";
         $result = mysqli_query($con, $query);
 
         // Check for empty result
         if (mysqli_num_rows($result) > 0) { // Success
-            $response["status"] = 200;
+            http_response_code(200);
             $response["message"] = "Success";
             $response["init"] = mysqli_fetch_assoc($result);
             $response["sqlerror"] = "";
@@ -57,7 +57,7 @@ if (mysqli_connect_errno()) {
             echo json_encode($response);
         } else {
             // no init found
-            $response["status"] = 200;
+            http_response_code(200);
             $response["query"] = $query;
             $response["message"] = "No initialisation match for company '$name'.";
 
@@ -66,7 +66,7 @@ if (mysqli_connect_errno()) {
         };
     } else {
         error_log("'username' and 'password' must be provided");
-        $response["status"] = 402;
+        http_response_code(402);
         $response["message"] = "'username' and 'password' must be provided";
         $response["sqlerror"] = "";
         echo json_encode($response);
