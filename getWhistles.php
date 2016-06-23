@@ -1,6 +1,6 @@
 <?php
 /*
-Get a list of whistles from the encol database.
+Get a list of whistles from the encol database. If the user is '' then return all whistles for the company
 
 Parameters:
     id: company identifier. Integer
@@ -18,23 +18,27 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
+include 'fn_connected.php';
+include 'fn_http_response.php';
+include 'fn_get_escape.php';
+
 // Array for JSON response
 $response = array();
 
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (mysqli_connect_errno()) {
-    error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    $response["status"] = 401;
-    $response["message"] = "Failed to connect to DB";
-    $response["sqlerror"] = mysqli_connect_error();
-    echo json_encode($response);
-} else {
+if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8"); // Set the character set to use
     if (isset($_GET['id']) && isset($_GET['user'])) {
-        $id = mysqli_real_escape_string($con, $_GET['id']); // Escape to avoid injection vunerability
-        $user = mysqli_real_escape_string($con, $_GET['user']); // Escape to avoid injection vunerability
+        $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
+        $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
     
         // Get a list of whistles
-        $select = "SELECT * FROM whistles WHERE user='$user' AND company_id=$id";
+        if ($user == '') {
+            $and_user = '';                     // Return whistles for all users
+        } else {
+            $and_user = "AND user='$user'";     // Limit to a particular user
+        }
+        $select = "SELECT * FROM whistles WHERE company_id=$id $and_user";
         $result = mysqli_query($con, $select);
         $response["query"] = "$select";
 
