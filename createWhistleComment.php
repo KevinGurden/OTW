@@ -49,7 +49,7 @@ if (connected($con, $response)) {
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, fromuser, fromnick, date, anon, company_id";
-	$vals = "'whistle', $catid, '$type', '$content', '$fromuser', '$fromnick', $date', $anon, $company_id";
+	$vals = "'whistle', $catid, '$type', '$content', '$fromuser', '$fromnick', '$date', $anon, $company_id";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
@@ -70,7 +70,7 @@ if (connected($con, $response)) {
     echo json_encode($response);
 };
 
-/* 
+/*
 Useful stuff:
     SSH for mac:
         chmod 400 otwkey.pem to encrypt key. Do this in the otwkey directory
