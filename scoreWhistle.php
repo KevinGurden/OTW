@@ -46,7 +46,6 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $whistles_open = "SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND status != 'closed' AND cat = 'whistle'";
     $on_dup = "ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, whistle_open = ($whistles_open) $on_dup";
-    error_log("insert: $insert");
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
 };
@@ -67,7 +66,6 @@ function insert_counts($con, $cid, $day, $types) { // Update type counts into 'h
     $sets = '';
     $set_where = "WHERE company_id=".$cid." AND status != 'closed' AND cat = 'whistle'";
     $select = "SELECT COUNT(*) FROM whistles $set_where";
-    error_log("types[0]: ".$types[0]);
     foreach($types as $ix=>$type) {
         $type_count_label = 'whistle_open_'.$ix; // e.g. whistle_open_1
         $type_count = "($select AND type_selected='$type')";
@@ -80,7 +78,6 @@ function insert_counts($con, $cid, $day, $types) { // Update type counts into 'h
 
     
     $update = "UPDATE health $sets WHERE day='$day' AND company_id=$cid";
-    error_log("update: $update");
     $update_result = mysqli_query($con, $update);
     return $update_result;
 };
@@ -101,7 +98,6 @@ if (connected($con, $response)) {
         if ($types!='') { // Old apps didn't pass types so check first
             $types_array = explode(',',$types);
             $db_result2 = insert_counts($con, $company_id, $day, $types_array);
-            error_log('db_result2: ' . $db_result2);
 
             if ($db_result2) { // Success
                 http_response_code(200);
@@ -119,7 +115,6 @@ if (connected($con, $response)) {
             http_response_code(200);
             $response["message"] = "Success although types not passed";
             $response["sqlerror"] = "";
-            error_log('success');
         };
             
         // Finally update the overall health scores. This does not use insert_counts

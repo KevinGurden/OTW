@@ -54,7 +54,6 @@ if (connected($con, $response)) {
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
 	if ($result) { // Success
-		error_log("createWhistleComment: success");
         http_response_code(200);
         $response["message"] = "Comment created";
         $response["id"] = mysqli_insert_id($con); // Return the id of the record added

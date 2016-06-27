@@ -36,15 +36,7 @@ if (connected($con, $response)) {
     $id = $_POST['id'];
     $field1 = $_POST['field1']; $val1 = $_POST['val1'];
     $field2 = $_POST['field2']; $val2 = $_POST['val2'];
-    error_log("posted: $id $field1 $field2");
 
-    // Escape the values to ensure no injection vunerability
-    // $id = escape($con, 'id', '');
-    // $field1 = escape($con, 'field1', '');
-    // $val1 = escape($con, 'val1', '');
-    // $field2 = escape($con, 'field2', '');
-    // $val2 = escape($con, 'val2', '');
-	    
 	// Issue the database update
 	/*
 	UPDATE whistles 
