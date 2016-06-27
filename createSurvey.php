@@ -25,9 +25,7 @@ function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, '$cid'";
 
     $insert = "INSERT INTO answers($cols) VALUES($vals)";
-    error_log("INSERT: $insert");
     $result = mysqli_query($con, $insert);
-    error_log("INSERT result: $result");
     return $result;
 };
 

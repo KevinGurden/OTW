@@ -32,7 +32,9 @@ function getHealth($con, $day, $cid) { // Get a day score
 
 function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
-    $cols = 'lookup, day, company_id'; $vals = "$cid . ':' . $day, '$day', $cid";
+    $cols = 'lookup, day, company_id'; 
+    $lookup = $cid . ':' . $day; 
+    $vals = "$lookup, '$day', $cid";
     foreach($elements as $el) {
         $el_count_label = $el.'_survey_count'; // e.g. c1_count
         $el_count = $dh[$el_count_label];
