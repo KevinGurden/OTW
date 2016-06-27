@@ -59,8 +59,9 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     // Which fields are affected?
     $sets = '';
     foreach($elements as $el) {
-        $el_count_label = $el.'_survey_count'; // e.g. c1_count
-        $el_old_count = $old_h[$el_count_label]; $el_new_count = $new_h[$el_count_label]; 
+        $el_count_label = $el.'_survey_count'; // e.g. c1_survey_count
+        $el_old_count = $old_h[$el_count_label]; 
+        $el_new_count = $new_h[$el_count_label]; 
         if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_survey_score';
             $el_new_score = $new_h[$el_score_label];
