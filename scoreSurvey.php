@@ -66,9 +66,9 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
             $el_score_label = $el.'_survey_score';
             $el_new_score = $new_h[$el_score_label];
             if ($sets == '') {
-                $sets = 'SET '.$el_count_label.'='.$el_new_score;  // Add the first set=xyz's
+                $sets = 'SET '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the first set=xyz's
             } else {
-                $sets = $sets.', '.$el_count_label.'='.$el_new_score;  // Add the new set=xyz's
+                $sets = $sets.', '.$el_count_label.'='.$el_new_count','.$el_score_label.'='.$el_new_score;  // Add the new set=xyz's
             };
         };
     };
