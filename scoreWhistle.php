@@ -31,21 +31,39 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
             lookup=$cid:$day,
             company_id=$cid,
             whistle_open = (
-                SELECT 
-                    COUNT(*) FROM whistles
-                    WHERE company_id = $cid AND status != 'closed' AND cat = 'whistle'
+                as UPDATE below
             )
     ON DUPLICATE KEY 
-        UPDATE whistle_open = (
-            SELECT 
-                COUNT(*) FROM whistles
-                WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle'
-        );
+        UPDATE 
+            whistle_open = (
+                SELECT 
+                    COUNT(*) FROM whistles
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle'
+            ),
+            whistle_open_3m = (
+                SELECT 
+                    COUNT(*) FROM whistles
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND datediff(curdate(),subdate)<90
+            ),
+            whistle_quick_3m = (
+                SELECT 
+                    COUNT(*) FROM whistles
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'cat' AND datediff(curdate(),subdate)<90
+            );
     */
     $lookup = $cid . ':' . $day;
-    $whistles_open = "SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND status != 'closed' AND cat = 'whistle'";
-    $on_dup = "ON DUPLICATE KEY UPDATE whistle_open = ($whistles_open)";
-    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, whistle_open = ($whistles_open) $on_dup";
+    $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
+    $not_closed = "status!='closed'";
+    $cat_whistle = "cat='whistle'"; $cat_quick = "cat='quick'";
+
+    $whistles_open = "SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle";
+    $whistles_open_3m = "whistle_open_3m = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle AND $days_90)";
+    $whistles_quick_3m = "whistle_quick_3m = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_quick AND $days_90)";
+    $whistle_events = "whistle_open = ($whistles_open), whistle_open_3m = ($whistles_open_3m), whistle_quick_3m = ($whistles_quick_3m)";
+    
+    $on_dup = "ON DUPLICATE KEY UPDATE $whistles_events";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $whistles_events $on_dup";
+    error_log($insert);
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
 };

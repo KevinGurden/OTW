@@ -24,11 +24,11 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
 
-function getHealth($con, $day, $cid) { // Get a day score
-    $select = "SELECT * FROM health WHERE day='$day' AND company_id=$cid";
-    $res = mysqli_query($con, $select);
-    return $res;
-};
+// function getHealth($con, $day, $cid) { // Get a day score
+//     $select = "SELECT * FROM health WHERE day='$day' AND company_id=$cid";
+//     $res = mysqli_query($con, $select);
+//     return $res;
+// };
 
 function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
@@ -260,7 +260,6 @@ if (connected($con, $response)) {
     
     $elements = array('c1','c2','c3','e1','v1','v2','v3','v4','v5','v6','v7');
 
-    // $result = getHealth($con, $day, $company_id); // Get the current day score
     $select = "SELECT * FROM health WHERE day='$day' AND company_id=$company_id";
     $result = mysqli_query($con, $select);
     if ($result === false || mysqli_num_rows($result) == 0) { // No record so create one
