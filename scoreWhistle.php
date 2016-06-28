@@ -56,15 +56,15 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $not_closed = "status!='closed'";
     $cat_whistle = "cat='whistle'"; $cat_quick = "cat='quick'";
 
-    $whistles_open = "SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle";
+    $whistles_open = "whistle_open = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle)";
     $whistles_open_3m = "whistle_open_3m = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle AND $days_90)";
     $whistles_quick_3m = "whistle_quick_3m = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_quick AND $days_90)";
-    $whistle_events = "whistle_open = ($whistles_open), whistle_open_3m = ($whistles_open_3m), whistle_quick_3m = ($whistles_quick_3m)";
+    $whistle_events = "$whistles_open, $whistles_open_3m, $whistles_quick_3m";
     
     $on_dup = "ON DUPLICATE KEY UPDATE $whistle_events";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $whistle_events $on_dup";
-    error_log($insert);
     $insert_result = mysqli_query($con, $insert);
+    error_log($insert, $insert_result);
     return $insert_result;
 };
 
