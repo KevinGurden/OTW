@@ -67,7 +67,12 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     foreach($elements as $el) {
         $el_count_label = $el.'_survey_count'; // e.g. c1_survey_count
         $el_old_count = $old_h[$el_count_label]; 
-        $el_new_count = $new_h[$el_count_label]; 
+        if (isset($new_h[$el_count_label])) {
+            $el_new_count = $new_h[$el_count_label];
+        } else {
+            error_log('new_h['.$el_count_label.'] is not set. '.$count($new_h));
+            $el_new_count = null;
+        };
         if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_survey_score';
             $el_new_score = $new_h[$el_score_label];
@@ -80,6 +85,10 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     };
 
     // Add any events (duplicated in function update!)
+    // $sets = $sets.', survey_anon_3m, survey_refuse_3m';
+    $survey_anon_3m = "SET survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90)";
+    $survey_refuse_3m = "SET survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90)";
+    $sets = $sets.', $survey_anon_3m, $survey_refuse_3m';
 
     $update = "UPDATE health $sets WHERE day='$day' AND company_id='$cid'"; // Issue the database update
     error_log("update: $update");
