@@ -56,12 +56,16 @@ if (connected($con, $response)) {
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
     if (count($answers) == 0) {
+        error_log('count is 0');
         $res = create($con, null, null, null, null, $subdate, $user, $anon, $company_id, 1); // User refused to answer
+        error_log('res is '. $res);
         if (!$res) { // Error
+            error_log('error is '. mysqli_error($con));
             $response["sqlerror"] = mysqli_error($con);
         };
     } else {
         // Normal response
+        error_log('count > 0');
         $total_created = 0;
         foreach ($answers as $answer) {
             $created = create($con, $answer['cat'], $answer['id'], $answer['value100'], $loc, $subdate, $user, $anon, $company_id, 0);
