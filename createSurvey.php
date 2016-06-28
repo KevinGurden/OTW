@@ -38,7 +38,7 @@ function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
 
 function refuse($con, $sdate, $user, $anon, $cid) {
     // Issue the database create
-    $cols = "cat, subdate, user, anon, company_id, refused";
+    $cols = "subdate, user, anon, company_id, refused";
     $vals = "'$sdate', '$user', $anon, $cid, 1";
 
     $insert = "INSERT INTO answers($cols) VALUES($vals)";
