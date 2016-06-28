@@ -61,14 +61,14 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $whistles_quick_3m = "whistle_quick_3m = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_quick AND $days_90)";
     $whistle_events = "whistle_open = ($whistles_open), whistle_open_3m = ($whistles_open_3m), whistle_quick_3m = ($whistles_quick_3m)";
     
-    $on_dup = "ON DUPLICATE KEY UPDATE $whistles_events";
-    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $whistles_events $on_dup";
+    $on_dup = "ON DUPLICATE KEY UPDATE $whistle_events";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $whistle_events $on_dup";
     error_log($insert);
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
 };
 
-function insert_counts($con, $cid, $day, $types) { // Update type counts into 'health'
+function insert_counts($con, $cid, $day, $types) { // Update category type counts into 'health'
     /* 
     UPDATE health
         SET whistle_open_1=(
@@ -112,12 +112,12 @@ if (connected($con, $response)) {
     $company_id = got_int('company_id', 0);
     $types = escape($con, 'types', '');
     
-    $db_result1 = insert($con, $company_id, $day);
+    $db_result1 = insert($con, $company_id, $day); // Update any whistle events first e.g. Open > 3 months
     if ($db_result1) { // Completed
         
         if ($types!='') { // Old apps didn't pass types so check first
             $types_array = explode(',',$types);
-            $db_result2 = insert_counts($con, $company_id, $day, $types_array);
+            $db_result2 = insert_counts($con, $company_id, $day, $types_array); // Now add category counts e.g. Bribery
 
             if ($db_result2) { // Success
                 http_response_code(200);
