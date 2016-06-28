@@ -26,6 +26,8 @@ function escape($con, $field, $default) {
     };
 };
 
+error_log("----- createWhistleComment.php ---------------------------"); // Announce us in the log
+
 // Array for JSON response
 $response = array();
 

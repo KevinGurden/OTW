@@ -16,23 +16,19 @@ header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+
+error_log("----- createWhistle.php ---------------------------"); // Announce us in the log
 
 // Array for JSON response
 $response = array();
 
-// Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (!$con) {
-    error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    http_response_code(401);
-    $response["status"] = 401;
-    $response["message"] = "Failed to connect to DB";
-    $response["sqlerror"] = mysqli_connect_error();
-    header('Content-Type: application/json');
-    echo json_encode($response);
-} else {
+if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8"); // Set the character set to use
+
 	$_POST = json_decode(file_get_contents('php://input'), true);
 
 	// Escape the values to ensure no injection vunerability
@@ -48,7 +44,7 @@ if (!$con) {
 	$loc_main = escape($con, 'loc_main', '');
 	$loc_detail = escape($con, 'loc_detail', '');
 	$user = escape($con, 'user', '');
-	$anon = escape($con, 'anon', 0);
+	$anon = escape($con, 'wAnon', 0);
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
 	// Issue the database create

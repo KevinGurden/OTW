@@ -19,6 +19,8 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
+error_log("----- getActivityUser.php ---------------------------"); // Announce us in the log
+
 // Array for JSON response
 $response = array();
 

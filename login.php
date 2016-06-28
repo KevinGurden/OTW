@@ -23,6 +23,8 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
 
+error_log("----- login.php ---------------------------"); // Announce us in the log
+
 // Array for JSON response
 $response = array();
 

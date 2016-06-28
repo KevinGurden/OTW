@@ -245,6 +245,8 @@ function weightSurvey($ans, $old_health) {
     weight('Vital Base', 100, $ans, $old_health, 'v7');     // V7: Vital Base
 };
 
+error_log("----- scoreSurvey.php ---------------------------"); // Announce us in the log
+
 $response = array(); // Array for JSON response
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
@@ -284,7 +286,9 @@ if (connected($con, $response)) {
     };
 
     if ($db_result) {
-        // Success
+        // Success... finally update the overall health scores. This does not use insert_counts
+        $response["day"] = score_health($con, $company_id, $day);
+        
         http_response_code(200);
         $response["status"] = 200;
         $response["message"] = "Success";

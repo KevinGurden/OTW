@@ -62,6 +62,8 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     return $insert_result;
 };
 
+error_log("----- scoreGrow.php ---------------------------"); // Announce us in the log
+
 $response = array(); // Array for JSON response
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {

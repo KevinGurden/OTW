@@ -82,6 +82,8 @@ function insert_counts($con, $cid, $day, $types) { // Update type counts into 'h
     return $update_result;
 };
 
+error_log("----- scoreWhistle.php ---------------------------"); // Announce us in the log
+
 $response = array(); // Array for JSON response
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {

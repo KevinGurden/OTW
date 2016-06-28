@@ -21,6 +21,8 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
 
+error_log("----- getScores.php ---------------------------"); // Announce us in the log
+
 $response = array(); // Array for JSON response
 
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");

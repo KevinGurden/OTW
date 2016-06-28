@@ -29,6 +29,8 @@ function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     return $result;
 };
 
+error_log("----- createSurvey.php ---------------------------"); // Announce us in the log
+
 // Array for JSON response
 $response = array();
 
