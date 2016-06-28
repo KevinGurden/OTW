@@ -45,14 +45,10 @@ function score_survey($comp, $score) {
 
 function score_total($scores) {
     // Create an average but remove nulls first
-    // error_log('arg0: ' . $scores[0]);
-    // error_log('arg0: ' . $scores[1]);
     $count = 0; $total = 0;
     foreach ($scores as $score) {
-        if (is_null($score)) {
-            // error_log('null');
-        } else {
-            error_log($score);
+        if (!is_null($score)) {
+            error_log("score: $score");
             $count = $count + 1;
             $total = $total + $score;
             // error_log('so... count: $count, total: $total');
@@ -71,10 +67,7 @@ function score_component($comp, $score, $events) {
     // Create an average but remove nulls first
     $count = 0; $total = 0;
     foreach ($events as $event) {
-        if (is_null($event)) {
-            // error_log('null');
-        } else {
-            // error_log($event);
+        if (!is_null($event)) {
             $count = $count + 1;
             $total = $total + $event;
         };
@@ -107,10 +100,7 @@ function score_contribution($comp, $cont, $events) {
     // Create an average but remove nulls first
     $count = 0; $total = 0;
     foreach ($events as $event) {
-        if (is_null($event)) {
-            error_log('null');
-        } else {
-            // error_log($event);
+        if (!is_null($event)) {
             $count = $count + 1;
             $total = $total + $event;
         };
@@ -177,6 +167,8 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $gr_open_3m = score_event($score['grow_open_3m'], 0, 20);
             $gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
             $gr_closed_not_met = score_event($score['grow_closed_not_met'], 0, 15);
+            $su_anon_3m = score_event($score['survey_anon_3m'], 0, 10);
+            $su_refuse_3m = score_event($score['survey_refuse_3m'], 0, 50);
 
             // Contributions
             $c1_grow = score_contribution('c1', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));

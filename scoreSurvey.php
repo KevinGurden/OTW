@@ -48,10 +48,16 @@ function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 
         };
     };
 
+    // Add any events (duplicated in function update!)
+    $cols = $cols.', survey_anon_3m, survey_refuse_3m';
+    $survey_anon_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90";
+    $survey_refuse_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90";
+    $vals = $vals.', ($survey_anon_3m), ($survey_refuse_3m)';
+
     $insert_into = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
-    error_log("insert: $insert_into");
+    error_log("$insert_into");
     $insert_result = mysqli_query($con, $insert_into);
-    // error_log("INSERT result: $insert_result");
+    error_log("INSERT result: $insert_result");
     return $insert_result;
 };
 
@@ -72,6 +78,9 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
             };
         };
     };
+
+    // Add any events (duplicated in function update!)
+
     $update = "UPDATE health $sets WHERE day='$day' AND company_id='$cid'"; // Issue the database update
     error_log("update: $update");
     $update_result = mysqli_query($con, $update);
