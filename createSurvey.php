@@ -26,10 +26,20 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
 
-function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid, $refused) {
+function create($con, $cat, $id, $value, $loc, $sdate, $user, $anon, $cid) {
     // Issue the database create
     $cols = "cat, id, value100, location, subdate, user, anon, company_id, refused";
-    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, '$cid', $refused";
+    $vals = "'$cat', $id, '$value', '$loc', '$sdate', '$user', $anon, $cid, 0";
+
+    $insert = "INSERT INTO answers($cols) VALUES($vals)";
+    $result = mysqli_query($con, $insert);
+    return $result;
+};
+
+function refuse($con, $sdate, $user, $anon, $cid) {
+    // Issue the database create
+    $cols = "cat, subdate, user, anon, company_id, refused";
+    $vals = "'$sdate', '$user', $anon, $cid, 1";
 
     $insert = "INSERT INTO answers($cols) VALUES($vals)";
     $result = mysqli_query($con, $insert);
@@ -56,7 +66,7 @@ if (connected($con, $response)) {
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 
     if (count($answers) == 0) {
-        $res = create($con, '', null, '', '', $subdate, $user, $anon, $company_id, 1); // User refused to answer
+        $res = refuse($con, $subdate, $user, $anon, $company_id); // User refused to answer
         error_log('res is '. $res);
         if (!$res) { // Error
             error_log('error is '. mysqli_error($con));
