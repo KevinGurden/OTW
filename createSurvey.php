@@ -68,6 +68,7 @@ if (connected($con, $response)) {
     if (count($answers) == 0) {
         $res = refuse($con, $subdate, $user, $anon, $company_id); // User refused to answer
         error_log('res is '. $res);
+        $total_created = 1;
         if (!$res) { // Error
             error_log('error is '. mysqli_error($con));
             $response["sqlerror"] = mysqli_error($con);
@@ -88,7 +89,7 @@ if (connected($con, $response)) {
 
     if ($res) { // Did we successfully create all records?
         http_response_code(200);
-        $response["message"] = "$total_created answers created";
+        $response["message"] = "$total_created answer(s) created";
         $response["sqlerror"] = "";
     } else { // Failure
         http_response_code(304);
