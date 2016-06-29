@@ -164,7 +164,8 @@ function weight($cat, $effect, $ans, $olddh, $el) {
     
     if ($ans['cat'] == $cat) {      // Are we the correct category
         global $new_health;
-        $new_value = $effect/100 * $value;
+        $effect100 = $effect/100;
+        $new_value = $effect100 * $value;
         if ($el=='v4') {
             error_log("weight 1: $cat, $effect, $value, $el");
         };
@@ -174,13 +175,14 @@ function weight($cat, $effect, $ans, $olddh, $el) {
         $el_count = $olddh[$count_label];  // Current count
         if ($el_count == 0) { // Ignore current score if this is a new record
             $new_health[$score_label] = $new_value;
-            $new_health[$count_label] = 1;
+            $new_health[$count_label] = $effect100;
             // error_log("weight 2: $new_value 1");
             // error_log(var_dump($day_health));
         } else { // We have a non-zero count to calculate the combined average
             $el_score = $olddh[$score_label];  // Current score 
-            $new_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
-            $new_health[$count_label] = $el_count + 1;
+            // $new_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
+            $new_health[$score_label] = $el_score + ($new_value/$effect100);
+            $new_health[$count_label] = $el_count + $effect100;
             if ($el=='v4') {
                 $one = $new_health[$score_label]; $two = $new_health[$count_label];
                 error_log("weight 2: score: $one count: $two");
