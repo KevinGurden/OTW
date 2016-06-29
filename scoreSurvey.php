@@ -239,24 +239,25 @@ function weight_count($old_count, $cat, $effect, $ans, $el) {
     };
 };
 
-function weightSurvey($ans, $old_health) {
+function weightSurvey($ans, $old_health, $new_health) {
     // Table of weighting effects:
     // e.g. 'c1_survey_score' has a 10% effect on C1 (Commitment) given a 'Vital Base' answer
     // weight('Vital Base', 10, $ans, $old_health, 'c1');      // C1: Commitment
-    $id = $ans['id'];
-    $c1_score = $old_health['c1_survey_score']; $c1_count = $old_health['c1_survey_count'];
-    $c2_score = $old_health['c2_survey_score']; $c2_count = $old_health['c2_survey_count'];
-    $c3_score = $old_health['c3_survey_score']; $c3_count = $old_health['c3_survey_count'];
-    $e1_score = $old_health['e1_survey_score']; $e1_count = $old_health['e1_survey_count'];
-    $v1_score = $old_health['v1_survey_score']; $v1_count = $old_health['v1_survey_count'];
-    $v2_score = $old_health['v2_survey_score']; $v2_count = $old_health['v2_survey_count'];
-    $v3_score = $old_health['v3_survey_score']; $v3_count = $old_health['v3_survey_count'];
-    $v4_score = $old_health['v4_survey_score']; $v4_count = $old_health['v4_survey_count'];
-    $v5_score = $old_health['v5_survey_score']; $v5_count = $old_health['v5_survey_count'];
-    $v6_score = $old_health['v6_survey_score']; $v6_count = $old_health['v6_survey_count'];
-    $v7_score = $old_health['v7_survey_score']; $v7_count = $old_health['v7_survey_count'];
+    // $id = $ans['id'];
+    
+    // $c1_score = $old_health['c1_survey_score']; $c1_count = $old_health['c1_survey_count'];
+    // $c2_score = $old_health['c2_survey_score']; $c2_count = $old_health['c2_survey_count'];
+    // $c3_score = $old_health['c3_survey_score']; $c3_count = $old_health['c3_survey_count'];
+    // $e1_score = $old_health['e1_survey_score']; $e1_count = $old_health['e1_survey_count'];
+    // $v1_score = $old_health['v1_survey_score']; $v1_count = $old_health['v1_survey_count'];
+    // $v2_score = $old_health['v2_survey_score']; $v2_count = $old_health['v2_survey_count'];
+    // $v3_score = $old_health['v3_survey_score']; $v3_count = $old_health['v3_survey_count'];
+    // $v4_score = $old_health['v4_survey_score']; $v4_count = $old_health['v4_survey_count'];
+    // $v5_score = $old_health['v5_survey_score']; $v5_count = $old_health['v5_survey_count'];
+    // $v6_score = $old_health['v6_survey_score']; $v6_count = $old_health['v6_survey_count'];
+    // $v7_score = $old_health['v7_survey_score']; $v7_count = $old_health['v7_survey_count'];
 
-    $c1_score = weight_score($c1_score, $c1_count,  'Commitment', 100, $ans, 'c1');        // C1: Commitment
+    $new_health["c1_score"] = weight_score($new_health["c1_score"], $c1_count,  'Commitment', 100, $ans, 'c1');        // C1: Commitment
             $c1_count = weight_count($c1_count,     'Commitment', 100, $ans, 'c1');                                 
     // weight('Commitment', 100, $ans, $old_health, 'c1');     // C1: Commitment
     // weight('Commitment', 10, $ans, $old_health, 'c2');      // C2: Communication
@@ -265,8 +266,8 @@ function weightSurvey($ans, $old_health) {
     // weight('Commitment', 0, $ans, $old_health, 'v1');       // V1: Vision
     // weight('Commitment', 0, $ans, $old_health, 'v2');       // V2: Values
     // weight('Commitment', 10, $ans, $old_health, 'v3');      // V3: Value
-    $v4_score = weight_score($v4_score, $v4_count,  'Commitment', 10, $ans, 'v4');         // V4: Vulnerability
-            $v4_count = weight_count($v4_count,     'Commitment', 10, $ans, 'v4');                                  
+    $new_health["v4_score"] = weight_score($new_health["v4_score"], $v4_count,  'Commitment', 10, $ans, 'v4');         // V4: Vulnerability
+            $v4_c = weight_count($v4_c, 'Commitment', 10, $ans, 'v4');                                  
     // weight('Commitment', 10, $ans, $old_health, 'v4');      // V4: Vulnerability
     // weight('Commitment', 20, $ans, $old_health, 'v5');      // V5: Victory
     // weight('Commitment', 20, $ans, $old_health, 'v6');      // V6: Vitality
@@ -351,8 +352,8 @@ function weightSurvey($ans, $old_health) {
     // weight('Vulnerability', 0, $ans, $old_health, 'v1');    // V1: Vision
     // weight('Vulnerability', 0, $ans, $old_health, 'v2');    // V2: Values
     // weight('Vulnerability', 40, $ans, $old_health, 'v3');   // V3: Value
-    $v4_score = weight_score($v4_score, $v4_count,  'Vulnerability', 100, $ans, 'v4');         // V4: Vulnerability
-            $v4_count = weight_count($v4_count,     'Vulnerability', 100, $ans, 'v4');   
+    $new_health["v4_score"] = weight_score($new_health["v4_score"], $v4_count,  'Vulnerability', 100, $ans, 'v4');         // V4: Vulnerability
+            $v4_count = weight_count($v4_count, 'Vulnerability', 100, $ans, 'v4');   
     // weight('Vulnerability', 100, $ans, $old_health, 'v4');  // V4: Vulnerability
     // weight('Vulnerability', 10, $ans, $old_health, 'v5');   // V5: Victory
     // weight('Vulnerability', 10, $ans, $old_health, 'v6');   // V6: Vitality
@@ -394,18 +395,7 @@ function weightSurvey($ans, $old_health) {
     // weight('Vital Base', 20, $ans, $old_health, 'v6');      // V6: Vitality
     // weight('Vital Base', 100, $ans, $old_health, 'v7');     // V7: Vital Base
 
-    global $new_health;
-    $new_health['c1_survey_score'] = $c1_score;  $new_health['c1_survey_count'] = $c1_count; 
-    $new_health['c2_survey_score'] = $c2_score;  $new_health['c2_survey_count'] = $c2_count; 
-    $new_health['c3_survey_score'] = $c3_score;  $new_health['c3_survey_count'] = $c3_count; 
-    $new_health['e1_survey_score'] = $e1_score;  $new_health['e1_survey_count'] = $e1_count; 
-    $new_health['v1_survey_score'] = $v1_score;  $new_health['v1_survey_count'] = $v1_count; 
-    $new_health['v2_survey_score'] = $v2_score;  $new_health['v2_survey_count'] = $v2_count; 
-    $new_health['v3_survey_score'] = $v3_score;  $new_health['v3_survey_count'] = $v3_count; 
-    $new_health['v4_survey_score'] = $v4_score;  $new_health['v4_survey_count'] = $v4_count; 
-    $new_health['v5_survey_score'] = $v5_score;  $new_health['v5_survey_count'] = $v5_count; 
-    $new_health['v6_survey_score'] = $v6_score;  $new_health['v6_survey_count'] = $v6_count; 
-    $new_health['v7_survey_score'] = $v7_score;  $new_health['v7_survey_count'] = $v7_count; 
+    return $new_health; 
 };
 
 error_log("----- scoreSurvey.php ---------------------------"); // Announce us in the log
@@ -436,19 +426,34 @@ if (connected($con, $response)) {
         $old_health = mysqli_fetch_assoc($result); // Just take the first
     };
     
-    $new_health = array(); 
+    $new_health = array(
+        "c1_score" => $old_health['c1_survey_score'], "c1_count" => $old_health['c1_survey_count'],
+        "c2_score" => $old_health['c2_survey_score'], "c2_count" => $old_health['c2_survey_count'];
+        "c3_score" => $old_health['c3_survey_score'], "c3_count" => $old_health['c3_survey_count'];
+        "e1_score" => $old_health['e1_survey_score'], "e1_count" => $old_health['e1_survey_count'];
+        "v1_score" => $old_health['v1_survey_score'], "v1_count" => $old_health['v1_survey_count'];
+        "v2_score" => $old_health['v2_survey_score'], "v2_count" => $old_health['v2_survey_count'];
+        "v3_score" => $old_health['v3_survey_score'], "v3_count" => $old_health['v3_survey_count'];
+        "v4_score" => $old_health['v4_survey_score'], "v4_count" => $old_health['v4_survey_count'];
+        "v5_score" => $old_health['v5_survey_score'], "v5_count" => $old_health['v5_survey_count'];
+        "v6_score" => $old_health['v6_survey_score'], "v6_count" => $old_health['v6_survey_count'];
+        "v7_score" => $old_health['v7_survey_score'], "v7_count" => $old_health['v7_survey_count'];
+    );
     foreach ($answers as $answer) {
-        weightSurvey($answer, $old_health); // Adjust for an individual answer
+        $new_health = weightSurvey($answer, $old_health, $new_health); // Adjust for an individual answer
+        error_log("after question ".$answer["id"]." new_health[v4] is ".$new_health["v4_score"].",".$new_health["v4_count"]);
     };
 
-    $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
+    return 
+
+    //$db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
     // if ($tinsert) {
     //     $db_result = insert($con, $new_health, $company_id, $day, $elements);
     // } else {
     //     $db_result = updateold($con, $old_health, $new_health, $company_id, $day, $elements);
     // };
 
-    if ($db_result) {
+    //if ($db_result) {
         // Success... finally update the overall health scores. This does not use insert_counts
         $response["day"] = score_health($con, $company_id, $day);
         
@@ -456,13 +461,13 @@ if (connected($con, $response)) {
         $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
-    } else {
+    //} else {
         // Failure
-        http_response_code(403);
-        $response["status"] = 403;
-        $response["message"] = "Failed to create/update record";
-        $response["sqlerror"] = "";
-    };
+    //     http_response_code(403);
+    //     $response["status"] = 403;
+    //     $response["message"] = "Failed to create/update record";
+    //     $response["sqlerror"] = "";
+    // };
 }; 
 
 echo json_encode($response); // Echo JSON response
