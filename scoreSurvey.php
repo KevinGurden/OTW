@@ -428,16 +428,16 @@ if (connected($con, $response)) {
     
     $new_health = array(
         "c1_score" => $old_health['c1_survey_score'], "c1_count" => $old_health['c1_survey_count'],
-        "c2_score" => $old_health['c2_survey_score'], "c2_count" => $old_health['c2_survey_count'];
-        "c3_score" => $old_health['c3_survey_score'], "c3_count" => $old_health['c3_survey_count'];
-        "e1_score" => $old_health['e1_survey_score'], "e1_count" => $old_health['e1_survey_count'];
-        "v1_score" => $old_health['v1_survey_score'], "v1_count" => $old_health['v1_survey_count'];
-        "v2_score" => $old_health['v2_survey_score'], "v2_count" => $old_health['v2_survey_count'];
-        "v3_score" => $old_health['v3_survey_score'], "v3_count" => $old_health['v3_survey_count'];
-        "v4_score" => $old_health['v4_survey_score'], "v4_count" => $old_health['v4_survey_count'];
-        "v5_score" => $old_health['v5_survey_score'], "v5_count" => $old_health['v5_survey_count'];
-        "v6_score" => $old_health['v6_survey_score'], "v6_count" => $old_health['v6_survey_count'];
-        "v7_score" => $old_health['v7_survey_score'], "v7_count" => $old_health['v7_survey_count'];
+        "c2_score" => $old_health['c2_survey_score'], "c2_count" => $old_health['c2_survey_count'],
+        "c3_score" => $old_health['c3_survey_score'], "c3_count" => $old_health['c3_survey_count'],
+        "e1_score" => $old_health['e1_survey_score'], "e1_count" => $old_health['e1_survey_count'],
+        "v1_score" => $old_health['v1_survey_score'], "v1_count" => $old_health['v1_survey_count'],
+        "v2_score" => $old_health['v2_survey_score'], "v2_count" => $old_health['v2_survey_count'],
+        "v3_score" => $old_health['v3_survey_score'], "v3_count" => $old_health['v3_survey_count'],
+        "v4_score" => $old_health['v4_survey_score'], "v4_count" => $old_health['v4_survey_count'],
+        "v5_score" => $old_health['v5_survey_score'], "v5_count" => $old_health['v5_survey_count'],
+        "v6_score" => $old_health['v6_survey_score'], "v6_count" => $old_health['v6_survey_count'],
+        "v7_score" => $old_health['v7_survey_score'], "v7_count" => $old_health['v7_survey_count'],
     );
     foreach ($answers as $answer) {
         $new_health = weightSurvey($answer, $old_health, $new_health); // Adjust for an individual answer
