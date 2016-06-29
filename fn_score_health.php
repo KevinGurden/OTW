@@ -184,7 +184,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             // Contributions
             $c1_grow = score_contribution('c1', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             // $set_v3_whistle = score_contribution('v3', 'whistle', array());
-            $v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open, $wh_quick_3m));
+            $v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon));
             $v5_grow = score_contribution('v5', 'grow', array($gr_closed_met, $gr_closed_not_met));
             $v6_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             $v7_grow = score_contribution('v7', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
@@ -197,7 +197,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $v1 = score_component('v1', $score, array());
             $v2 = score_component('v2', $score, array());
             $v3 = score_component('v3', $score, array());
-            $v4 = score_component('v4', $score, array($wh_open_3m, $wh_open, $wh_quick_3m));
+            $v4 = score_component('v4', $score, array($wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon));
             $v5 = score_component('v5', $score, array($gr_closed_met, $gr_closed_not_met));
             $v6 = score_component('v6', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             $v7 = score_component('v7', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));

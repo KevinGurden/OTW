@@ -25,12 +25,6 @@ include 'fn_http_response.php';
 include 'fn_escape.php';
 include 'fn_score_health.php';
 
-// function getHealth($con, $day, $cid) { // Get a day score
-//     $select = "SELECT * FROM health WHERE day='$day' AND company_id=$cid";
-//     $res = mysqli_query($con, $select);
-//     return $res;
-// };
-
 function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
     $cols = 'lookup, day, company_id'; 
