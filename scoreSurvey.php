@@ -37,7 +37,13 @@ function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 
     $vals = "'$lookup', '$day', $cid";
     foreach($elements as $el) {
         $el_count_label = $el.'_survey_count'; // e.g. c1_count
-        $el_count = $dh[$el_count_label];
+        
+        if (isset($dh[$el_count_label])) {
+            $el_count = $dh[$el_count_label];
+        } else {
+            error_log('dh['.$el_count_label.'] is not set. '.count($dh));
+            $el_count = null;
+        };
         // error_log("INSERT: $el_count_label $el_count");
         if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
             $el_score_label = $el.'_survey_score';
@@ -50,18 +56,18 @@ function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 
 
     // Add any events (duplicated in function update!)
     $cols = $cols.', survey_anon_3m, survey_refuse_3m';
-    $survey_anon_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90";
-    $survey_refuse_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90";
+    $survey_anon_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90";
+    $survey_refuse_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90";
     $vals = $vals.', ($survey_anon_3m), ($survey_refuse_3m)';
 
     $insert_into = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
-    error_log("$insert_into");
+    error_log("insert: $insert_into");
     $insert_result = mysqli_query($con, $insert_into);
     error_log("INSERT result: $insert_result");
     return $insert_result;
 };
 
-function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
+function updateold($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
     // Which fields are affected?
     $sets = '';
     foreach($elements as $el) {
@@ -70,7 +76,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
         if (isset($new_h[$el_count_label])) {
             $el_new_count = $new_h[$el_count_label];
         } else {
-            error_log('new_h['.$el_count_label.'] is not set. '.$count($new_h));
+            error_log('new_h['.$el_count_label.'] is not set. '.count($dh));
             $el_new_count = null;
         };
         if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
@@ -86,14 +92,72 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
 
     // Add any events (duplicated in function update!)
     // $sets = $sets.', survey_anon_3m, survey_refuse_3m';
-    $survey_anon_3m = "SET survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90)";
-    $survey_refuse_3m = "SET survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90)";
+    $survey_anon_3m = "SET survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90)";
+    $survey_refuse_3m = "SET survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90)";
     $sets = $sets.', $survey_anon_3m, $survey_refuse_3m';
 
     $update = "UPDATE health $sets WHERE day='$day' AND company_id='$cid'"; // Issue the database update
     error_log("update: $update");
     $update_result = mysqli_query($con, $update);
     return $update_result;
+};
+
+function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
+    error_log("update: ".count($old_h).",".count($new_h));
+    /* 
+    INSERT INTO health  
+        SET day='$day', lookup=$cid:$day, company_id=$cid,
+            c1_survey_count=(), c2_survey_score=(),
+            etc
+            survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND DATEDIFF(CURDATE(),subdate)<90), 
+            survey_refuse_3m=()
+    ON DUPLICATE KEY 
+        UPDATE 
+            c1_survey_count=(), c2_survey_score=(),
+            etc
+            survey_anon_3m = (
+                SELECT 
+                    COUNT(*) FROM whistles
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND datediff(curdate(),subdate)<90
+            ),
+            whistle_refuse_3m = (
+                SELECT 
+                    COUNT(*) FROM whistles
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'cat' AND datediff(curdate(),subdate)<90
+            );
+    */
+    // Which survey fields are affected?
+    $sets = '';
+    foreach($elements as $el) {
+        $el_count_label = $el.'_survey_count'; // e.g. c1_survey_count
+        $el_old_count = $old_h[$el_count_label]; 
+        if (isset($new_h[$el_count_label])) {
+            $el_new_count = $new_h[$el_count_label];
+        } else {
+            error_log('new_h['.$el_count_label.'] is not set. '.$count($new_h));
+            $el_new_count = null;
+        };
+        if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
+            $el_score_label = $el.'_survey_score';
+            $el_new_score = $new_h[$el_score_label];
+            $sets = $sets.', '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the new field=xyz
+        };
+    };
+    $survey_scores = $sets;
+
+    // Add any events
+    $lookup = $cid . ':' . $day;
+    $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
+
+    $survey_anon_3m = "survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND $days_90)";
+    $survey_refuse_3m = "SET survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND refused=1 AND $days_90)";
+    $survey_events = "$survey_anon_3m, $survey_refuse_3m";
+
+    $on_dup = "ON DUPLICATE KEY UPDATE $survey_scores, $survey_events";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $survey_scores, $survey_events $on_dup";
+    error_log("insert2: $insert");
+    $insert_result = mysqli_query($con, $insert);
+    return $insert_result;
 };
 
 function weight($cat, $effect, $ans, $olddh, $el) {
@@ -295,12 +359,13 @@ if (connected($con, $response)) {
     foreach ($answers as $answer) {
         weightSurvey($answer, $old_health); // Adjust for an individual answer
     };
-    
-    if ($tinsert) {
-        $db_result = insert($con, $new_health, $company_id, $day, $elements);
-    } else {
-        $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
-    };
+
+    $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
+    // if ($tinsert) {
+    //     $db_result = insert($con, $new_health, $company_id, $day, $elements);
+    // } else {
+    //     $db_result = updateold($con, $old_health, $new_health, $company_id, $day, $elements);
+    // };
 
     if ($db_result) {
         // Success... finally update the overall health scores. This does not use insert_counts
