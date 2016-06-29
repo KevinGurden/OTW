@@ -35,7 +35,9 @@ function score_event($value, $good, $bad) {
 function score_event_div($value1, $value2, $good, $bad) {
     // Calculate value1/value2 and return a percentage score between $good (100%) and bad (0%).
     if (!is_null($value2) && $value2>0) {
-        if (!isset($value1)) {$value1=0};
+        if (!isset($value1)) {
+            $value1=0;
+        };
         return score_event($value1/$value2, $good, $bad);
     } else {
         return null;

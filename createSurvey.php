@@ -67,7 +67,6 @@ if (connected($con, $response)) {
 
     if (count($answers) == 0) {
         $res = refuse($con, $subdate, $user, $anon, $company_id); // User refused to answer
-        error_log('res is '. $res);
         $total_created = 1;
         if (!$res) { // Error
             error_log('error is '. mysqli_error($con));
