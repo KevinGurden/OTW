@@ -183,10 +183,12 @@ function weight($cat, $effect, $ans, $olddh, $el) {
             $new_health[$count_label] = $el_count + 1;
             if ($el=='v4') {
                 $one = $new_health[$score_label]; $two = $new_health[$count_label];
-                error_log("weight 3: score: $one count: $two");
+                error_log("weight 2: score: $one count: $two");
             };
         };
-        error_log("weight 2: $value, ".$new_health[$score_label].", $new_value");
+        if ($el=='v4') {
+            error_log("weight 3: $value, ".$new_health[$score_label].", $new_value");
+        };
     }; 
 };
 
@@ -204,7 +206,7 @@ function weightSurvey($ans, $old_health) {
     weight('Commitment', 0, $ans, $old_health, 'v1');       // V1: Vision
     weight('Commitment', 0, $ans, $old_health, 'v2');       // V2: Values
     weight('Commitment', 10, $ans, $old_health, 'v3');      // V3: Value
-    // weight('Commitment', 10, $ans, $old_health, 'v4');      // V4: Vulnerability
+    weight('Commitment', 10, $ans, $old_health, 'v4');      // V4: Vulnerability
     weight('Commitment', 20, $ans, $old_health, 'v5');      // V5: Victory
     weight('Commitment', 20, $ans, $old_health, 'v6');      // V6: Vitality
     weight('Commitment', 0, $ans, $old_health, 'v7');       // V7: Vital Base
