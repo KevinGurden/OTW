@@ -258,7 +258,7 @@ function weightSurvey($ans, $old_health, $new_health) {
     // $v7_score = $old_health['v7_survey_score']; $v7_count = $old_health['v7_survey_count'];
 
     $new_health["c1_score"] = weight_score($new_health["c1_score"], $c1_count,  'Commitment', 100, $ans, 'c1');        // C1: Commitment
-            $c1_count = weight_count($c1_count,     'Commitment', 100, $ans, 'c1');                                 
+            $new_health["c1_count"] = weight_count($new_health["c1_count"],     'Commitment', 100, $ans, 'c1');                                 
     // weight('Commitment', 100, $ans, $old_health, 'c1');     // C1: Commitment
     // weight('Commitment', 10, $ans, $old_health, 'c2');      // C2: Communication
     // weight('Commitment', 0, $ans, $old_health, 'c3');       // C3: Care
@@ -267,7 +267,7 @@ function weightSurvey($ans, $old_health, $new_health) {
     // weight('Commitment', 0, $ans, $old_health, 'v2');       // V2: Values
     // weight('Commitment', 10, $ans, $old_health, 'v3');      // V3: Value
     $new_health["v4_score"] = weight_score($new_health["v4_score"], $v4_count,  'Commitment', 10, $ans, 'v4');         // V4: Vulnerability
-            $v4_c = weight_count($v4_c, 'Commitment', 10, $ans, 'v4');                                  
+            $new_health["v4_count"] = weight_count($new_health["v4_count"],     'Commitment', 10, $ans, 'v4');                                  
     // weight('Commitment', 10, $ans, $old_health, 'v4');      // V4: Vulnerability
     // weight('Commitment', 20, $ans, $old_health, 'v5');      // V5: Victory
     // weight('Commitment', 20, $ans, $old_health, 'v6');      // V6: Vitality
@@ -353,7 +353,7 @@ function weightSurvey($ans, $old_health, $new_health) {
     // weight('Vulnerability', 0, $ans, $old_health, 'v2');    // V2: Values
     // weight('Vulnerability', 40, $ans, $old_health, 'v3');   // V3: Value
     $new_health["v4_score"] = weight_score($new_health["v4_score"], $v4_count,  'Vulnerability', 100, $ans, 'v4');         // V4: Vulnerability
-            $v4_count = weight_count($v4_count, 'Vulnerability', 100, $ans, 'v4');   
+            $new_health["v4_count"] = weight_count($new_health["v4_count"],     'Vulnerability', 100, $ans, 'v4');   
     // weight('Vulnerability', 100, $ans, $old_health, 'v4');  // V4: Vulnerability
     // weight('Vulnerability', 10, $ans, $old_health, 'v5');   // V5: Victory
     // weight('Vulnerability', 10, $ans, $old_health, 'v6');   // V6: Vitality
