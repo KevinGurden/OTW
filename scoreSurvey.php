@@ -23,6 +23,7 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+include 'fn_score_health.php';
 
 // function getHealth($con, $day, $cid) { // Get a day score
 //     $select = "SELECT * FROM health WHERE day='$day' AND company_id=$cid";

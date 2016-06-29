@@ -32,6 +32,16 @@ function score_event($value, $good, $bad) {
     };
 };
 
+function score_event_div($value1, $value2, $good, $bad) {
+    // Calculate value1/value2 and return a percentage score between $good (100%) and bad (0%).
+    if (!is_null($value2) && $value2>0) {
+        if (!isset($value1)) {$value1=0};
+        return score_event($value1/$value2, $good, $bad);
+    } else {
+        return null;
+    };
+};
+
 function score_survey($comp, $score) {
     // Return the calculated survey score for component (C1, C2, etc) $comp
     $survey_score = $comp.'_survey_score';
@@ -164,6 +174,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
             $wh_quick_3m = score_event($score['whistle_quick_3m'], 0, 20);
             $wh_open = score_event($score['whistle_open'], 200, 0);
+            $wh_open_anon = score_event_div($score['whistle_anon'], $score['whistle_open'], 0, 1);
             $gr_open_3m = score_event($score['grow_open_3m'], 0, 20);
             $gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
             $gr_closed_not_met = score_event($score['grow_closed_not_met'], 0, 15);
