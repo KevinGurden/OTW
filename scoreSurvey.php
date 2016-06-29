@@ -103,6 +103,7 @@ function updateold($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a ne
 };
 
 function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
+    // If new_h is [] then this is an event update only (probably a refusal to answer a survey)
     error_log("update: ".count($old_h).",".count($new_h));
     /* 
     INSERT INTO health  
@@ -128,22 +129,25 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     */
     // Which survey fields are affected?
     $sets = '';
-    foreach($elements as $el) {
-        $el_count_label = $el.'_survey_count'; // e.g. c1_survey_count
-        $el_old_count = $old_h[$el_count_label]; 
-        if (isset($new_h[$el_count_label])) {
-            $el_new_count = $new_h[$el_count_label];
-        } else {
-            error_log('new_h['.$el_count_label.'] is not set. '.$count($new_h));
-            $el_new_count = null;
+    if (count(new_h)>0) { // We have some answers. Do answers and events
+        foreach($elements as $el) {
+            $el_count_label = $el.'_survey_count'; // e.g. c1_survey_count
+            $el_old_count = $old_h[$el_count_label]; 
+            if (isset($new_h[$el_count_label])) {
+                $el_new_count = $new_h[$el_count_label];
+            } else {
+                $el_new_count = null;
+            };
+            if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
+                $el_score_label = $el.'_survey_score';
+                $el_new_score = $new_h[$el_score_label];
+                $sets = $sets.', '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the new field=xyz
+            };
         };
-        if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
-            $el_score_label = $el.'_survey_score';
-            $el_new_score = $new_h[$el_score_label];
-            $sets = $sets.', '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the new field=xyz
-        };
+        $survey_scores = $sets;
+    } else {
+        $survey_scores = ""; // Only do events so blank this out
     };
-    $survey_scores = $sets;
 
     // Add any events
     $lookup = $cid . ':' . $day;
