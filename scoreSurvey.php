@@ -173,11 +173,15 @@ function weight($cat, $effect, $ans, $olddh, $el) {
         $score_label = $el.'_survey_score';    // Score field label in the 'health' table
         $count_label = $el.'_survey_count';    // Count field label in the 'health' table
         $el_count = $olddh[$count_label];  // Current count
+        if ($el=='v4') {
+            error_log("weight 2: $el_count");
+        };
         if ($el_count == 0) { // Ignore current score if this is a new record
+            if ($el=='v4') {
+                error_log("weight 3a: el_count==0");
+            };
             $new_health[$score_label] = $new_value;
             $new_health[$count_label] = $effect100;
-            // error_log("weight 2: $new_value 1");
-            // error_log(var_dump($day_health));
         } else { // We have a non-zero count to calculate the combined average
             $el_score = $olddh[$score_label];  // Current score 
             // $new_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
@@ -185,11 +189,11 @@ function weight($cat, $effect, $ans, $olddh, $el) {
             $new_health[$count_label] = $el_count + $effect100;
             if ($el=='v4') {
                 $one = $new_health[$score_label]; $two = $new_health[$count_label];
-                error_log("weight 2: score: $one count: $two");
+                error_log("weight 3b: score: $one count: $two");
             };
         };
         if ($el=='v4') {
-            error_log("weight 3: $value, ".$new_health[$score_label].", $new_value");
+            error_log("weight 4: $value, ".$new_health[$score_label].", $new_value");
         };
     }; 
 };
