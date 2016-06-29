@@ -211,7 +211,7 @@ function weight_score($old_score, $old_count, $cat, $effect, $ans, $el) {
         if ($old_count == 0) { // Ignore current score if this is a new record
             $new_score = $new_value;
         } else { // We have a non-zero count to calculate the combined average
-            $new_score = $old_score + ($new_value/$effect100);
+            $new_score = $old_score + ($new_value*$effect100);
         };
         if ($el=='v4') {
             error_log("weight_score 4: $new_score");
