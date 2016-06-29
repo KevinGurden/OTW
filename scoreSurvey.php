@@ -136,10 +136,10 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
             if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
                 $el_score_label = $el.'_survey_score';
                 $el_new_score = $new_h[$el_score_label];
-                $sets = $sets.', '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the new field=xyz
+                $sets = $sets.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score.', ';  // Add the new field=xyz
             };
         };
-        $survey_scores = $sets.', ';
+        $survey_scores = $sets;
     } else {
         $survey_scores = ""; // Only do events so blank this out
     };
