@@ -210,14 +210,8 @@ function weight_score($old_score, $old_count, $cat, $effect, $ans, $el) {
         };
         if ($old_count == 0) { // Ignore current score if this is a new record
             $new_score = $new_value;
-            $new_health[$count_label] = $effect100;
         } else { // We have a non-zero count to calculate the combined average
             $new_score = $old_score + ($new_value/$effect100);
-            $new_health[$count_label] = $old_count + $effect100;
-            if ($el=='v4') {
-                $one = $new_health[$score_label]; $two = $new_health[$count_label];
-                error_log("weight 3b: score: $one count: $two");
-            };
         };
         if ($el=='v4') {
             error_log("weight_score 4: $new_score");
@@ -228,8 +222,11 @@ function weight_score($old_score, $old_count, $cat, $effect, $ans, $el) {
     };
 };
 
-function weight_count($old_count, $cat, $effect) {    
+function weight_count($old_count, $cat, $effect, $ans) {    
     if ($ans['cat'] == $cat && $effect > 0) {      // Are we the correct category
+        if ($el=='v4') {
+            error_log("weight_count 1: $old_count $cat $effect");
+        };
         $effect100 = $effect/100;
         if (!isset($old_count) || $old_count == 0) { // Ignore current score if this is a new record
             $new_count = $effect100;
@@ -389,8 +386,8 @@ function weightSurvey($ans, $old_health) {
     weight('Vital Base', 100, $ans, $old_health, 'v7');     // V7: Vital Base
 
     global $new_health;
-    $new_health['v4_survey_score'] = v4_score;
-    $new_health['v4_survey_count'] = v4_count; 
+    $new_health['v4_survey_score'] = $v4_score;
+    $new_health['v4_survey_count'] = $v4_count; 
 };
 
 error_log("----- scoreSurvey.php ---------------------------"); // Announce us in the log
