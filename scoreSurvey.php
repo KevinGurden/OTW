@@ -129,7 +129,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     */
     // Which survey fields are affected?
     $sets = '';
-    if (count(new_h)>0) { // We have some answers. Do answers and events
+    if (count($new_h)>0) { // We have some answers. Do answers and events
         foreach($elements as $el) {
             $el_count_label = $el.'_survey_count'; // e.g. c1_survey_count
             $el_old_count = $old_h[$el_count_label]; 
@@ -144,7 +144,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
                 $sets = $sets.', '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the new field=xyz
             };
         };
-        $survey_scores = $sets;
+        $survey_scores = $sets.', ';
     } else {
         $survey_scores = ""; // Only do events so blank this out
     };
@@ -154,11 +154,11 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
 
     $survey_anon_3m = "survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND $days_90)";
-    $survey_refuse_3m = "SET survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$company_id AND refused=1 AND $days_90)";
+    $survey_refuse_3m = "survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND $days_90)";
     $survey_events = "$survey_anon_3m, $survey_refuse_3m";
 
-    $on_dup = "ON DUPLICATE KEY UPDATE $survey_scores, $survey_events";
-    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $survey_scores, $survey_events $on_dup";
+    $on_dup = "ON DUPLICATE KEY UPDATE $survey_scores $survey_events";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $survey_scores $survey_events $on_dup";
     error_log("insert2: $insert");
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
