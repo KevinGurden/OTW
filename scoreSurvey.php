@@ -162,7 +162,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
 function weight($cat, $effect, $ans, $olddh, $el) {
     $value = $ans['value100'];      // Answer value (0-100)
     
-    if ($ans['cat'] == $cat) {      // Are we the correct category
+    if ($ans['cat'] == $cat && $effect > 0) {      // Are we the correct category
         global $new_health;
         $effect100 = $effect/100;
         $new_value = $effect100 * $value;
@@ -220,7 +220,7 @@ function weightSurvey($ans, $old_health) {
     weight('Communication', 10, $ans, $old_health, 'v1');   // V1: Vision
     weight('Communication', 25, $ans, $old_health, 'v2');   // V2: Values
     weight('Communication', 20, $ans, $old_health, 'v3');   // V3: Value
-    // weight('Communication', 20, $ans, $old_health, 'v4');   // V4: Vulnerability
+    weight('Communication', 20, $ans, $old_health, 'v4');   // V4: Vulnerability
     weight('Communication', 10, $ans, $old_health, 'v5');   // V5: Victory
     weight('Communication', 10, $ans, $old_health, 'v6');   // V6: Vitality
     weight('Communication', 25, $ans, $old_health, 'v7');   // V7: Vital Base
@@ -232,7 +232,7 @@ function weightSurvey($ans, $old_health) {
     weight('Care', 0, $ans, $old_health, 'v1');             // V1: Vision
     weight('Care', 20, $ans, $old_health, 'v2');            // V2: Values
     weight('Care', 20, $ans, $old_health, 'v3');            // V3: Value
-    // weight('Care', 20, $ans, $old_health, 'v4');            // V4: Vulnerability
+    weight('Care', 20, $ans, $old_health, 'v4');            // V4: Vulnerability
     weight('Care', 10, $ans, $old_health, 'v5');            // V5: Victory
     weight('Care', 10, $ans, $old_health, 'v6');            // V6: Vitality
     weight('Care', 25, $ans, $old_health, 'v7');            // V7: Vital Base
@@ -244,7 +244,7 @@ function weightSurvey($ans, $old_health) {
     weight('Environment', 0, $ans, $old_health, 'v1');      // V1: Vision
     weight('Environment', 10, $ans, $old_health, 'v2');     // V2: Values
     weight('Environment', 20, $ans, $old_health, 'v3');     // V3: Value
-    // weight('Environment', 10, $ans, $old_health, 'v4');     // V4: Vulnerability
+    weight('Environment', 10, $ans, $old_health, 'v4');     // V4: Vulnerability
     weight('Environment', 10, $ans, $old_health, 'v5');     // V5: Victory
     weight('Environment', 10, $ans, $old_health, 'v6');     // V6: Vitality
     weight('Environment', 20, $ans, $old_health, 'v7');     // V7: Vital Base
@@ -256,7 +256,7 @@ function weightSurvey($ans, $old_health) {
     weight('Vision', 100, $ans, $old_health, 'v1');         // V1: Vision
     weight('Vision', 25, $ans, $old_health, 'v2');          // V2: Values
     weight('Vision', 20, $ans, $old_health, 'v3');          // V3: Value
-    // weight('Vision', 10, $ans, $old_health, 'v4');          // V4: Vulnerability
+    weight('Vision', 10, $ans, $old_health, 'v4');          // V4: Vulnerability
     weight('Vision', 0, $ans, $old_health, 'v5');           // V5: Victory
     weight('Vision', 20, $ans, $old_health, 'v6');          // V6: Vitality
     weight('Vision', 20, $ans, $old_health, 'v7');          // V7: Vital Base
@@ -268,7 +268,7 @@ function weightSurvey($ans, $old_health) {
     weight('Values', 25, $ans, $old_health, 'v1');          // V1: Vision
     weight('Values', 100, $ans, $old_health, 'v2');         // V2: Values
     weight('Values', 0, $ans, $old_health, 'v3');           // V3: Value
-    // weight('Values', 20, $ans, $old_health, 'v4');          // V4: Vulnerability
+    weight('Values', 20, $ans, $old_health, 'v4');          // V4: Vulnerability
     weight('Values', 0, $ans, $old_health, 'v5');           // V5: Victory
     weight('Values', 20, $ans, $old_health, 'v6');          // V6: Vitality
     weight('Values', 20, $ans, $old_health, 'v7');          // V7: Vital Base
@@ -280,7 +280,7 @@ function weightSurvey($ans, $old_health) {
     weight('Value', 20, $ans, $old_health, 'v1');           // V1: Vision
     weight('Value', 20, $ans, $old_health, 'v2');           // V2: Values
     weight('Value', 100, $ans, $old_health, 'v3');          // V3: Value
-    // weight('Value', 40, $ans, $old_health, 'v4');           // V4: Vulnerability
+    weight('Value', 40, $ans, $old_health, 'v4');           // V4: Vulnerability
     weight('Value', 20, $ans, $old_health, 'v5');           // V5: Victory
     weight('Value', 20, $ans, $old_health, 'v6');           // V6: Vitality
     weight('Value', 20, $ans, $old_health, 'v7');           // V7: Vital Base
@@ -304,7 +304,7 @@ function weightSurvey($ans, $old_health) {
     weight('Victory', 0, $ans, $old_health, 'v1');          // V1: Vision
     weight('Victory', 0, $ans, $old_health, 'v2');          // V2: Values
     weight('Victory', 0, $ans, $old_health, 'v3');          // V3: Value
-    // weight('Victory', 0, $ans, $old_health, 'v4');          // V4: Vulnerability
+    weight('Victory', 0, $ans, $old_health, 'v4');          // V4: Vulnerability
     weight('Victory', 100, $ans, $old_health, 'v5');        // V5: Victory
     weight('Victory', 10, $ans, $old_health, 'v6');         // V6: Vitality
     weight('Victory', 20, $ans, $old_health, 'v7');         // V7: Vital Base
@@ -316,7 +316,7 @@ function weightSurvey($ans, $old_health) {
     weight('Vitality', 10, $ans, $old_health, 'v1');        // V1: Vision
     weight('Vitality', 0, $ans, $old_health, 'v2');         // V2: Values
     weight('Vitality', 0, $ans, $old_health, 'v3');         // V3: Value
-    // weight('Vitality', 0, $ans, $old_health, 'v4');         // V4: Vulnerability
+    weight('Vitality', 0, $ans, $old_health, 'v4');         // V4: Vulnerability
     weight('Vitality', 20, $ans, $old_health, 'v5');        // V5: Victory
     weight('Vitality', 100, $ans, $old_health, 'v6');       // V6: Vitality
     weight('Vitality', 0, $ans, $old_health, 'v7');         // V7: Vital Base
@@ -328,7 +328,7 @@ function weightSurvey($ans, $old_health) {
     weight('Vital Base', 20, $ans, $old_health, 'v1');      // V1: Vision
     weight('Vital Base', 20, $ans, $old_health, 'v2');      // V2: Values
     weight('Vital Base', 20, $ans, $old_health, 'v3');      // V3: Value
-    // weight('Vital Base', 20, $ans, $old_health, 'v4');      // V4: Vulnerability
+    weight('Vital Base', 20, $ans, $old_health, 'v4');      // V4: Vulnerability
     weight('Vital Base', 10, $ans, $old_health, 'v5');      // V5: Victory
     weight('Vital Base', 20, $ans, $old_health, 'v6');      // V6: Vitality
     weight('Vital Base', 100, $ans, $old_health, 'v7');     // V7: Vital Base
