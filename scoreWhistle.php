@@ -22,7 +22,7 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
-include 'fn_score_health.php';
+include 'fn_scoring.php';
 
 function insert($con, $cid, $day) { // Insert a new record into 'health' or update if it already exists
     /* 
