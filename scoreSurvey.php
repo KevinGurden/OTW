@@ -25,78 +25,6 @@ include 'fn_http_response.php';
 include 'fn_escape.php';
 include 'fn_scoring.php';
 
-function insert($con, $dh, $cid, $day, $elements) { // Insert a new record into 'health'
-    // Which fields are affected?
-    $cols = 'lookup, day, company_id'; 
-    $lookup = $cid . ':' . $day; 
-    $vals = "'$lookup', '$day', $cid";
-    foreach($elements as $el) {
-        $el_count_label = $el.'_survey_count'; // e.g. c1_count
-        
-        if (isset($dh[$el_count_label])) {
-            $el_count = $dh[$el_count_label];
-        } else {
-            error_log('dh['.$el_count_label.'] is not set. '.count($dh));
-            $el_count = null;
-        };
-        // error_log("INSERT: $el_count_label $el_count");
-        if ($el_count > 0) { // One of the elements that were affected by an answer's weighting
-            $el_score_label = $el.'_survey_score';
-            $el_score = $dh[$el_score_label];
-            $cols = $cols.', '.$el_count_label.', '.$el_score_label;  // Add the new column names
-            $vals = $vals.', '.$el_count.', '.$el_score;              // Add the new column values
-            // error_log("INSERT: cols: $cols");
-        };
-    };
-
-    // Add any events (duplicated in function update!)
-    $cols = $cols.', survey_anon_3m, survey_refuse_3m';
-    $survey_anon_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90";
-    $survey_refuse_3m = "SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90";
-    $vals = $vals.', ($survey_anon_3m), ($survey_refuse_3m)';
-
-    $insert_into = "INSERT INTO health($cols) VALUES($vals)"; // Issue the database insert
-    error_log("insert: $insert_into");
-    $insert_result = mysqli_query($con, $insert_into);
-    error_log("INSERT result: $insert_result");
-    return $insert_result;
-};
-
-function updateold($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
-    // Which fields are affected?
-    $sets = '';
-    foreach($elements as $el) {
-        $el_count_label = $el.'_survey_count'; // e.g. c1_survey_count
-        $el_old_count = $old_h[$el_count_label]; 
-        if (isset($new_h[$el_count_label])) {
-            $el_new_count = $new_h[$el_count_label];
-        } else {
-            error_log('new_h['.$el_count_label.'] is not set. '.count($dh));
-            $el_new_count = null;
-        };
-        if ($el_new_count > $el_old_count) { // One of the elements that were affected by an answer's weighting
-            $el_score_label = $el.'_survey_score';
-            $el_new_score = $new_h[$el_score_label];
-            if ($sets == '') {
-                $sets = 'SET '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the first set=xyz's
-            } else {
-                $sets = $sets.', '.$el_count_label.'='.$el_new_count.','.$el_score_label.'='.$el_new_score;  // Add the new set=xyz's
-            };
-        };
-    };
-
-    // Add any events (duplicated in function update!)
-    // $sets = $sets.', survey_anon_3m, survey_refuse_3m';
-    $survey_anon_3m = "SET survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND DATEDIFF(CURDATE(), subdate)<90)";
-    $survey_refuse_3m = "SET survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND DATEDIFF(CURDATE(), subdate)<90)";
-    $sets = $sets.', $survey_anon_3m, $survey_refuse_3m';
-
-    $update = "UPDATE health $sets WHERE day='$day' AND company_id='$cid'"; // Issue the database update
-    error_log("update: $update");
-    $update_result = mysqli_query($con, $update);
-    return $update_result;
-};
-
 function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
     // If new_h is [] then this is an event update only (probably a refusal to answer a survey)
     error_log("update: ".count($old_h).",".count($new_h));
@@ -239,7 +167,7 @@ function weight_count($old_count, $cat, $effect, $ans, $el) {
     };
 };
 
-function weight_survey($ans, $old_health, $new_health) {
+function weight_survey($ans, $old_health, $new_health, $els) {
     // Table of weighting effects:
     // e.g. 'c1_survey_score' has a 10% effect on C1 (Commitment) given a 'Vital Base' answer
     // weight('Vital Base', 10, $ans, $old_health, 'c1');      // C1: Commitment
@@ -247,9 +175,8 @@ function weight_survey($ans, $old_health, $new_health) {
     $categories = array_keys($weights);
 
     foreach($categories as $cat) {
-        foreach(array("c1","c2","c3","e1","v1","v2","v3","v4","v5","v6","v7") as $i => $el) {
+        foreach($els as $i => $el) {
             $wt = $weights[$cat][$i];
-            error_log("foreach: $cat $el $wt");
             $new_health[$el."_score"] = weight_score($new_health[$el."_score"], $new_health[$el."_count"],  $cat, $wt, $ans, $el);
             $new_health[$el."_count"] = weight_count($new_health[$el."_count"], $cat, $wt, $ans, $el);
         };
@@ -289,6 +216,7 @@ if (connected($con, $response)) {
         $old_health = mysqli_fetch_assoc($result); // Just take the first
     };
     
+    // Set the new health scores initially to those returned from the current day's health
     $new_health = array(
         "c1_score" => $old_health['c1_survey_score'], "c1_count" => $old_health['c1_survey_count'],
         "c2_score" => $old_health['c2_survey_score'], "c2_count" => $old_health['c2_survey_count'],
@@ -302,20 +230,16 @@ if (connected($con, $response)) {
         "v6_score" => $old_health['v6_survey_score'], "v6_count" => $old_health['v6_survey_count'],
         "v7_score" => $old_health['v7_survey_score'], "v7_count" => $old_health['v7_survey_count'],
     );
+    // Cycle through each question to build a running score/count for each element
     foreach ($answers as $answer) {
-        error_log("before question ".$answer["id"]." new_health[v4] is ".$new_health["v4_score"].",".$new_health["v4_count"]);
-        $new_health = weight_survey($answer, $old_health, $new_health); // Adjust for an individual answer
-        error_log("after  question ".$answer["id"]." new_health[v4] is ".$new_health["v4_score"].",".$new_health["v4_count"]);
+        // Weight the score according to the contributions in fn_scoring
+        $new_health = weight_survey($answer, $old_health, $new_health, $elements); // Adjust for an individual answer
+        // error_log("after  question ".$answer["id"]." new_health[v4] is ".$new_health["v4_score"].",".$new_health["v4_count"]);
     };
 
     return 
 
     $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
-    // if ($tinsert) {
-    //     $db_result = insert($con, $new_health, $company_id, $day, $elements);
-    // } else {
-    //     $db_result = updateold($con, $old_health, $new_health, $company_id, $day, $elements);
-    // };
 
     if ($db_result) { // Success... finally update the overall health scores. This does not use insert_counts
         $response["day"] = score_health($con, $company_id, $day);
@@ -324,9 +248,10 @@ if (connected($con, $response)) {
         $response["message"] = "Success";
         $response["sqlerror"] = "";
     } else { // Failure
+        $response["sqlerror"] = mysqli_error($con);
+        error_log('scoreSurvey: Failed to update survey ('.$response['sqlerror'].')');
         http_response_code(403);
         $response["message"] = "Failed to create/update record";
-        $response["sqlerror"] = "";
     };
 }; 
 

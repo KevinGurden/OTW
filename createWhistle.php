@@ -58,14 +58,12 @@ if (connected($con, $response)) {
 	$result = mysqli_query($con, $insert);
 	if ($result) { // Success
         http_response_code(200);
-        $response["status"] = 200;
         $response["message"] = "Whistle created";
         $response["id"] = mysqli_insert_id($con); // Return the id of the record added
         $response["sqlerror"] = "";
 	} else { // Failure
 		error_log("$result: from $insert");
         http_response_code(402);
-        $response["status"] = 402;
         $response["message"] = "Create whistle failed";
         $response["sqlerror"] = mysqli_error($con);
     };
@@ -80,5 +78,7 @@ Useful stuff:
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
         sudo cat getwhistlesphp-error.log | more to show the error log
+    GIT commands
+        'git status' then 'git add <file>.php' then 'git commit -m 'message'' then 'git push origin master'
  */
 ?>

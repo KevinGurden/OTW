@@ -134,7 +134,7 @@ if (connected($con, $response)) {
             } else { // Partial failure
                 http_response_code(304);
                 $response["message"] = "Partially failed to create/update record";
-                $response["sqlerror"] = mysqli_connect_error();
+                $response["sqlerror"] = mysqli_error($con);
                 error_log('partial failure');
             };
         } else {
@@ -149,7 +149,7 @@ if (connected($con, $response)) {
         // Failure
         http_response_code(304);
         $response["message"] = "Failed to create/update record";
-        $response["sqlerror"] = mysqli_connect_error();
+        $response["sqlerror"] = mysqli_error($con);
         error_log('failure');
     };
 }; 
