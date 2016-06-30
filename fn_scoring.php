@@ -39,7 +39,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             // Events
             $wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
             $wh_quick_3m = score_event($score['whistle_quick_3m'], 0, 20);
-            $wh_open = score_event($score['whistle_open'], 200, 0);
+            $wh_open = score_event($score['whistle_open'], 5, 100);
             $wh_open_anon = score_event_div($score['whistle_anon'], $score['whistle_open'], 0, 1);
             $gr_open_3m = score_event($score['grow_open_3m'], 0, 20);
             $gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
@@ -91,7 +91,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $sets = "health=$health, $c123e1, $v1234567";
             $on_dup = "ON DUPLICATE KEY UPDATE $sets";
             $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $sets $on_dup";
-            // error_log("insert: $insert");
+            error_log("insert: $insert");
             $insert_result = mysqli_query($con, $insert);
 
             if ($insert_result) {
