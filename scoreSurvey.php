@@ -480,14 +480,14 @@ if (connected($con, $response)) {
 
     return 
 
-    //$db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
+    $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
     // if ($tinsert) {
     //     $db_result = insert($con, $new_health, $company_id, $day, $elements);
     // } else {
     //     $db_result = updateold($con, $old_health, $new_health, $company_id, $day, $elements);
     // };
 
-    //if ($db_result) {
+    if ($db_result) {
         // Success... finally update the overall health scores. This does not use insert_counts
         $response["day"] = score_health($con, $company_id, $day);
         
@@ -495,13 +495,13 @@ if (connected($con, $response)) {
         $response["status"] = 200;
         $response["message"] = "Success";
         $response["sqlerror"] = "";
-    //} else {
+    } else {
         // Failure
-    //     http_response_code(403);
-    //     $response["status"] = 403;
-    //     $response["message"] = "Failed to create/update record";
-    //     $response["sqlerror"] = "";
-    // };
+        http_response_code(403);
+        $response["status"] = 403;
+        $response["message"] = "Failed to create/update record";
+        $response["sqlerror"] = "";
+    };
 }; 
 
 echo json_encode($response); // Echo JSON response
