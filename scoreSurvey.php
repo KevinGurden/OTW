@@ -451,8 +451,8 @@ if (connected($con, $response)) {
     if ($result === false || mysqli_num_rows($result) == 0) { // No record so create one
         $tinsert = true;
         foreach($elements as $e) {
-            $label = $e.'_survey_count';
-            $old_health[$label] = 0;
+            $old_health[$e.'_survey_score'] = null;
+            $old_health[$e.'_survey_count'] = 0;
         };
     } else { // We found at least 1 record
         $tinsert = false;
