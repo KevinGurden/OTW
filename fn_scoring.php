@@ -5,17 +5,17 @@
  */
 function weights() { // Provide survey contributions
     return array(
-        "Commitment" =>     array(100,  10,   0,  10,   0,   0,  10,  10,  20,  20,   0),
-        "Communication" =>  array( 20, 100,   0,  10,  10,  25,  20,  20,  10,  10,  25),
-        "Care" =>           array( 10,  20, 100,  20,   0,  20,  20,  20,  10,  10,  25),
-        "Environment" =>    array( 10,  10,  10, 100,   0,  10,  20,  10,  10,  10,  20),
-        "Vision" =>         array( 10,  20,  20,  10, 100,  25,  20,  10,   0,  20,  20),
-        "Values" =>         array( 10,  20,  20,  10,  25, 100,   0,  20,   0,  20,  20),
-        "Value" =>          array( 10,   0,  20,  20,  20,  20, 100,  40,  20,  20,  20),
-        "Vulnerability" =>  array( 10,   0,  20,  10,   0,   0,  40, 100,  10,  10,  20),
-        "Victory" =>        array( 10,   0,   0,   0,   0,   0,   0,   0, 100,  10,  20),
-        "Vitality" =>       array( 20,  10,   0,   0,  10,   0,   0,   0,  20, 100,   0),
-        "Vital Base" =>     array( 10,  20,  20,  20,  20,  20,  20,  20,  10,  20, 100)
+        "Commitment" =>     array(100,  10,   0,  10,   0,   0,  10,  10,  20,  20,   0), // C1
+        "Communication" =>  array( 20, 100,   0,  10,  10,  25,  20,  20,  10,  10,  25), // C2
+        "Care" =>           array( 10,  20, 100,  20,   0,  20,  20,  20,  10,  10,  25), // C3
+        "Environment" =>    array( 10,  10,  10, 100,   0,  10,  20,  10,  10,  10,  20), // E1
+        "Vision" =>         array( 10,  20,  20,  10, 100,  25,  20,  10,   0,  20,  20), // V1
+        "Values" =>         array( 10,  20,  20,  10,  25, 100,   0,  20,   0,  20,  20), // V2
+        "Value" =>          array( 10,   0,  20,  20,  20,  20, 100,  40,  20,  20,  20), // V3
+        "Vulnerability" =>  array( 10,   0,  20,  10,   0,   0,  40, 100,  10,  10,  20), // V4
+        "Victory" =>        array( 10,   0,   0,   0,   0,   0,   0,   0, 100,  10,  20), // V5
+        "Vitality" =>       array( 20,  10,   0,   0,  10,   0,   0,   0,  20, 100,   0), // V6
+        "Vital Base" =>     array( 10,  20,  20,  20,  20,  20,  20,  20,  10,  20, 100)  // V7
     );
 };
 
@@ -39,8 +39,12 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             // Events
             $wh_open_3m = score_event($score['whistle_open_3m'], 0, 20);
             $wh_quick_3m = score_event($score['whistle_quick_3m'], 0, 20);
-            $wh_open = score_event($score['whistle_open'], 5, 100);
+            $wh_open = score_event($score['whistle_open'], 5, 50);
             $wh_open_anon = score_event_div($score['whistle_anon'], $score['whistle_open'], 0, 1);
+            $fl_open_3m = score_event($score['flag_open_3m'], 0, 20);
+            $fl_quick_3m = score_event($score['flag_quick_3m'], 0, 20);
+            $fl_open = score_event($score['flag_open'], 5, 100);
+            $fl_open_anon = score_event_div($score['flag_anon'], $score['flag_open'], 0, 1);
             $gr_open_3m = score_event($score['grow_open_3m'], 0, 20);
             $gr_closed_met = score_event($score['grow_closed_met'], 15, 0);
             $gr_closed_not_met = score_event($score['grow_closed_not_met'], 0, 15);
@@ -51,6 +55,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $c1_grow = score_contribution('c1', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             // $set_v3_whistle = score_contribution('v3', 'whistle', array());
             $v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon));
+            $v4_flag = score_contribution('v4', 'flag', array($fl_open_3m, $fl_open, $fl_quick_3m, $wh_open_anon));
             $v5_grow = score_contribution('v5', 'grow', array($gr_closed_met, $gr_closed_not_met));
             $v6_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             $v7_grow = score_contribution('v7', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
@@ -63,15 +68,19 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $v1 = score_component('v1', $score, array());
             $v2 = score_component('v2', $score, array());
             $v3 = score_component('v3', $score, array());
-            $v4 = score_component('v4', $score, array($wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon));
+            $v4 = score_component('v4', $score, array(
+                                                        $wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon,
+                                                        $fl_open_3m, $fl_open, $fl_quick_3m, $fl_open_anon
+                                                ));
             $v5 = score_component('v5', $score, array($gr_closed_met, $gr_closed_not_met));
             $v6 = score_component('v6', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             $v7 = score_component('v7', $score, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
 
             // Health
-            $all = array($c1['value'], $c2['value'], $c3['value'], $e1['value'],
-                        $v1['value'], $v2['value'], $v3['value'], $v4['value'], $v5['value'], $v6['value'], $v7['value']
-                    );  
+            $all = array(   
+                            $c1['value'], $c2['value'], $c3['value'], $e1['value'],
+                            $v1['value'], $v2['value'], $v3['value'], $v4['value'], $v5['value'], $v6['value'], $v7['value']
+                        );  
             $all_non_null = array_filter($all, "not_null");
             $health = round(array_sum($all_non_null) / count($all_non_null));
 

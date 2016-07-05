@@ -11,7 +11,7 @@ Return:
     status: 200 for success, 400+ for error
     message: High level error message
     sqlerror: detailed sql error
-    company: a json object of company specific information
+    init: a json object of company specific information
 
 See bottom for useful commands
  */
