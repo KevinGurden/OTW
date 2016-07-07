@@ -122,6 +122,7 @@ if (connected($con, $response)) {
     if ($db_result1) { // Completed
         
         if ($types!='') { // Old apps didn't pass types so check first
+            error_log('Whistle: types: '.$types);
             $types_array = explode(',',$types);
             $db_result2 = insert_counts($con, $company_id, $day, $types_array); // Now add category counts e.g. Bribery
 
