@@ -102,7 +102,7 @@ function insert_counts($con, $cid, $day, $types) { // Update category type count
 
     
     $update = "UPDATE health $sets WHERE day='$day' AND company_id=$cid";
-    error_log('update: $update');
+    error_log('update: '.$update);
     $update_result = mysqli_query($con, $update);
     return $update_result;
 };
