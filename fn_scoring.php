@@ -55,7 +55,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $c1_grow = score_contribution('c1', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             // $set_v3_whistle = score_contribution('v3', 'whistle', array());
             $v4_whistle = score_contribution('v4', 'whistle', array($wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon));
-            $v4_flag = score_contribution('v4', 'flag', array($fl_open_3m, $fl_open, $fl_quick_3m, $wh_open_anon));
+            $v4_flag = score_contribution('v4', 'flag', array($fl_open_3m, $fl_open, $fl_quick_3m, $fl_open_anon));
             $v5_grow = score_contribution('v5', 'grow', array($gr_closed_met, $gr_closed_not_met));
             $v6_grow = score_contribution('v6', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
             $v7_grow = score_contribution('v7', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
@@ -96,7 +96,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $c123e1 = $c1['set'].','.$c2['set'].','.$c3['set'].','.$e1['set'];
             $c123e1 = $c123e1.','.$c1_grow['set'];
             $v1234567 = $v1['set'].','.$v2['set'].','.$v3['set'].','.$v4['set'].','.$v5['set'].','.$v6['set'].','.$v7['set'];
-            $v1234567 = $v1234567.','.$v4_whistle['set'].','.$v5_grow['set'].','.$v6_grow['set'].','.$v7_grow['set'];
+            $v1234567 = $v1234567.','.$v4_flag['set'].','.$v4_whistle['set'].','.$v5_grow['set'].','.$v6_grow['set'].','.$v7_grow['set'];
             $sets = "health=$health, $c123e1, $v1234567";
             $on_dup = "ON DUPLICATE KEY UPDATE $sets";
             $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $sets $on_dup";
@@ -236,8 +236,9 @@ function score_contribution($comp, $cont, $events) {
     } else {
         $cont_score = 'NULL';
     };
-
-    return array('set' => $comp."_".$cont."_score=".$cont_score, 'value' => $cont_score);
+    $cont_set = array('set' => $comp."_".$cont."_score=".$cont_score, 'value' => $cont_score);
+    //error_log("contribution: $cont_set['set']");
+    return $cont_set;
 };
 
 
