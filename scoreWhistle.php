@@ -35,40 +35,42 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
             )
     ON DUPLICATE KEY 
         UPDATE 
-            whistle_open = (
+            whistle_open = ( // Count whistles that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle'
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<=$day
             ),
-            whistle_open_3m = (
+            whistle_open_3m = ( // Count whistles that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND datediff(curdate(),subdate)<90
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<=$day AND datediff(curdate(),subdate)<90
             ),
-            whistle_quick_3m = (
+            whistle_quick_3m = ( // Count quick whistles that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'quick' AND datediff(curdate(),subdate)<90
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'quick' AND subdate<=$day AND datediff(curdate(),subdate)<90
             ),
-            whistle_anon = (
+            whistle_anon = ( // Count whistles that were submitted before the day and are raised anononously
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND anon=1
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<=$day AND anon=1
             )
     */
     $lookup = $cid . ':' . $day;
+    $comp = "company_id=$cid";
     $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
     $not_closed = "status!='closed'";
+    $before = "subdate<=$day";
     $cat_whistle = "cat='whistle'"; $cat_quick = "cat='quick'";
 
-    $whistles_open = "whistle_open = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle)";
-    $whistles_open_3m = "whistle_open_3m = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle AND $days_90)";
-    $whistles_quick_3m = "whistle_quick_3m = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_quick AND $days_90)";
-    $whistles_open_anon = "whistle_anon = (SELECT COUNT(*) FROM whistles WHERE company_id=$cid AND $not_closed AND $cat_whistle AND anon=1)";
+    $whistles_open = "whistle_open = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before)";
+    $whistles_open_3m = "whistle_open_3m = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before AND $days_90)";
+    $whistles_quick_3m = "whistle_quick_3m = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_quick AND $before AND $days_90)";
+    $whistles_open_anon = "whistle_anon = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before AND anon=1)";
     $whistle_events = "$whistles_open, $whistles_open_3m, $whistles_quick_3m, $whistles_open_anon";
     
     $on_dup = "ON DUPLICATE KEY UPDATE $whistle_events";
-    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $whistle_events $on_dup";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', $comp, $whistle_events $on_dup";
     $insert_result = mysqli_query($con, $insert);
     error_log($insert, $insert_result);
     return $insert_result;
@@ -77,9 +79,9 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
 function insert_counts($con, $cid, $day, $types) { // Update category type counts into 'health'
     /* 
     UPDATE health
-        SET whistle_open_1=(
+        SET whistle_open_1=( // Count cat 1 whistles that were submitted before the day and are still open
             SELECT COUNT(*) FROM whistles
-                WHERE company_id = $cid AND status != 'closed' AND cat = 'whistle' AND type_selected='$type'
+                WHERE company_id = $cid AND status != 'closed' AND cat = 'whistle' AND subdate<=$day AND type_selected='$type' 
         ),
         etc
         WHERE day='$day',
@@ -88,7 +90,7 @@ function insert_counts($con, $cid, $day, $types) { // Update category type count
     */
     // Build up the set= statements
     $sets = '';
-    $set_where = "WHERE company_id=".$cid." AND status != 'closed' AND cat = 'whistle'";
+    $set_where = "WHERE company_id=".$cid." AND status!='closed' AND cat='whistle' AND subdate<=$day";
     $select = "SELECT COUNT(*) FROM whistles $set_where";
     foreach($types as $ix=>$type) {
         $type_count_label = 'whistle_open_'.$ix; // e.g. whistle_open_1

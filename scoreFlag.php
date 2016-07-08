@@ -35,40 +35,42 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
             )
     ON DUPLICATE KEY 
         UPDATE 
-            flag_open = (
+            flag_open = ( // Count flags that were submitted before the day and are still open
                 SELECT 
                     COUNT(*) FROM flags
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'flag'
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'flag' AND subdate<=$day
             ),
-            flag_open_3m = (
+            flag_open_3m = ( // Count flags that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM flags
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'flag' AND datediff(curdate(),subdate)<90
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'flag' AND subdate<=$day AND datediff(curdate(),subdate)<90
             ),
-            flag_quick_3m = (
+            flag_quick_3m = ( // Count quick flags that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM flags
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'quick' AND datediff(curdate(),subdate)<90
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'quick' AND subdate<=$day AND datediff(curdate(),subdate)<90
             ),
-            flag_anon = (
+            flag_anon = ( // Count flags that were submitted before the day and are raised anononously
                 SELECT 
                     COUNT(*) FROM flags
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'flag' AND anon=1
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'flag' AND subdate<=$day AND anon=1
             )
     */
     $lookup = $cid . ':' . $day;
+    $comp = "company_id=$cid";
     $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
     $not_closed = "status!='closed'";
+    $before = "subdate<=$day";
     $cat_flag = "cat='flag'"; $cat_quick = "cat='quick'";
 
-    $flags_open = "flag_open = (SELECT COUNT(*) FROM flags WHERE company_id=$cid AND $not_closed AND $cat_flag)";
-    $flags_open_3m = "flag_open_3m = (SELECT COUNT(*) FROM flags WHERE company_id=$cid AND $not_closed AND $cat_flag AND $days_90)";
-    $flags_quick_3m = "flag_quick_3m = (SELECT COUNT(*) FROM flags WHERE company_id=$cid AND $not_closed AND $cat_quick AND $days_90)";
-    $flags_open_anon = "flag_anon = (SELECT COUNT(*) FROM flags WHERE company_id=$cid AND $not_closed AND $cat_flag AND anon=1)";
+    $flags_open = "flag_open = (SELECT COUNT(*) FROM flags WHERE $comp AND $not_closed AND $cat_flag AND $before)";
+    $flags_open_3m = "flag_open_3m = (SELECT COUNT(*) FROM flags WHERE $comp AND $not_closed AND $cat_flag AND $before AND $days_90)";
+    $flags_quick_3m = "flag_quick_3m = (SELECT COUNT(*) FROM flags WHERE $comp AND $not_closed AND $cat_quick AND $before AND $days_90)";
+    $flags_open_anon = "flag_anon = (SELECT COUNT(*) FROM flags WHERE $comp AND $not_closed AND $cat_flag AND $before AND anon=1)";
     $flag_events = "$flags_open, $flags_open_3m, $flags_quick_3m, $flags_open_anon";
     
     $on_dup = "ON DUPLICATE KEY UPDATE $flag_events";
-    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $flag_events $on_dup";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', $comp, $flag_events $on_dup";
     $insert_result = mysqli_query($con, $insert);
     error_log($insert, $insert_result);
     return $insert_result;
@@ -77,9 +79,9 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
 function insert_counts($con, $cid, $day, $types) { // Update category type counts into 'health'
     /* 
     UPDATE health
-        SET flag_open_1=(
+        SET flag_open_1=( // Count cat 1 flags that were submitted before the day and are still open
             SELECT COUNT(*) FROM flags
-                WHERE company_id = $cid AND status != 'closed' AND cat = 'flag' AND type_selected='$type'
+                WHERE company_id = $cid AND status != 'closed' AND cat = 'flag' AND subdate<=$day AND type_selected='$type'
         ),
         etc
         WHERE day='$day',
