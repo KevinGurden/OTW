@@ -44,7 +44,7 @@ if (connected($con, $response)) {
 	$loc_main = escape($con, 'loc_main', '');
 	$loc_detail = escape($con, 'loc_detail', '');
 	$user = escape($con, 'user', '');
-	$anon = escape($con, 'wAnon', 0);
+	$anon = escape($con, 'anon', 0);
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
 	// Issue the database create
