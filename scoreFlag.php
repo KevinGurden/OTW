@@ -90,7 +90,7 @@ function insert_counts($con, $cid, $day, $types) { // Update category type count
     */
     // Build up the set= statements
     $sets = '';
-    $set_where = "WHERE company_id=".$cid." AND status != 'closed' AND cat = 'flag'";
+    $set_where = "WHERE company_id=".$cid." AND status != 'closed' AND cat = 'flag' AND subdate<='$day'";
     $select = "SELECT COUNT(*) FROM flags $set_where";
     foreach($types as $ix=>$type) {
         $type_count_label = 'flag_open_'.$ix; // e.g. flag_open_1
