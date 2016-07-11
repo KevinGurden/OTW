@@ -72,7 +72,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $on_dup = "ON DUPLICATE KEY UPDATE $flag_events";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', $comp, $flag_events $on_dup";
     $insert_result = mysqli_query($con, $insert);
-    error_log($insert, $insert_result);
+    // error_log($insert, $insert_result);
     return $insert_result;
 };
 
@@ -104,7 +104,7 @@ function insert_counts($con, $cid, $day, $types) { // Update category type count
 
     
     $update = "UPDATE health $sets WHERE day='$day' AND company_id=$cid";
-    error_log('update: '.$update);
+    // error_log('update: '.$update);
     $update_result = mysqli_query($con, $update);
     return $update_result;
 };
@@ -125,7 +125,6 @@ if (connected($con, $response)) {
     if ($db_result1) { // Completed
         
         if ($types!='') { // Old apps didn't pass types so check first
-            error_log('Flag: types: '.$types);
             $types_array = explode(',',$types);
             $db_result2 = insert_counts($con, $company_id, $day, $types_array); // Now add category counts e.g. Sexism
 
@@ -134,7 +133,6 @@ if (connected($con, $response)) {
                 // $response["status"] = 200;
                 $response["message"] = "Success";
                 $response["sqlerror"] = "";
-                error_log('success');
             } else { // Partial failure
                 http_response_code(304);
                 $response["message"] = "Partially failed to create/update record";

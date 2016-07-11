@@ -100,7 +100,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             $sets = "health=$health, $c123e1, $v1234567";
             $on_dup = "ON DUPLICATE KEY UPDATE $sets";
             $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $sets $on_dup";
-            error_log("insert: $insert");
+            // error_log("insert: $insert");
             $insert_result = mysqli_query($con, $insert);
 
             if ($insert_result) {

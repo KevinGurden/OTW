@@ -27,7 +27,7 @@ include 'fn_scoring.php';
 
 function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
     // If new_h is [] then this is an event update only (probably a refusal to answer a survey)
-    error_log("update: ".count($old_h).",".count($new_h));
+    // error_log("update: ".count($old_h).",".count($new_h));
     /* 
     INSERT INTO health  
         SET day='$day', lookup=$cid:$day, company_id=$cid,
@@ -82,7 +82,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
 
     $on_dup = "ON DUPLICATE KEY UPDATE $survey_scores $survey_events";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $survey_scores $survey_events $on_dup";
-    error_log("insert2: $insert");
+    // error_log("insert2: $insert");
     $insert_result = mysqli_query($con, $insert);
     return $insert_result;
 };
@@ -94,20 +94,12 @@ function weight($cat, $effect, $ans, $olddh, $el) {
         global $new_health;
         $effect100 = $effect/100;
         $new_value = $effect100 * $value;
-        if ($el=='v4') {
-            error_log("weight 1: $cat, $effect, $value, $el");
-        };
 
         $score_label = $el.'_survey_score';    // Score field label in the 'health' table
         $count_label = $el.'_survey_count';    // Count field label in the 'health' table
         $el_count = $olddh[$count_label];  // Current count
-        if ($el=='v4') {
-            error_log("weight 2: $el_count");
-        };
+        
         if ($el_count == 0) { // Ignore current score if this is a new record
-            if ($el=='v4') {
-                error_log("weight 3a: el_count==0");
-            };
             $new_health[$score_label] = $new_value;
             $new_health[$count_label] = $effect100;
         } else { // We have a non-zero count to calculate the combined average
@@ -115,13 +107,6 @@ function weight($cat, $effect, $ans, $olddh, $el) {
             // $new_health[$score_label] = (($el_score * $el_count) + $new_value) / $el_count + 1;
             $new_health[$score_label] = $el_score + ($new_value/$effect100);
             $new_health[$count_label] = $el_count + $effect100;
-            if ($el=='v4') {
-                $one = $new_health[$score_label]; $two = $new_health[$count_label];
-                error_log("weight 3b: score: $one count: $two");
-            };
-        };
-        if ($el=='v4') {
-            error_log("weight 4: $value, ".$new_health[$score_label].", $new_value");
         };
     }; 
 };
@@ -133,16 +118,10 @@ function weight_score($old_score, $old_count, $cat, $effect, $ans, $el) {
         $effect100 = $effect/100;
         $new_value = $effect100 * $value;
 
-        if ($el=='v4') {
-            error_log("weight_score 1: $value ($old_score $old_count) $cat $effect");
-        };
         if ($old_count == 0) { // Ignore current score if this is a new record
             $new_score = $new_value;
         } else { // We have a non-zero count to calculate the combined average
             $new_score = $old_score + $new_value;
-        };
-        if ($el=='v4') {
-            error_log("weight_score 4: $new_score");
         };
         return $new_score;
     } else {
@@ -152,9 +131,6 @@ function weight_score($old_score, $old_count, $cat, $effect, $ans, $el) {
 
 function weight_count($old_count, $cat, $effect, $ans, $el) {    
     if ($ans['cat'] == $cat && $effect > 0) {      // Are we the correct category
-        if ($el=='v4') {
-            error_log("weight_count 1: ($old_count) $cat $effect");
-        };
         $effect100 = $effect/100;
         if (!isset($old_count) || $old_count == 0) { // Ignore current score if this is a new record
             $new_count = $effect100;
