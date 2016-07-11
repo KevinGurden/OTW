@@ -64,6 +64,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $cat_whistle = "cat='whistle'"; $cat_quick = "cat='quick'";
 
     $whistles_open = "whistle_open = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before)";
+    error_log('whistles_open: '.$whistles_open);
     $whistles_open_3m = "whistle_open_3m = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before AND $days_90)";
     $whistles_quick_3m = "whistle_quick_3m = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_quick AND $before AND $days_90)";
     $whistles_open_anon = "whistle_anon = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before AND anon=1)";
