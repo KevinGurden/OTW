@@ -60,7 +60,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $comp = "company_id=$cid";
     $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
     $not_closed = "status!='closed'";
-    $before = "subdate<=$day";
+    $before = "subdate<='$day'";
     $cat_flag = "cat='flag'"; $cat_quick = "cat='quick'";
 
     $flags_open = "flag_open = (SELECT COUNT(*) FROM flags WHERE $comp AND $not_closed AND $cat_flag AND $before)";

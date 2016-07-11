@@ -38,29 +38,29 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
             whistle_open = ( // Count whistles that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<=$day
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<='$day'
             ),
             whistle_open_3m = ( // Count whistles that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<=$day AND datediff(curdate(),subdate)<90
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<='$day' AND datediff(curdate(),subdate)<90
             ),
             whistle_quick_3m = ( // Count quick whistles that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'quick' AND subdate<=$day AND datediff(curdate(),subdate)<90
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'quick' AND subdate<='$day' AND datediff(curdate(),subdate)<90
             ),
             whistle_anon = ( // Count whistles that were submitted before the day and are raised anononously
                 SELECT 
                     COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<=$day AND anon=1
+                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND subdate<='$day' AND anon=1
             )
     */
     $lookup = $cid . ':' . $day;
     $comp = "company_id=$cid";
     $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
     $not_closed = "status!='closed'";
-    $before = "subdate<=$day";
+    $before = "subdate<='$day'";
     $cat_whistle = "cat='whistle'"; $cat_quick = "cat='quick'";
 
     $whistles_open = "whistle_open = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before)";
