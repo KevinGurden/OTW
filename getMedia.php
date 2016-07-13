@@ -6,6 +6,7 @@ Parameters:
     id: company identifier. Integer
     user: userid. String
     mediaId: Integer
+    type: type of return media; 'thumbnail', 'full', 'stock'. String
 
 Return:
     status: 200 for success, 300+ for error
@@ -34,7 +35,8 @@ if (connected($con, $response)) {
     $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
     $user = escape($con, 'user', '');
     $mediaId = escape($con, 'mediaId', '');
-    error_log("getMedia: ".$mediaIds);
+    $type = escape($con, 'type', 'full');
+    error_log("getMedia: ".$type);
 
     // Get 1 record only
     $select = "SELECT * FROM media WHERE company_id=$id AND user='$user' AND id=$mediaId LIMIT 1";
@@ -54,12 +56,17 @@ if (connected($con, $response)) {
         if (mysqli_num_rows($result) > 0) {
             $media = mysqli_fetch_assoc($result); // Should only be 1 result
             
-            $b64 = base64_encode($media["file"]);
-            $media["valid"] = !($b64 === false);
-            if ($media["valid"]) { // Valid conversion
-                // $b64 = mysqli_real_escape_string($con, $b64);
-                $media["file64"] = $b64;
+            if ($type=='full') { // Only convert file/file64 if we want the full transfer
+                $b64 = base64_encode($media["file"]);
+                $media["valid"] = !($b64 === false);
+                if ($media["valid"]) { // Valid conversion
+                    // $b64 = mysqli_real_escape_string($con, $b64);
+                    $media["file64"] = $b64;
+                } else {
+                    $media["file64"] = null;
+                };
             } else {
+                $media["file"] = null;
                 $media["file64"] = null;
             };
 
