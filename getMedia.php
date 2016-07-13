@@ -1,11 +1,11 @@
 <?php
 /*
-Get media files from the encol database.
+Get a media file from the encol database.
 
 Parameters:
     id: company identifier. Integer
     user: userid. String
-    mediaIds: Comma sepearated list of integer ids. String
+    mediaId: Integer
 
 Return:
     status: 200 for success, 300+ for error
@@ -33,11 +33,11 @@ if (connected($con, $response)) {
 
     $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
     $user = escape($con, 'user', '');
-    $mediaIds = escape($con, 'mediaIds', '');
+    $mediaId = escape($con, 'mediaId', '');
     error_log("getMedia: ".$mediaIds);
 
-    // Get an arry of scores by day
-    $select = "SELECT * FROM media WHERE company_id=$id AND id IN (".$mediaIds.")";
+    // Get 1 record only
+    $select = "SELECT * FROM media WHERE company_id=$id AND user='$user' AND id=$mediaId LIMIT 1";
     error_log("getMedia: ".$select);
     $result = mysqli_query($con, $select);
     $response["query"] = "$select";
@@ -52,25 +52,22 @@ if (connected($con, $response)) {
 
         // Check for empty result
         if (mysqli_num_rows($result) > 0) {
-            // Loop through all results
-            while ($media = mysqli_fetch_assoc($result)) {
-                $medias[] = $media;
-            };
+            $media = mysqli_fetch_assoc($result); // Should only be 1 result
             
-            foreach($medias as $key=>$value){
-                $newMedias[$key] = $medias[$key];
+            foreach($media as $key=>$value){
+                $newMedia[$key] = $media[$key];
 
-                $b64 = base64_encode($medias[$key]["file"]);
-                $newMedias[$key]["valid"] = !($b64 === false);
-                if ($newMedias[$key]["valid"]) { // Valid conversion
+                $b64 = base64_encode($media[$key]["file"]);
+                $newMedia[$key]["valid"] = !($b64 === false);
+                if ($newMedia[$key]["valid"]) { // Valid conversion
                     // $b64 = mysqli_real_escape_string($con, $b64);
-                    $newMedias[$key]["file64"] = $b64;
+                    $newMedia[$key]["file64"] = $b64;
                 } else {
-                    $newMedias[$key]["file64"] = null;
+                    $newMedia[$key]["file64"] = null;
                 };
             };
 
-            $response["media"] = $newMedias;
+            $response["media"] = $newMedia;
 
             http_response_code(200); // Success
             $response["message"] = "Success";
