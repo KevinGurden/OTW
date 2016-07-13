@@ -39,7 +39,6 @@ if (connected($con, $response)) {
     $select = "SELECT * FROM media WHERE company_id=$id AND id IN (".$mediaIds.")";
     error_log("getMedia: ".$select);
     $result = mysqli_query($con, $select);
-    error_log("getMedia: result: ".$result);
     $response["query"] = "$select";
 
     if ($result === false) { // Will either be false or an array
