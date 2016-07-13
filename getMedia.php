@@ -54,6 +54,9 @@ if (connected($con, $response)) {
             // Loop through all results
             
             while ($media = mysqli_fetch_assoc($result)) {
+                $b64 = base64_encode($media["file"]);
+                $b64 = mysql_real_escape_string($b64);
+                $media["file64"] = $b64;
                 $medias[] = $media;
             };
             $response["media"] = $medias;
