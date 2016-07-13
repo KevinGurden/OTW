@@ -59,7 +59,7 @@ if (connected($con, $response)) {
             };
             
             foreach($medias as $key=>$value){
-                $newMedias[$key] = medias[$key];
+                $newMedias[$key] = $medias[$key];
 
                 $b64 = base64_encode($medias[$key]["file"]);
                 $newMedias[$key]["valid"] = ($b64 === false);
