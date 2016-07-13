@@ -29,6 +29,7 @@ $response = array(); // Array for JSON response
 
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
     $user = escape($con, 'user', '');
