@@ -54,7 +54,7 @@ if (connected($con, $response)) {
         if (mysqli_num_rows($result) > 0) {
             $media = mysqli_fetch_assoc($result); // Should only be 1 result
             
-            $b64 = base64_encode($media[$key]["file"]);
+            $b64 = base64_encode($media["file"]);
             $media["valid"] = !($b64 === false);
             if ($media["valid"]) { // Valid conversion
                 // $b64 = mysqli_real_escape_string($con, $b64);
