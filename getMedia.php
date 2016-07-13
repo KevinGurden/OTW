@@ -5,7 +5,7 @@ Get media files from the encol database.
 Parameters:
     id: company identifier. Integer
     user: userid. String
-    imageIds: Comma sepearated list of integer ids. String
+    mediaIds: Comma sepearated list of integer ids. String
 
 Return:
     status: 200 for success, 300+ for error
@@ -32,12 +32,14 @@ if (connected($con, $response)) {
 
     $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
     $user = escape($con, 'user', '');
-    $imageIds = escape($con, 'imageIds', '');
-    error_log("getMedia: ".$imageIds);
+    $mediaIds = escape($con, 'mediaIds', '');
+    error_log("getMedia: ".$mediaIds);
 
     // Get an arry of scores by day
-    $select = "SELECT * FROM media WHERE company_id=$id AND id IN (".$imageIds.")";
+    $select = "SELECT * FROM media WHERE company_id=$id AND id IN (".$mediaIds.")";
+    error_log("getMedia: ".$select);
     $result = mysqli_query($con, $select);
+    error_log("getMedia: result: ".$result);
     $response["query"] = "$select";
 
     if ($result === false) { // Will either be false or an array
