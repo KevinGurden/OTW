@@ -48,26 +48,22 @@ if (connected($con, $response)) {
         $response["message"] = "Query failed";
         $response["sqlerror"] = mysqli_error($con);
     } else {
-        $medias = array();
+        $media = array();
 
         // Check for empty result
         if (mysqli_num_rows($result) > 0) {
             $media = mysqli_fetch_assoc($result); // Should only be 1 result
             
-            foreach($media as $key=>$value){
-                $newMedia[$key] = $media[$key];
-
-                $b64 = base64_encode($media[$key]["file"]);
-                $newMedia[$key]["valid"] = !($b64 === false);
-                if ($newMedia[$key]["valid"]) { // Valid conversion
-                    // $b64 = mysqli_real_escape_string($con, $b64);
-                    $newMedia[$key]["file64"] = $b64;
-                } else {
-                    $newMedia[$key]["file64"] = null;
-                };
+            $b64 = base64_encode($media[$key]["file"]);
+            $media["valid"] = !($b64 === false);
+            if ($media["valid"]) { // Valid conversion
+                // $b64 = mysqli_real_escape_string($con, $b64);
+                $media["file64"] = $b64;
+            } else {
+                $media["file64"] = null;
             };
 
-            $response["media"] = $newMedia;
+            $response["media"] = $media;
 
             http_response_code(200); // Success
             $response["message"] = "Success";
