@@ -55,24 +55,30 @@ if (connected($con, $response)) {
             // Loop through all results
             
             while ($media = mysqli_fetch_assoc($result)) {
-                $b64 = base64_encode($media["file"]);
-                $media["valid"] = ($b64 === false);
-                if ($media["valid"]) { // Valid conversion
-                    $b64 = mysqli_real_escape_string($con, $b64);
-                    $media["file64"] = $b64;
-                } else {
-                    $media["file64"] = null;
-                };
                 $medias[] = $media;
             };
-            $response["media"] = $medias;
+            
+            foreach($medias as $key=>$value){
+                $newMedias[$key] = medias[$key];
+
+                $b64 = base64_encode($medias[$key]["file"]);
+                $newMedias[$key]["valid"] = ($b64 === false);
+                if ($newMedias[$key]["valid"]) { // Valid conversion
+                    $b64 = mysqli_real_escape_string($con, $b64);
+                    $newMedias[$key]["file64"] = $b64;
+                } else {
+                    $newMedias[$key]["file64"] = null;
+                };
+            };
+
+            $response["media"] = $newMedias;
 
             http_response_code(200); // Success
             $response["message"] = "Success";
             $response["sqlerror"] = "";
         } else {
             http_response_code(200); // Success but null return
-            $response["message"] = "No media found for company '$id'";
+            $response["message"] = "No media found";
             $response["scores"] = $scores;
         };
     };
