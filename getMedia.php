@@ -55,8 +55,13 @@ if (connected($con, $response)) {
             
             while ($media = mysqli_fetch_assoc($result)) {
                 $b64 = base64_encode($media["file"]);
-                $b64 = mysql_real_escape_string($b64);
-                $media["file64"] = $b64;
+                $media["valid"] = ($b64 === false);
+                if ($media["valid"]) { // Valid conversion
+                    $b64 = mysqli_real_escape_string($con, $b64);
+                    $media["file64"] = $b64;
+                } else {
+                    $media["file64"] = null;
+                };
                 $medias[] = $media;
             };
             $response["media"] = $medias;
