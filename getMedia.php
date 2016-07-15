@@ -65,9 +65,10 @@ if (connected($con, $response)) {
                 } else {
                     $media["file64"] = null;
                 };
-            } else {
+                $media["thumbnail"] = base64_encode($media["thumbnail"]);
+            } elseif ($type=='thumbnail') {
                 $media["file"] = null;
-                $media["file64"] = null;
+                $media["thumbnail"] = base64_encode($media["thumbnail"]);
             };
 
             $response["media"] = $media;
