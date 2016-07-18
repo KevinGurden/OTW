@@ -5,6 +5,7 @@ Create a new media item in the 'media' encol database.
 Data passed:
 	file64:     Base64 encoded file. Blob
     type:       Type of media object e.g. 'photo', 'video'. String
+    photo_type: Type of photo if type=photo e.g. 'jpeg'. String
     user:       Username. String
     cId:        Company identifier in the 'company' table within the encol database. Integer
 
@@ -36,14 +37,15 @@ if (connected($con, $response)) {
 
 	// Escape the values to ensure no injection vunerability
     $type = escape($con, 'type', 'photo');
+    $photo_type = escape($con, 'photo_type', '');
 	$user = escape($con, 'user', '');
 	$cId = escape($con, 'cId', 0); // Default to 0-Unknown
-    error_log('createMedia: '.$type.', '.$user.', '.$cId);
+    // error_log('createMedia: '.$type.', '.$user.', '.$cId);
     $file64 = $_POST['file64'];
 
     // Issue the database create
-    $cols = "type, file, user, company_id";
-    $vals = "'$type', '$file64', '$user', $cId";
+    $cols = "type, photo_type, file, user, company_id";
+    $vals = "'$type', '$photo_type', '$file64', '$user', $cId";
 
     $insert = "INSERT INTO media($cols) VALUES($vals)";
     error_log('createMedia: insert: '.$insert);
