@@ -38,6 +38,7 @@ if (connected($con, $response)) {
     $type = escape($con, 'type', 'photo');
 	$user = escape($con, 'user', '');
 	$cId = escape($con, 'cId', 0); // Default to 0-Unknown
+    error_log('createMedia: $type, $user, $cId');
     $file64 = $_POST['file64'];
 
     // Issue the database create
@@ -45,6 +46,7 @@ if (connected($con, $response)) {
     $vals = "'$type', '$file64', '$user', $cId";
 
     $insert = "INSERT INTO media($cols) VALUES($vals)";
+    error_log('createMedia: insert: $insert');
     $result = mysqli_query($con, $insert);
     if ($result) {
         http_response_code(200);
