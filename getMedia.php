@@ -69,6 +69,7 @@ if (connected($con, $response)) {
             } elseif ($type=='thumbnail') {
                 $media["file"] = null;
                 $media["thumbnail"] = base64_encode($media["thumbnail"]);
+                $media["thumbnail"] = base64_encode($media["thumbnail"]);
             };
 
             $response["media"] = $media;
@@ -79,7 +80,7 @@ if (connected($con, $response)) {
         } else {
             http_response_code(200); // Success but null return
             $response["message"] = "No media found";
-            $response["scores"] = $scores;
+            $response["sqlerror"] = "";
         };
     };
 };
