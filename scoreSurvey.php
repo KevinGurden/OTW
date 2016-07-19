@@ -31,13 +31,13 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     /* 
     INSERT INTO health  
         SET day='$day', lookup=$cid:$day, company_id=$cid,
-            c1_survey_count=(), c2_survey_score=(),
+            cm_survey_count=(), co_survey_score=(),
             etc
             survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND DATEDIFF(CURDATE(),subdate)<90), 
             survey_refuse_3m=()
     ON DUPLICATE KEY 
         UPDATE 
-            c1_survey_count=(), c2_survey_score=(),
+            cm_survey_count=(), co_survey_score=(),
             etc
             survey_anon_3m = (
                 SELECT 
@@ -177,7 +177,7 @@ if (connected($con, $response)) {
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
     
-    $elements = array('c1','c2','c3','e1','v1','v2','v3','v4','v5','v6','v7');
+    $elements = array('cm','co','ca','wo','vi','va','re','ri','su','vt','vb');
 
     $select = "SELECT * FROM health WHERE day='$day' AND company_id=$company_id";
     $result = mysqli_query($con, $select);
@@ -194,17 +194,17 @@ if (connected($con, $response)) {
     
     // Set the new health scores initially to those returned from the current day's health
     $new_health = array(
-        "c1_score" => $old_health['c1_survey_score'], "c1_count" => $old_health['c1_survey_count'],
-        "c2_score" => $old_health['c2_survey_score'], "c2_count" => $old_health['c2_survey_count'],
-        "c3_score" => $old_health['c3_survey_score'], "c3_count" => $old_health['c3_survey_count'],
-        "e1_score" => $old_health['e1_survey_score'], "e1_count" => $old_health['e1_survey_count'],
-        "v1_score" => $old_health['v1_survey_score'], "v1_count" => $old_health['v1_survey_count'],
-        "v2_score" => $old_health['v2_survey_score'], "v2_count" => $old_health['v2_survey_count'],
-        "v3_score" => $old_health['v3_survey_score'], "v3_count" => $old_health['v3_survey_count'],
-        "v4_score" => $old_health['v4_survey_score'], "v4_count" => $old_health['v4_survey_count'],
-        "v5_score" => $old_health['v5_survey_score'], "v5_count" => $old_health['v5_survey_count'],
-        "v6_score" => $old_health['v6_survey_score'], "v6_count" => $old_health['v6_survey_count'],
-        "v7_score" => $old_health['v7_survey_score'], "v7_count" => $old_health['v7_survey_count'],
+        "cm_score" => $old_health['cm_survey_score'], "cm_count" => $old_health['cm_survey_count'],
+        "co_score" => $old_health['co_survey_score'], "co_count" => $old_health['co_survey_count'],
+        "ca_score" => $old_health['ca_survey_score'], "ca_count" => $old_health['ca_survey_count'],
+        "wo_score" => $old_health['wo_survey_score'], "wo_count" => $old_health['wo_survey_count'],
+        "vi_score" => $old_health['vi_survey_score'], "vi_count" => $old_health['vi_survey_count'],
+        "va_score" => $old_health['va_survey_score'], "va_count" => $old_health['va_survey_count'],
+        "re_score" => $old_health['re_survey_score'], "re_count" => $old_health['re_survey_count'],
+        "ri_score" => $old_health['ri_survey_score'], "ri_count" => $old_health['ri_survey_count'],
+        "su_score" => $old_health['su_survey_score'], "su_count" => $old_health['su_survey_count'],
+        "vt_score" => $old_health['vt_survey_score'], "vt_count" => $old_health['vt_survey_count'],
+        "vb_score" => $old_health['vb_survey_score'], "vb_count" => $old_health['vb_survey_count'],
     );
     // Cycle through each question to build a running score/count for each element
     foreach ($answers as $answer) {
