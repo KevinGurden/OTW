@@ -23,17 +23,17 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
     // Get the days' health row, calculate new values and write it back
     error_log("score_health...");
     $select = "SELECT * FROM health WHERE company_id=$cid AND day<='$day' AND datediff('$day',day)<=5 ORDER BY -day";
-    // error_log("select: $select");
+    error_log("select: $select");
     
     $select_result = mysqli_query($con, $select);
     if ($select_result === false) { // Will either be false or an array
         // select failed to run
         error_log("select failed");
     } else {
-        // error_log("select success");
+        error_log("select success");
         // Check for empty result
         if (mysqli_num_rows($select_result) > 0) {
-            
+            error_log("results > 0 success");
             // Loop through all results. The first should be $day (usually today)
             while ($score = mysqli_fetch_assoc($select_result)) {
                 $scores[] = $score;
@@ -41,7 +41,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             
             $s_day = $scores[0];
             if ($s_day['day'] == $day) { // We've got the correct day
-
+                error_log("correct day");
                 // Events
                 $wh_open_3m = score_event($s_day['whistle_open_3m'], 0, 20);
                 $wh_quick_3m = score_event($s_day['whistle_quick_3m'], 0, 20);
