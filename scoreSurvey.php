@@ -1,7 +1,7 @@
 <?php
 /*
 Update the the survey health metrics in the health table for a particular day.
-This should be executed after a survey has been submitted to the database.
+This should be executed after a survey has been submitted to the database but is also called at other times.
 
 Parameters:
     day: The day to apply the scores. Date stamp
@@ -12,7 +12,14 @@ Return:
     status: 200 for success, 400+ for error
     message: High level error message
     sqlerror: detailed sql error
-    questions: an array of question objects
+
+Process:
+1. Acees todays health row
+2. For each answer...
+3.    For each element (Cm, Co, etc)...
+4.       Lookup weightings for the answer type and add these to the running score for that element (e.g 10% of a Ca answer goes to Re)
+         using <el>_survey_score and <el>_survey_count db values
+5. Recalculate all the element totals <el>_score taking into account the new survey running scores
 
 See bottom for useful commands
  */
