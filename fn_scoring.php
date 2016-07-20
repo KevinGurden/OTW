@@ -153,9 +153,10 @@ function overall_health($els) {
 
 function score_rolling($comp, $day_score, $other_scores) {
     // Create an average from the last 5 days of scores
-    $roll_total = $day_score; $count = 1;
+    $roll_total = $day_score['value']; $count = 1;
     foreach ($other_scores as $other_score) {
-        if (!is_null($other_score[$comp.+'_score'])) {
+        error_log('fn_scoring: other_score.day: '.$other_score['day'].', '.$other_score[$comp.'_score']);
+        if (!is_null($other_score[$comp.'_score'])) {
             $roll_total = $roll_total + $other_score[$comp.+'_score'];
             $count = $count + 1;
         };
