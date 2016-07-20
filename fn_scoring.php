@@ -68,6 +68,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
 
                 // Components
                 $cm = score_component('cm', $s_day, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+                error_log("components: cm = ".$cm['value']);
                 $co = score_component('co', $s_day, array());
                 $ca = score_component('ca', $s_day, array());
                 $wo = score_component('wo', $s_day, array());
@@ -163,8 +164,7 @@ function score_rolling($comp, $day_score, $other_scores) {
     };
 
     $roll_score = round($roll_total/$count);
-
-    return $roll_score;
+    return $comp."_score=".$roll_score;
 };
 
 function score_event($value, $good, $bad) {
@@ -267,7 +267,7 @@ function score_component($comp, $score, $events) {
             $comp_score = $survey_score;
         };
     };
-
+    error_log("component: set: ".$comp."_score=".$comp_score);
     return array('set' => $comp."_score=".$comp_score, 'value' => $comp_score);
 };
 
