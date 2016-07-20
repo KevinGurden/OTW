@@ -97,7 +97,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
                 // Health
                 $health = overall_health(
                     array($cm['value'], $co['value'], $ca['value'], $wo['value'],
-                        $vi['value'], $va['value'], $re['value'], $ri['value'], $su['value'], $vt['value'], $vb['value']);
+                        $vi['value'], $va['value'], $re['value'], $ri['value'], $su['value'], $vt['value'], $vb['value'])
                 );  
 
                 /* 
