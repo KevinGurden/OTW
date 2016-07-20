@@ -157,7 +157,7 @@ function score_rolling($comp, $day_score, $other_scores) {
     foreach ($other_scores as $other_score) {
         error_log('fn_scoring: other_score.day: '.$other_score['day'].', '.$other_score[$comp.'_score']);
         if (!is_null($other_score[$comp.'_score'])) {
-            $roll_total = $roll_total + $other_score[$comp.+'_score'];
+            $roll_total = $roll_total + $other_score[$comp.'_score'];
             $count = $count + 1;
         };
     };
