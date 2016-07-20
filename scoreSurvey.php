@@ -40,22 +40,13 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
         SET day='$day', lookup=$cid:$day, company_id=$cid,
             cm_survey_count=(), co_survey_score=(),
             etc
-            survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND DATEDIFF(CURDATE(),subdate)<90), 
-            survey_refuse_3m=()
+            survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND subdate<='$day' AND DATEDIFF('$day',subdate)<90), 
+            survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND subdate<='$day' AND DATEDIFF('$day',subdate)<90)
     ON DUPLICATE KEY 
         UPDATE 
             cm_survey_count=(), co_survey_score=(),
             etc
-            survey_anon_3m = (
-                SELECT 
-                    COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'whistle' AND datediff(curdate(),subdate)<90
-            ),
-            whistle_refuse_3m = (
-                SELECT 
-                    COUNT(*) FROM whistles
-                    WHERE company_id = 1 AND status != 'closed' AND cat = 'cat' AND datediff(curdate(),subdate)<90
-            );
+            survey_anon_3m = (as above), etc;
     */
     // Which survey fields are affected?
     $sets = '';
@@ -81,10 +72,11 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
 
     // Add any events
     $lookup = $cid . ':' . $day;
-    $days_90 = "DATEDIFF(CURDATE(),subdate)<90";
+    $before = "subdate<='$day'";
+    $days_90 = "DATEDIFF('$day',subdate)<90";
 
-    $survey_anon_3m = "survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND $days_90)";
-    $survey_refuse_3m = "survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND $days_90)";
+    $survey_anon_3m = "survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND $before AND $days_90)";
+    $survey_refuse_3m = "survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND $before AND $days_90)";
     $survey_events = "$survey_anon_3m, $survey_refuse_3m";
 
     $on_dup = "ON DUPLICATE KEY UPDATE $survey_scores $survey_events";
