@@ -164,7 +164,7 @@ function score_rolling($comp, $day_score, $other_scores) {
     };
 
     $roll_score = round($roll_total/$count);
-    return $comp."_score=".$roll_score;
+    return $comp."_avg_recent=".$roll_score;
 };
 
 function score_event($value, $good, $bad) {
