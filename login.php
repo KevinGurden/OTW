@@ -45,25 +45,25 @@ if (connected($con, $response)) {
         } else {
             $company = 1; // Default to Acme
         };
-        $query = "SELECT * FROM company WHERE company=$company";
+        error_log('login: force:'.$_GET['force'].', company: '.$company);
+        $query = "SELECT * FROM company WHERE id=$company";
         $result = mysqli_query($con, $query);
 
-        // Check for empty result
-        if (mysqli_num_rows($result) > 0) { // Success
+        // Check for bad or empty result
+        if ($result == false || mysqli_num_rows($result) == 0) { // no init found
+            http_response_code(200);
+            $response["query"] = $query;
+            $response["message"] = "No initialisation match for company $company";
+
+            // echo no init JSON
+            echo json_encode($response);
+        } else { // Success
             http_response_code(200);
             $response["message"] = "Success";
             $response["init"] = mysqli_fetch_assoc($result);
             $response["sqlerror"] = "";
 
             // Echoing JSON response
-            echo json_encode($response);
-        } else {
-            // no init found
-            http_response_code(200);
-            $response["query"] = $query;
-            $response["message"] = "No initialisation match for company $company";
-
-            // echo no init JSON
             echo json_encode($response);
         };
     } else {
