@@ -160,7 +160,7 @@ function score_rolling($comp, $day_score, $other_scores) {
     foreach ($other_scores as $other_score) {
         $comp_score = $comp.'_score';
         if (array_key_exists($comp_score, $other_score) && !is_null($other_score[$comp_score])) {
-            error_log('score_rolling: '.$comp.': '.$roll_total.' + '.$other_score[$comp_score].' = '.$roll_total + $other_score[$comp_score]);
+            error_log('score_rolling: '.$comp.' + '.$other_score[$comp_score]);
             $roll_total = $roll_total + $other_score[$comp_score];
             $count = $count + 1;
             error_log('score_rolling: '.$comp.': count now '.$count);
@@ -230,17 +230,13 @@ function score_total($scores) {
     $count = 0; $total = 0;
     foreach ($scores as $score) {
         if (!is_null($score)) {
-            error_log("score: $score");
             $count = $count + 1;
             $total = $total + $score;
-            // error_log('so... count: $count, total: $total');
         };
     };
     if ($count == 0) {
-        error_log('count 0 so return null');
         return null;
     } else {
-        error_log('count !0 so return ' . $total/$count);
         return $total/$count;
     };
 };

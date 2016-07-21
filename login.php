@@ -5,7 +5,7 @@ Login and get any general info specific to the user's company from the encol dat
 Parameters:
     username: the username e.g. 'test1'. String
     password: the identifier within the category. String
-    force: (test only) force the return of a specific company information
+    force: (test only) force the return of a specific company information. Integer
 
 Return:
     status: 200 for success, 400+ for error
@@ -41,11 +41,11 @@ if (connected($con, $response)) {
 
         // Get company defaults
         if (isset($_GET['force'])) {
-            $name = mysqli_real_escape_string($con, $_GET['force']);
+            $company = $_GET['force'];
         } else {
-            $name = 'Acme'; // Defualt to Acme
+            $company = 1; // Default to Acme
         };
-        $query = "SELECT * FROM company WHERE name='$name'";
+        $query = "SELECT * FROM company WHERE company=$company";
         $result = mysqli_query($con, $query);
 
         // Check for empty result
@@ -61,7 +61,7 @@ if (connected($con, $response)) {
             // no init found
             http_response_code(200);
             $response["query"] = $query;
-            $response["message"] = "No initialisation match for company '$name'.";
+            $response["message"] = "No initialisation match for company $company";
 
             // echo no init JSON
             echo json_encode($response);
