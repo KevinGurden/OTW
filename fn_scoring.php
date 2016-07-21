@@ -156,15 +156,21 @@ function overall_health($els) {
 function score_rolling($comp, $day_score, $other_scores) {
     // Create an average from the last 5 days of scores
     $roll_total = $day_score['value']; $count = 1;
+    error_log('score_rolling: '.$comp.': roll_total initially '.$roll_total);
     foreach ($other_scores as $other_score) {
-        error_log('fn_scoring: other_score.day: '.$other_score['day'].', '.$other_score[$comp.'_score']);
+        
         if (!is_null($other_score[$comp.'_score'])) {
+            error_log('score_rolling: '.$comp.': '.$roll_total.' + '.$other_score[$comp.'_score'].' = '.$roll_total + $other_score[$comp.'_score']);
             $roll_total = $roll_total + $other_score[$comp.'_score'];
             $count = $count + 1;
+            error_log('score_rolling: '.$comp.': count now '.$count);
+        } else {
+            error_log('score_rolling: '.$comp.'_score is null');
         };
     };
 
     $roll_score = round($roll_total/$count);
+    error_log('score_rolling: '.$comp.': '.$roll_total.' / '.$count.' = '.$roll_score);
     return $comp."_avg_recent=".$roll_score;
 };
 
