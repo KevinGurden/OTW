@@ -56,6 +56,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
                 $gr_closed_not_met = score_event($s_day['grow_closed_not_met'], 0, 15);
                 $su_anon_3m = score_event($s_day['survey_anon_3m'], 0, 10);
                 $su_refuse_3m = score_event($s_day['survey_refuse_3m'], 0, 50);
+                $su_none_5d = score_event($s_day['survey_5d'], 0, 1);
 
                 // Contributions
                 $cm_grow = score_contribution('cm', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));

@@ -40,8 +40,15 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
         SET day='$day', lookup=$cid:$day, company_id=$cid,
             cm_survey_count=(), co_survey_score=(),
             etc
+
+            // Count of anonymous surveys in the last 3 months
             survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND subdate<='$day' AND DATEDIFF('$day',subdate)<90), 
-            survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND subdate<='$day' AND DATEDIFF('$day',subdate)<90)
+            
+            // Count of refused surveys in the last 3 months
+            survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND subdate<='$day' AND DATEDIFF('$day',subdate)<90),
+            
+            // Count of surveys in the last 5 days
+            survey_5d=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND subdate<='$day' AND DATEDIFF('$day',subdate)<5)
     ON DUPLICATE KEY 
         UPDATE 
             cm_survey_count=(), co_survey_score=(),
@@ -73,11 +80,13 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     // Add any events
     $lookup = $cid . ':' . $day;
     $before = "subdate<='$day'";
-    $days_90 = "DATEDIFF('$day',subdate)<90";
+    $days_90 = "DATEDIFF('$day',subdate)<=90";
+    $days_5 = "DATEDIFF('$day',subdate)<=5";
 
     $survey_anon_3m = "survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND $before AND $days_90)";
     $survey_refuse_3m = "survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND $before AND $days_90)";
-    $survey_events = "$survey_anon_3m, $survey_refuse_3m";
+    $survey_5d = "survey_5d=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND $before AND $days_5)";
+    $survey_events = "$survey_anon_3m, $survey_refuse_3m"; // , $survey_5d";
 
     $on_dup = "ON DUPLICATE KEY UPDATE $survey_scores $survey_events";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $survey_scores $survey_events $on_dup";
@@ -211,8 +220,6 @@ if (connected($con, $response)) {
         $new_health = weight_survey($answer, $old_health, $new_health, $elements); // Adjust for an individual answer
         // error_log("after  question ".$answer["id"]." new_health[v4] is ".$new_health["v4_score"].",".$new_health["v4_count"]);
     };
-
-    return 
 
     $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
 
