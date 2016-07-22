@@ -19,7 +19,7 @@ function weights() { // Provide survey contributions
     );
 };
 
-function score_health($con, $cid, $day) { // Update the C1..E1 scores and then the overall health
+function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores and then the overall health
     // Get the days' health row, calculate new values and write it back
     error_log("score_health...");
     $select = "SELECT * FROM health WHERE company_id=$cid AND day<='$day' AND datediff('$day',day)<=5 ORDER BY -day";
@@ -54,7 +54,14 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
                 $gr_open_3m = score_event($s_day['grow_open_3m'], 0, 20);
                 $gr_closed_met = score_event($s_day['grow_closed_met'], 15, 0);
                 $gr_closed_not_met = score_event($s_day['grow_closed_not_met'], 0, 15);
-                $su_anon_3m = score_event($s_day['survey_anon_3m'], 0, 10);
+
+                if (isset($events)) {
+                    error_log('score_health: anon high is '.$events['anon']['high']);
+                    $su_anon_3m = score_event($s_day['survey_anon_3m'], $events['anon']['low'], $events['anon']['high']);
+                } else {
+                    $su_anon_3m = score_event($s_day['survey_anon_3m'], 0, 10);
+                };
+                
                 $su_refuse_3m = score_event($s_day['survey_refuse_3m'], 0, 50);
                 $su_none_5d = score_event($s_day['survey_5d'], 0, 1);
 

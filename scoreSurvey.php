@@ -7,6 +7,7 @@ Parameters:
     day: The day to apply the scores. Date stamp
     answers: An array of answers. Can be []
     company_id: company that this applies to. Integer
+    events: An array of event objects
 
 Return:
     status: 200 for success, 400+ for error
@@ -184,6 +185,7 @@ if (connected($con, $response)) {
     $answers = $_POST['answers'];
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
+    $events = $_POST['events'];
     
     $elements = array('cm','co','ca','wo','vi','va','re','ri','su','vt','vb');
 
@@ -224,7 +226,7 @@ if (connected($con, $response)) {
     $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
 
     if ($db_result) { // Success... finally update the overall health scores. This does not use insert_counts
-        $response["day"] = score_health($con, $company_id, $day);
+        $response["day"] = score_health($con, $company_id, $day, $events);
         
         http_response_code(200);
         $response["message"] = "Success";

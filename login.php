@@ -24,6 +24,19 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
 
+function($query) { // Mop up the eents query into an array
+    if (mysqli_num_rows($query) > 0) {
+        $events = array();
+        
+        while ($event = mysqli_fetch_assoc($query)) { // Loop through all results
+            $events[] = $event;
+        };
+        return $events; 
+    } else {
+        return array();
+    };
+};
+        
 error_log("----- login.php ---------------------------"); // Announce us in the log
 
 // Array for JSON response
@@ -75,7 +88,7 @@ if (connected($con, $response)) {
                     $response["init"] = $init;
                 } else { // Init & events success
                     $events_store = mysqli_store_result($con);
-                    $events = mysqli_fetch_assoc($events_store);
+                    $events = collectEvents($events_store); 
 
                     http_response_code(200);
                     $response["message"] = "Success";
