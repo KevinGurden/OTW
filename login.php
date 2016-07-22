@@ -6,6 +6,7 @@ Parameters:
     username: the username e.g. 'test1'. String
     password: the identifier within the category. String
     force: (test only) force the return of a specific company information. Integer
+    events: if set will return events information as well. Integer boolean; 0 or 1
 
 Return:
     status: 200 for success, 400+ for error
@@ -40,15 +41,19 @@ if (connected($con, $response)) {
         // Assume username and password are ok
 
         // Get company defaults
-        if (isset($_GET['force'])) {
+        if (array_key_exists('force', $_GET)) {
             $company = $_GET['force'];
         } else {
             $company = 1; // Default to Acme
         };
-        error_log('login: force:'.$_GET['force'].', company: '.$company);
-        $init_query = "SELECT * FROM company WHERE id=$company";
-        $event_query = "SELECT * FROM events";
-        $init_result = mysqli_multi_query($con, $init_query.';'.$events_query);
+        $events_needed = isset($_GET['events']) && $_GET['events']==1;
+
+        $query = "SELECT * FROM company WHERE id=$company";
+        if ($events_needed) {
+            $query = $query."; SELECT * FROM events";
+        };
+
+        $init_result = mysqli_multi_query($con, $query);
 
         // Check for bad or empty result
         if ($init_result == false || mysqli_num_rows($init_result) == 0) { // no init found
@@ -56,23 +61,31 @@ if (connected($con, $response)) {
             $response["query"] = $query;
             $response["message"] = "No initialisation match for company $company";
         } else { // Init success
-            $init_store = mysqli_store_result($con);
-            $init = mysqli_fetch_assoc($init_store);
-            error_log('init length: '.count($init));
 
-            $events_result = mysqli_next_result($con);
-            if ($events_result == false || mysqli_num_rows($events_result) == 0) { // no events found
-                http_response_code(204);
-                $response["query"] = $query;
-                $response["message"] = "No initialisation match for company $company";
-                $response["init"] = $init;
-            } else { // Init & events success
-                $events = mysqli_fetch_assoc($con);
+            if ($events_needed) {
+                $init_store = mysqli_store_result($con);
+                $init = mysqli_fetch_assoc($init_store);
+                error_log('init length: '.count($init));
 
+                $events_result = mysqli_next_result($con);
+                if ($events_result == false || mysqli_num_rows($events_result) == 0) { // no events found
+                    http_response_code(204);
+                    $response["query"] = $query;
+                    $response["message"] = "No initialisation match for company $company";
+                    $response["init"] = $init;
+                } else { // Init & events success
+                    $events = mysqli_fetch_assoc($con);
+
+                    http_response_code(200);
+                    $response["message"] = "Success";
+                    $response["init"] = $init;
+                    $response["events"] = $events;
+                    $response["sqlerror"] = "";
+                };
+            } else {
                 http_response_code(200);
                 $response["message"] = "Success";
                 $response["init"] = $init;
-                $response["events"] = $events;
                 $response["sqlerror"] = "";
             };
         };
