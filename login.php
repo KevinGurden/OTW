@@ -24,7 +24,7 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
 
-function($query) { // Mop up the eents query into an array
+function collect_events($query) { // Mop up the eents query into an array
     if (mysqli_num_rows($query) > 0) {
         $events = array();
         
@@ -88,7 +88,7 @@ if (connected($con, $response)) {
                     $response["init"] = $init;
                 } else { // Init & events success
                     $events_store = mysqli_store_result($con);
-                    $events = collectEvents($events_store); 
+                    $events = collect_events($events_store); 
 
                     http_response_code(200);
                     $response["message"] = "Success";
