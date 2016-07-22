@@ -74,7 +74,8 @@ if (connected($con, $response)) {
                     $response["message"] = "No initialisation match for company $company";
                     $response["init"] = $init;
                 } else { // Init & events success
-                    $events = mysqli_fetch_assoc($con);
+                    $events_store = mysqli_store_result($con);
+                    $events = mysqli_fetch_assoc($events_store);
 
                     http_response_code(200);
                     $response["message"] = "Success";
