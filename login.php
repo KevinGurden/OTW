@@ -68,7 +68,7 @@ if (connected($con, $response)) {
                 error_log('init length: '.count($init));
 
                 $events_result = mysqli_next_result($con);
-                if ($events_result == false || mysqli_num_rows($events_result) == 0) { // no events found
+                if ($events_result == false) { // no events found
                     http_response_code(204);
                     $response["query"] = $query;
                     $response["message"] = "No initialisation match for company $company";
