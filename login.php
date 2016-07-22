@@ -56,7 +56,7 @@ if (connected($con, $response)) {
         $init_result = mysqli_multi_query($con, $query);
 
         // Check for bad or empty result
-        if ($init_result == false || mysqli_num_rows($init_result) == 0) { // no init found
+        if ($init_result == false) { // no init found
             http_response_code(204);
             $response["query"] = $query;
             $response["message"] = "No initialisation match for company $company";
