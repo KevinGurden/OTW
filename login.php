@@ -46,33 +46,43 @@ if (connected($con, $response)) {
             $company = 1; // Default to Acme
         };
         error_log('login: force:'.$_GET['force'].', company: '.$company);
-        $query = "SELECT * FROM company WHERE id=$company";
-        $result = mysqli_query($con, $query);
+        $init_query = "SELECT * FROM company WHERE id=$company";
+        $event_query = "SELECT * FROM events";
+        $init_result = mysqli_multi_query($con, $init_query.';'.$events_query);
 
         // Check for bad or empty result
-        if ($result == false || mysqli_num_rows($result) == 0) { // no init found
-            http_response_code(200);
+        if ($init_result == false || mysqli_num_rows($init_result) == 0) { // no init found
+            http_response_code(204);
             $response["query"] = $query;
             $response["message"] = "No initialisation match for company $company";
+        } else { // Init success
+            $init_store = mysqli_store_result($con);
+            $init = mysqli_fetch_assoc($init_store);
+            error_log('init length: '.count($init));
 
-            // echo no init JSON
-            echo json_encode($response);
-        } else { // Success
-            http_response_code(200);
-            $response["message"] = "Success";
-            $response["init"] = mysqli_fetch_assoc($result);
-            $response["sqlerror"] = "";
+            $events_result = mysqli_next_result($con);
+            if ($events_result == false || mysqli_num_rows($events_result) == 0) { // no events found
+                http_response_code(204);
+                $response["query"] = $query;
+                $response["message"] = "No initialisation match for company $company";
+                $response["init"] = $init;
+            } else { // Init & events success
+                $events = mysqli_fetch_assoc($con);
 
-            // Echoing JSON response
-            echo json_encode($response);
+                http_response_code(200);
+                $response["message"] = "Success";
+                $response["init"] = $init;
+                $response["events"] = $events;
+                $response["sqlerror"] = "";
+            };
         };
     } else {
         error_log("'username' and 'password' must be provided");
         http_response_code(402);
         $response["message"] = "'username' and 'password' must be provided";
         $response["sqlerror"] = "";
-        echo json_encode($response);
     };
+    echo json_encode($response);
 };
 
 /* 

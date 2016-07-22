@@ -41,7 +41,7 @@ function score_health($con, $cid, $day) { // Update the C1..E1 scores and then t
             
             $s_day = $scores[0];
             if ($s_day['day'] == $day) { // We've got the correct day
-                error_log("correct day");
+                
                 // Events
                 $wh_open_3m = score_event($s_day['whistle_open_3m'], 0, 20);
                 $wh_quick_3m = score_event($s_day['whistle_quick_3m'], 0, 20);

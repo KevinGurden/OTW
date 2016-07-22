@@ -86,7 +86,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     $survey_anon_3m = "survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND $before AND $days_90)";
     $survey_refuse_3m = "survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND $before AND $days_90)";
     $survey_5d = "survey_5d=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND $before AND $days_5)";
-    $survey_events = "$survey_anon_3m, $survey_refuse_3m"; // , $survey_5d";
+    $survey_events = "$survey_anon_3m, $survey_refuse_3m, $survey_5d";
 
     $on_dup = "ON DUPLICATE KEY UPDATE $survey_scores $survey_events";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $survey_scores $survey_events $on_dup";
