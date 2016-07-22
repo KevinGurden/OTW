@@ -30,10 +30,8 @@ function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores a
         // select failed to run
         error_log("select failed");
     } else {
-        error_log("select success");
         // Check for empty result
         if (mysqli_num_rows($select_result) > 0) {
-            error_log("results > 0 success");
             // Loop through all results. The first should be $day (usually today)
             while ($score = mysqli_fetch_assoc($select_result)) {
                 $scores[] = $score;
@@ -163,21 +161,21 @@ function overall_health($els) {
 function score_rolling($comp, $day_score, $other_scores) {
     // Create an average from the last 5 days of scores
     $roll_total = $day_score['value']; $count = 1;
-    error_log('score_rolling: '.$comp.': roll_total initially '.$roll_total);
+    // error_log('score_rolling: '.$comp.': roll_total initially '.$roll_total);
     foreach ($other_scores as $other_score) {
         $comp_score = $comp.'_score';
         if (array_key_exists($comp_score, $other_score) && !is_null($other_score[$comp_score])) {
-            error_log('score_rolling: '.$comp.' + '.$other_score[$comp_score]);
+            // error_log('score_rolling: '.$comp.' + '.$other_score[$comp_score]);
             $roll_total = $roll_total + $other_score[$comp_score];
             $count = $count + 1;
-            error_log('score_rolling: '.$comp.': count now '.$count);
-        } else {
-            error_log('score_rolling: '.$comp.'_score is null');
+            // error_log('score_rolling: '.$comp.': count now '.$count);
+        // } else {
+        //  error_log('score_rolling: '.$comp.'_score is null');
         };
     };
 
     $roll_score = round($roll_total/$count);
-    error_log('score_rolling: '.$comp.': '.$roll_total.' / '.$count.' = '.$roll_score);
+    // error_log('score_rolling: '.$comp.': '.$roll_total.' / '.$count.' = '.$roll_score);
     return $comp."_avg_recent=".$roll_score;
 };
 
@@ -277,7 +275,6 @@ function score_component($comp, $score, $events) {
             $comp_score = $survey_score;
         };
     };
-    error_log("component: set: ".$comp."_score=".$comp_score);
     return array('set' => $comp."_score=".$comp_score, 'value' => $comp_score);
 };
 

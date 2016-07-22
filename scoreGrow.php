@@ -6,6 +6,7 @@ This should be executed after a grow has been submitted to the database, but can
 Parameters:
     day: The day to apply the scores. Date stamp
     company_id: company that this applies to. Integer
+    events: An array of event objects
 
 Return:
     status: 200 for success, 300+ for error
@@ -72,6 +73,7 @@ if (connected($con, $response)) {
     // Escape the values to ensure no injection vunerability
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
+    $events = $_POST['events'];
     
     $db_result = insert($con, $company_id, $day);
     // error_log('db_result: ' . $db_result);
@@ -85,7 +87,7 @@ if (connected($con, $response)) {
         // error_log('success');
 
         // Finally update the overall health scores
-        $response["day"] = score_health($con, $company_id, $day);
+        $response["day"] = score_health($con, $company_id, $day, $events);
     } else {
         // Failure
         http_response_code(304);

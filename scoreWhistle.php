@@ -7,6 +7,7 @@ Parameters:
     day: The day to apply the scores. Date stamp
     company_id: company that this applies to. Integer
     types: list of comma separated whistle type names
+    events: An array of event objects
 
 Return:
     status: 200 for success, 300+ for error
@@ -119,6 +120,7 @@ if (connected($con, $response)) {
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
     $types = escape($con, 'types', '');
+    $events = $_POST['events'];
     
     $db_result1 = insert($con, $company_id, $day); // Update any whistle events first e.g. Open > 3 months
     if ($db_result1) { // Completed
@@ -145,7 +147,7 @@ if (connected($con, $response)) {
         };
             
         // Finally update the overall health scores. This does not use insert_counts
-        $response["day"] = score_health($con, $company_id, $day);
+        $response["day"] = score_health($con, $company_id, $day, $events);
     } else {
         // Failure
         http_response_code(304);

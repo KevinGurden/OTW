@@ -15,7 +15,7 @@ Return:
     sqlerror: detailed sql error
 
 Process:
-1. Acees todays health row
+1. Acces todays health row
 2. For each answer...
 3.    For each element (Cm, Co, etc)...
 4.       Lookup weightings for the answer type and add these to the running score for that element (e.g 10% of a Ca answer goes to Re)
