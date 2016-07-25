@@ -195,7 +195,7 @@ function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     //
     $bad = $bad_def; $good = $good_def;
     if (isset($events)) {
-        if (array_key_exists($comp, $events) {
+        if (array_key_exists($comp, $events)) {
             $comp_events = $events[$comp];
 
             if (array_key_exists($event_name, $comp_events)) {
