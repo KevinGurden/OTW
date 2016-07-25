@@ -41,27 +41,24 @@ function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores a
             if ($s_day['day'] == $day) { // We've got the correct day
                 
                 // Events
-                $wh_open_3m = score_event($s_day['whistle_open_3m'], 0, 20);
-                $wh_quick_3m = score_event($s_day['whistle_quick_3m'], 0, 20);
-                $wh_open = score_event($s_day['whistle_open'], 5, 50);
+                $wh_open_3m = score_event('whistle','open_3m', $s_day, $events, 0, 20);
+                error_log('fns: wh_open_3m is '.$wh_open_3m);
+                $wh_quick_3m = score_event('whistle', 'quick_3m', $s_day, $events, 0, 20);
+                $wh_open = score_event('whistle', 'open', $s_day, $events, 5, 50);
                 $wh_open_anon = score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1);
-                $fl_open_3m = score_event($s_day['flag_open_3m'], 0, 20);
-                $fl_quick_3m = score_event($s_day['flag_quick_3m'], 0, 20);
-                $fl_open = score_event($s_day['flag_open'], 5, 100);
-                $fl_open_anon = score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1);
-                $gr_open_3m = score_event($s_day['grow_open_3m'], 0, 20);
-                $gr_closed_met = score_event($s_day['grow_closed_met'], 15, 0);
-                $gr_closed_not_met = score_event($s_day['grow_closed_not_met'], 0, 15);
-
-                if (isset($events)) {
-                    error_log('score_health: anon high is '.$events['anon']['high']);
-                    $su_anon_3m = score_event($s_day['survey_anon_3m'], $events['anon']['low'], $events['anon']['high']);
-                } else {
-                    $su_anon_3m = score_event($s_day['survey_anon_3m'], 0, 10);
-                };
                 
-                $su_refuse_3m = score_event($s_day['survey_refuse_3m'], 0, 50);
-                $su_none_5d = score_event($s_day['survey_5d'], 0, 1);
+                $fl_open_3m = score_event('flag', 'open_3m', $s_day, $events, 0, 20);
+                $fl_quick_3m = score_event('flag', 'quick_3m', $s_day, $events, 0, 20);
+                $fl_open = score_event($s_day['flag', 'open', $s_day, $events, 5, 100);
+                $fl_open_anon = score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1);
+                
+                $gr_open_3m = score_event('grow', 'open_3m', $s_day, $events, 0, 20);
+                $gr_closed_met = score_event('grow', 'closed_met', $s_day, $events, 15, 0);
+                $gr_closed_not_met = score_event('grow', 'closed_not_met', $s_day, $events, 0, 15);
+                
+                $su_anon_3m = score_event('survey', 'anon_3m', $s_day, $events, 0, 10);
+                $su_refuse_3m = score_event('survey', 'refuse_3m', $s_day, $events, 0, 50);
+                $su_none_5d = score_event('survey', '5d', $s_day, $events, 0, 1);
 
                 // Contributions
                 $cm_grow = score_contribution('cm', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
@@ -179,8 +176,18 @@ function score_rolling($comp, $day_score, $other_scores) {
     return $comp."_avg_recent=".$roll_score;
 };
 
-function score_event($value, $good, $bad) {
+function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     // Return a percentage score between $good (100%) and bad (0%).
+    //
+    $value = $s_day[$comp.'_'.$event_name];
+    if (isset($events)) {
+        $bad = $events[$event_name]['low']; 
+        $good = $events[$event_name]['high'];
+        error_log('score_event: '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);
+    } else {
+        $bad = $bad_def; $good = $good_def;
+    };
+
     if (is_null($value)) {
         return $value;
     } else {
