@@ -41,7 +41,7 @@ function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores a
             if ($s_day['day'] == $day) { // We've got the correct day
                 
                 // Events
-                $wh_open_3m = score_event('whistle','open_3m', $s_day, 0, 20);
+                $wh_open_3m = score_event($s_day['whistle_open_3m'], 0, 20);
                 $wh_quick_3m = score_event($s_day['whistle_quick_3m'], 0, 20);
                 $wh_open = score_event($s_day['whistle_open'], 5, 50);
                 $wh_open_anon = score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1);
@@ -179,12 +179,12 @@ function score_rolling($comp, $day_score, $other_scores) {
     return $comp."_avg_recent=".$roll_score;
 };
 
-function score_event($value, $events, $default_good, $default_bad) {
+function score_event($value, $good, $bad) {
     // Return a percentage score between $good (100%) and bad (0%).
     if (is_null($value)) {
         return $value;
     } else {
-        if (array_key_exists(key, search))
+        // if (array_key_exists(key, search))
         if ($good < $bad) {
             $low = $good; $high = $bad; // It's a negative effect...
         } else {
