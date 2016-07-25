@@ -60,6 +60,8 @@ function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores a
                 $su_refuse_3m = score_event('survey', 'refuse_3m', $s_day, $events, 0, 50);
                 $su_none_5d = score_event('survey', '5d', $s_day, $events, 0, 1);
 
+                $bah = score_all_events($events);
+
                 // Contributions
                 $cm_grow = score_contribution('cm', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
                 // $set_v3_whistle = score_contribution('v3', 'whistle', array());
@@ -176,16 +178,33 @@ function score_rolling($comp, $day_score, $other_scores) {
     return $comp."_avg_recent=".$roll_score;
 };
 
+function score_all_events($events) {
+    // Use events to create a full list of event value
+
+    foreach ($events as $comp ==> $component) {
+        foreach ($component as $ev) {
+            error_log('score_all_events: '.$comp.' '.$ev);
+        };
+    };
+
+    return null;
+};
+
 function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     // Return a percentage score between $good (100%) and bad (0%).
     //
-    $value = $s_day[$comp.'_'.$event_name];
+    $bad = $bad_def; $good = $good_def;
     if (isset($events)) {
-        $bad = $events[$event_name]['low']; 
-        $good = $events[$event_name]['high'];
-        error_log('score_event: '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);
-    } else {
-        $bad = $bad_def; $good = $good_def;
+        if (array_key_exists($comp, $events) {
+            $comp_events = $events[$comp];
+
+            if (array_key_exists($event_name, $comp_events)) {
+                $value = $score[$comp.'_'.$event_name];
+                $bad = $events[$event_name]['low']; 
+                $good = $events[$event_name]['high'];
+                error_log('score_event: '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);
+            };
+        };
     };
 
     if (is_null($value)) {
