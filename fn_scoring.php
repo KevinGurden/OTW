@@ -193,13 +193,12 @@ function score_rolling($comp, $day_score, $other_scores) {
 function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     // Return a percentage score between $good (100%) and bad (0%).
     //
-    $bad = $bad_def; $good = $good_def;
+    $bad = $bad_def; $good = $good_def; $value = $score[$comp.'_'.$event_name];
     if (isset($events)) {
         if (array_key_exists($comp, $events)) {
             $comp_events = $events[$comp];
 
             if (array_key_exists($event_name, $comp_events)) {
-                $value = $score[$comp.'_'.$event_name];
                 $bad = $events[$event_name]['low']; 
                 $good = $events[$event_name]['high'];
                 error_log('score_event: '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);
