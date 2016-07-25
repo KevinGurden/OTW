@@ -74,10 +74,10 @@ if (connected($con, $response)) {
             $response["query"] = $query;
             $response["message"] = "No initialisation match for company $company";
         } else { // Init success
-
+            $init_store = mysqli_store_result($con);
+            $init = mysqli_fetch_assoc($init_store);
+            
             if ($events_needed) {
-                $init_store = mysqli_store_result($con);
-                $init = mysqli_fetch_assoc($init_store);
                 error_log('init length: '.count($init));
 
                 $events_result = mysqli_next_result($con);
