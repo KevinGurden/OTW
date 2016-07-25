@@ -60,7 +60,7 @@ function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores a
                 $su_refuse_3m = score_event('survey', 'refuse_3m', $s_day, $events, 0, 50);
                 $su_none_5d = score_event('survey', '5d', $s_day, $events, 0, 1);
 
-                $bah = score_all_events($events);
+                // $bah = score_all_events($events);
 
                 // Contributions
                 $cm_grow = score_contribution('cm', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
@@ -178,17 +178,17 @@ function score_rolling($comp, $day_score, $other_scores) {
     return $comp."_avg_recent=".$roll_score;
 };
 
-function score_all_events($events) {
-    // Use events to create a full list of event value
+// function score_all_events($events) {
+//     // Use events to create a full list of event value
 
-    foreach ($events as $comp ==> $component) {
-        foreach ($component as $ev) {
-            error_log('score_all_events: '.$comp.' '.$ev);
-        };
-    };
+//     foreach ($events as $comp ==> $component) {
+//         foreach ($component as $ev) {
+//             error_log('score_all_events: '.$comp.' '.$ev);
+//         };
+//     };
 
-    return null;
-};
+//     return null;
+// };
 
 function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     // Return a percentage score between $good (100%) and bad (0%).
