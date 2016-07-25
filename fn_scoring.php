@@ -49,7 +49,7 @@ function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores a
                 
                 $fl_open_3m = score_event('flag', 'open_3m', $s_day, $events, 0, 20);
                 $fl_quick_3m = score_event('flag', 'quick_3m', $s_day, $events, 0, 20);
-                $fl_open = score_event($s_day['flag', 'open', $s_day, $events, 5, 100);
+                $fl_open = score_event('flag', 'open', $s_day, $events, 5, 100);
                 $fl_open_anon = score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1);
                 
                 $gr_open_3m = score_event('grow', 'open_3m', $s_day, $events, 0, 20);
