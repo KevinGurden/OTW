@@ -17,12 +17,12 @@ Return:
 See bottom for useful commands
  */
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_get_escape.php';
+include 'fn_escape.php';
 include 'fn_scoring.php';
 
 function insert($con, $cid, $day) { // Insert a new record into 'health' or update if it already exists
@@ -120,7 +120,7 @@ if (connected($con, $response)) {
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
     $types = escape($con, 'types', '');
-    $events = $_GET['events'];
+    $events = $_POST['events'];
     $response['events'] = $events;
     $response['types'] = $types;
     
