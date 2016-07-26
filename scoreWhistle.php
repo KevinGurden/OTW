@@ -120,7 +120,7 @@ if (connected($con, $response)) {
     $_POST = json_decode(file_get_contents('php://input'), true);
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
-    $types = escape($con, 'types', '');
+    $types = $_POST['types'];
     $events = $_POST['events'];
     $response['events'] = $events;
     $response['types'] = $types;
@@ -128,31 +128,23 @@ if (connected($con, $response)) {
     $db_result1 = insert($con, $company_id, $day); // Update any whistle events first e.g. Open > 3 months
     if ($db_result1) { // Completed
         
-        if ($types!='') { // Old apps didn't pass types so check first
-            $types_array = explode(',',$types);
-            $db_result2 = insert_counts($con, $company_id, $day, $types_array); // Now add category counts e.g. Bribery
+        $db_result2 = insert_counts($con, $company_id, $day, $types); // Now add category counts e.g. Bribery
 
-            if ($db_result2) { // Success
-                http_response_code(200);
-                // $response["status"] = 200;
-                $response["message"] = "Success";
-                $response["sqlerror"] = "";
-            } else { // Partial failure
-                http_response_code(304);
-                $response["message"] = "Partially failed to create/update record";
-                $response["sqlerror"] = mysqli_error($con);
-                error_log('partial failure');
-            };
-        } else {
+        if ($db_result2) { // Success
             http_response_code(200);
-            $response["message"] = "Success although types not passed";
+            $response["message"] = "Success";
             $response["sqlerror"] = "";
+        } else { // Partial failure
+            http_response_code(304);
+            $response["message"] = "Partially failed to create/update record";
+            $response["sqlerror"] = mysqli_error($con);
+            error_log('partial failure');
         };
-            
+        
         // Finally update the overall health scores. This does not use insert_counts
         $response["day"] = score_health($con, $company_id, $day, $events, "scoreWhistle");
-    } else {
-        // Failure
+    
+    } else { // Failure
         http_response_code(304);
         $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = mysqli_error($con);

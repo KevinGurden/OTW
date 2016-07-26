@@ -71,9 +71,10 @@ if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     // Escape the values to ensure no injection vunerability
+    $_POST = json_decode(file_get_contents('php://input'), true);
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
-    $events = $_GET['events'];
+    $events = $_POST['events'];
     
     $db_result = insert($con, $company_id, $day);
     // error_log('db_result: ' . $db_result);

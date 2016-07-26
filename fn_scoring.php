@@ -41,7 +41,7 @@ function score_health($con, $cid, $day, $events, $from) { // Update the Cm..Vt s
             if ($s_day['day'] == $day) { // We've got the correct day
                 
                 // Events
-                if ($from == 'whistle') {
+                if ($from == 'scoreWhistle') {
                     $wh_open_3m = score_event('whistle','open_3m', $s_day, $events, 0, 20);
                     error_log('fns: wh_open_3m is '.$wh_open_3m);
                     $wh_quick_3m = score_event('whistle', 'quick_3m', $s_day, $events, 0, 20);
@@ -49,20 +49,20 @@ function score_health($con, $cid, $day, $events, $from) { // Update the Cm..Vt s
                     $wh_open_anon = score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1);
                 };
                 
-                if ($from == 'flag') {
+                if ($from == 'scoreFlag') {
                     $fl_open_3m = score_event('flag', 'open_3m', $s_day, $events, 0, 20);
                     $fl_quick_3m = score_event('flag', 'quick_3m', $s_day, $events, 0, 20);
                     $fl_open = score_event('flag', 'open', $s_day, $events, 5, 100);
                     $fl_open_anon = score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1);
                 };
                 
-                if ($from == 'grow') {
+                if ($from == 'scoreGrow') {
                     $gr_open_3m = score_event('grow', 'open_3m', $s_day, $events, 0, 20);
                     $gr_closed_met = score_event('grow', 'closed_met', $s_day, $events, 15, 0);
                     $gr_closed_not_met = score_event('grow', 'closed_not_met', $s_day, $events, 0, 15);
                 };
                 
-                if ($from == 'survey') {
+                if ($from == 'scoreSurvey') {
                     $su_anon_3m = score_event('survey', 'anon_3m', $s_day, $events, 0, 10);
                     $su_refuse_3m = score_event('survey', 'refuse_3m', $s_day, $events, 0, 50);
                     $su_none_5d = score_event('survey', '5d', $s_day, $events, 0, 1);
