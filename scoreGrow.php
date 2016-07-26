@@ -73,7 +73,7 @@ if (connected($con, $response)) {
     // Escape the values to ensure no injection vunerability
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
-    $events = $_POST['events'];
+    $events = $_GET['events'];
     
     $db_result = insert($con, $company_id, $day);
     // error_log('db_result: ' . $db_result);
