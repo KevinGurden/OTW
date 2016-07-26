@@ -19,7 +19,7 @@ function weights() { // Provide survey contributions
     );
 };
 
-function score_health($con, $cid, $day, $events, $from) { // Update the Cm..Vt scores and then the overall health
+function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt scores and then the overall health
     // Get the days' health row, calculate new values and write it back
     error_log("score_health... from ".$from);
     $select = "SELECT * FROM health WHERE company_id=$cid AND day<='$day' AND datediff('$day',day)<=5 ORDER BY -day";
@@ -41,58 +41,78 @@ function score_health($con, $cid, $day, $events, $from) { // Update the Cm..Vt s
             if ($s_day['day'] == $day) { // We've got the correct day
                 
                 // Events
-                if ($from == 'scoreWhistle') {
-                    $wh_open_3m = score_event('whistle','open_3m', $s_day, $events, 0, 20);
-                    error_log('fns: wh_open_3m is '.$wh_open_3m);
-                    $wh_quick_3m = score_event('whistle', 'quick_3m', $s_day, $events, 0, 20);
-                    $wh_open = score_event('whistle', 'open', $s_day, $events, 5, 50);
-                    $wh_open_anon = score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1);
-                };
-                
-                if ($from == 'scoreFlag') {
-                    $fl_open_3m = score_event('flag', 'open_3m', $s_day, $events, 0, 20);
-                    $fl_quick_3m = score_event('flag', 'quick_3m', $s_day, $events, 0, 20);
-                    $fl_open = score_event('flag', 'open', $s_day, $events, 5, 100);
-                    $fl_open_anon = score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1);
-                };
-                
-                if ($from == 'scoreGrow') {
-                    $gr_open_3m = score_event('grow', 'open_3m', $s_day, $events, 0, 20);
-                    $gr_closed_met = score_event('grow', 'closed_met', $s_day, $events, 15, 0);
-                    $gr_closed_not_met = score_event('grow', 'closed_not_met', $s_day, $events, 0, 15);
-                };
-                
-                if ($from == 'scoreSurvey') {
-                    $su_anon_3m = score_event('survey', 'anon_3m', $s_day, $events, 0, 10);
-                    $su_refuse_3m = score_event('survey', 'refuse_3m', $s_day, $events, 0, 50);
-                    $su_none_5d = score_event('survey', '5d', $s_day, $events, 0, 1);
-                };
+                $wh_ev = array(
+                    'open_3m'       => score_event('whistle','open_3m', $s_day, $ev_info, 0, 20),
+                    'quick_3m'      => score_event('whistle', 'quick_3m', $s_day, $ev_info, 0, 20),
+                    'open'          => score_event('whistle', 'open', $s_day, $ev_info, 5, 50),
+                    'open_anon'     => score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1)
+                );
 
-                // $bah = score_all_events($events);
+                $fl_ev = array(
+                    'open_3m'       => score_event('flag', 'open_3m', $s_day, $ev_info, 0, 20),
+                    'quick_3m'      => score_event('flag', 'quick_3m', $s_day, $ev_info, 0, 20),
+                    'open'          => score_event('flag', 'open', $s_day, $ev_info, 5, 100),
+                    'open_anon'          => score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1)
+                );
+                
+                $gr_ev = array(
+                    'open_3m'       => score_event('grow', 'open_3m', $s_day, $ev_info, 0, 20),
+                    'clsd_met'      => score_event('grow', 'closed_met', $s_day, $ev_info, 15, 0),
+                    'clsd_not_met'  => score_event('grow', 'closed_not_met', $s_day, $ev_info, 0, 15)
+                );
+                
+                $su_ev = array(
+                    'anon_3m'       => score_event('survey', 'anon_3m', $s_day, $ev_info, 0, 10),
+                    'refuse_3m'     => score_event('survey', 'refuse_3m', $s_day, $ev_info, 0, 50),
+                    '5d'            => score_event('survey', '5d', $s_day, $ev_info, 0, 1)
+                );
+
+                // $bah = score_all_events($ev_info);
 
                 // Contributions
-                $cm_grow = score_contribution('cm', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+                $cm_grow = score_contribution('cm', 'grow', 
+                    array($gr_ev['open_3m'],$gr_ev['clsd_met'],$gr_ev['clsd_not_met'])
+                );
                 // $set_v3_whistle = score_contribution('v3', 'whistle', array());
-                $ri_whistle = score_contribution('ri', 'whistle', array($wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon));
-                $ri_flag = score_contribution('ri', 'flag', array($fl_open_3m, $fl_open, $fl_quick_3m, $fl_open_anon));
-                $su_grow = score_contribution('su', 'grow', array($gr_closed_met, $gr_closed_not_met));
-                $vt_grow = score_contribution('vt', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
-                $vb_grow = score_contribution('vb', 'grow', array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+                $ri_whistle = score_contribution('ri', 'whistle', 
+                    array($wh_ev['open_3m'], $wh_ev['open'], $wh_ev['quick_3m'], $wh_ev['open_anon'])
+                );
+                $ri_flag = score_contribution('ri', 'flag', 
+                    array($fl_ev['open_3m'], $fl_ev['open'], $fl_ev['quick_3m'], $fl_ev['open_anon'])
+                );
+                $su_grow = score_contribution('su', 'grow', 
+                    array($gr_ev['clsd_met', $gr_ev['clsd_not_met'])
+                );
+                $vt_grow = score_contribution('vt', 'grow', array(
+                        $gr_ev['open_3m'], $gr_ev['clsd_met'], $gr_ev['clsd_not_met']
+                ));
+                $vb_grow = score_contribution('vb', 'grow', 
+                    array($gr_ev['open_3m'], $gr_ev['clsd_met'], $gr_ev['clsd_not_met'])
+                );
 
                 // Components
-                $cm = score_component('cm', $s_day, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
-                error_log("components: cm = ".$cm['value']);
+                $cm = score_component('cm', $s_day, 
+                    array($gr_ev['open_3m'], $gr_ev['clsd_met'], $gr_ev['clsd_not_met'])
+                );
                 $co = score_component('co', $s_day, array());
                 $ca = score_component('ca', $s_day, array());
                 $wo = score_component('wo', $s_day, array());
                 $vi = score_component('vi', $s_day, array());
                 $va = score_component('va', $s_day, array());
                 $re = score_component('re', $s_day, array());
-                $ri = score_component('ri', $s_day, array($wh_open_3m, $wh_open, $wh_quick_3m, $wh_open_anon,
-                                                          $fl_open_3m, $fl_open, $fl_quick_3m, $fl_open_anon));
-                $su = score_component('su', $s_day, array($gr_closed_met, $gr_closed_not_met));
-                $vt = score_component('vt', $s_day, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
-                $vb = score_component('vb', $s_day, array($gr_open_3m, $gr_closed_met, $gr_closed_not_met));
+                $ri = score_component('ri', $s_day, array(
+                    $wh_ev['open_3m'], $wh_ev['open'], $wh_ev['quick_3m'], $wh_ev['open_anon'],
+                    $fl_ev['open_3m'], $fl_ev['open'], $fl_ev['quick_3m'], $fl_ev['open_anon']
+                ));
+                $su = score_component('su', $s_day, array(
+                    $gr_ev['clsd_met'], $gr_ev['clsd_not_met'])
+                );
+                $vt = score_component('vt', $s_day, array(
+                    $gr_ev['open_3m'], $gr_ev['clsd_met'], $gr_ev['clsd_not_met']
+                ));
+                $vb = score_component('vb', $s_day, array(
+                    $gr_ev['open_3m'], $gr_ev['clsd_met'], $gr_ev['clsd_not_met']
+                ));
 
                 // Rolling Averages
                 $cm_5 = score_rolling('cm', $cm, $scores);
@@ -245,6 +265,7 @@ function score_event_div($value1, $value2, $good, $bad) {
         if (!isset($value1)) {
             $value1=0;
         };
+        //score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
         return score_event($value1/$value2, $good, $bad);
     } else {
         return null;
