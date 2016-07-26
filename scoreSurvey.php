@@ -183,11 +183,11 @@ if (connected($con, $response)) {
 
     // Escape the values to ensure no injection vunerability
     $answers = $_POST['answers'];
-    echo '<pre>'; print_r($answers); echo '</pre>';
+    $response['answers'] = $answers;
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
     $events = $_POST['events'];
-    echo '<pre>'; print_r($events); echo '</pre>';
+    $response['events'] = $events;
     
     $elements = array('cm','co','ca','wo','vi','va','re','ri','su','vt','vb');
 

@@ -194,19 +194,20 @@ function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     // Return a percentage score between $good (100%) and bad (0%).
     //
     $bad = $bad_def; $good = $good_def; $value = $score[$comp.'_'.$event_name];
-    error_log($comp.': bad_def:'.$bad_def.', good_def:'.$good_def.', value:'.$value);
+    error_log($comp.'/'.$event_name.': bad_def:'.$bad_def.', good_def:'.$good_def.', value:'.$value);
     if (isset($events)) {
-        error_log($comp.': events is set');
+        error_log($comp.'/'.$event_name.': events is set');
         $keys = array_keys($events);
         if (count($keys) >= 1) {error_log($comp.': events key 0: '.$keys[0]);};
         if (count($keys) >= 2) {error_log($comp.': events key 1: '.$keys[1]);};
         if (count($keys) >= 3) {error_log($comp.': events key 2: '.$keys[2]);};
         if (array_key_exists($comp, $events)) {
-            error_log($comp.': exists as a key in events');
+            error_log($comp.'/'.$event_name.': exists as a key in events');
             $comp_events = $events[$comp];
 
+
             if (array_key_exists($event_name, $comp_events)) {
-                error_log($comp.': event_name:'.$event_name.' exists in comp_events '.count($comp_events));
+                error_log($comp.'/'.$event_name.': event_name:'.$event_name.' exists in comp_events '.count($comp_events));
                 $bad = $events[$event_name]['low']; 
                 $good = $events[$event_name]['high'];
                 error_log('score_event: '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);

@@ -121,6 +121,8 @@ if (connected($con, $response)) {
     $company_id = got_int('company_id', 0);
     $types = escape($con, 'types', '');
     $events = $_GET['events'];
+    $response['events'] = $events;
+    $response['types'] = $types;
     
     $db_result1 = insert($con, $company_id, $day); // Update any whistle events first e.g. Open > 3 months
     if ($db_result1) { // Completed
