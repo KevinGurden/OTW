@@ -41,24 +41,32 @@ function score_health($con, $cid, $day, $events, $from) { // Update the Cm..Vt s
             if ($s_day['day'] == $day) { // We've got the correct day
                 
                 // Events
-                $wh_open_3m = score_event('whistle','open_3m', $s_day, $events, 0, 20);
-                error_log('fns: wh_open_3m is '.$wh_open_3m);
-                $wh_quick_3m = score_event('whistle', 'quick_3m', $s_day, $events, 0, 20);
-                $wh_open = score_event('whistle', 'open', $s_day, $events, 5, 50);
-                $wh_open_anon = score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1);
+                if ($from == 'whistle') {
+                    $wh_open_3m = score_event('whistle','open_3m', $s_day, $events, 0, 20);
+                    error_log('fns: wh_open_3m is '.$wh_open_3m);
+                    $wh_quick_3m = score_event('whistle', 'quick_3m', $s_day, $events, 0, 20);
+                    $wh_open = score_event('whistle', 'open', $s_day, $events, 5, 50);
+                    $wh_open_anon = score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1);
+                };
                 
-                $fl_open_3m = score_event('flag', 'open_3m', $s_day, $events, 0, 20);
-                $fl_quick_3m = score_event('flag', 'quick_3m', $s_day, $events, 0, 20);
-                $fl_open = score_event('flag', 'open', $s_day, $events, 5, 100);
-                $fl_open_anon = score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1);
+                if ($from == 'flag') {
+                    $fl_open_3m = score_event('flag', 'open_3m', $s_day, $events, 0, 20);
+                    $fl_quick_3m = score_event('flag', 'quick_3m', $s_day, $events, 0, 20);
+                    $fl_open = score_event('flag', 'open', $s_day, $events, 5, 100);
+                    $fl_open_anon = score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1);
+                };
                 
-                $gr_open_3m = score_event('grow', 'open_3m', $s_day, $events, 0, 20);
-                $gr_closed_met = score_event('grow', 'closed_met', $s_day, $events, 15, 0);
-                $gr_closed_not_met = score_event('grow', 'closed_not_met', $s_day, $events, 0, 15);
+                if ($from == 'grow') {
+                    $gr_open_3m = score_event('grow', 'open_3m', $s_day, $events, 0, 20);
+                    $gr_closed_met = score_event('grow', 'closed_met', $s_day, $events, 15, 0);
+                    $gr_closed_not_met = score_event('grow', 'closed_not_met', $s_day, $events, 0, 15);
+                };
                 
-                $su_anon_3m = score_event('survey', 'anon_3m', $s_day, $events, 0, 10);
-                $su_refuse_3m = score_event('survey', 'refuse_3m', $s_day, $events, 0, 50);
-                $su_none_5d = score_event('survey', '5d', $s_day, $events, 0, 1);
+                if ($from == 'survey') {
+                    $su_anon_3m = score_event('survey', 'anon_3m', $s_day, $events, 0, 10);
+                    $su_refuse_3m = score_event('survey', 'refuse_3m', $s_day, $events, 0, 50);
+                    $su_none_5d = score_event('survey', '5d', $s_day, $events, 0, 1);
+                };
 
                 // $bah = score_all_events($events);
 
@@ -197,21 +205,11 @@ function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     error_log($comp.'/'.$event_name.': bad_def:'.$bad_def.', good_def:'.$good_def.', value:'.$value);
     if (isset($events)) {
         error_log($comp.'/'.$event_name.': events is set');
-        $keys = array_keys($events);
-        if (count($keys) >= 1) {error_log($comp.': events key 0: '.$keys[0]);};
-        if (count($keys) >= 2) {error_log($comp.': events key 1: '.$keys[1]);};
-        if (count($keys) >= 3) {error_log($comp.': events key 2: '.$keys[2]);};
-        if (array_key_exists($comp, $events)) {
-            error_log($comp.'/'.$event_name.': exists as a key in events');
-            $comp_events = $events[$comp];
-
-
-            if (array_key_exists($event_name, $comp_events)) {
-                error_log($comp.'/'.$event_name.': event_name:'.$event_name.' exists in comp_events '.count($comp_events));
-                $bad = $events[$event_name]['low']; 
-                $good = $events[$event_name]['high'];
-                error_log('score_event: '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);
-            };
+        if (array_key_exists($event_name, $events)) {
+            error_log($comp.'/'.$event_name.': event_name:'.$event_name.' exists in events');
+            $bad = $events[$event_name]['low']; 
+            $good = $events[$event_name]['high'];
+            error_log('score_event: '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);
         };
     };
 
