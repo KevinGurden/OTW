@@ -197,6 +197,10 @@ function score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
     error_log($comp.': bad_def:'.$bad_def.', good_def:'.$good_def.', value:'.$value);
     if (isset($events)) {
         error_log($comp.': events is set');
+        $keys = array_keys($events);
+        if (count($keys) >= 0) {error_log($comp.': events key 0: '.$keys[0]);};
+        if (count($keys) >= 1) {error_log($comp.': events key 1: '.$keys[1]);};
+        if (count($keys) >= 2) {error_log($comp.': events key 2: '.$keys[2]);};
         if (array_key_exists($comp, $events)) {
             error_log($comp.': exists as a key in events');
             $comp_events = $events[$comp];
