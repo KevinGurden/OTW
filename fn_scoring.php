@@ -81,7 +81,7 @@ function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt 
                     array($fl_ev['open_3m'], $fl_ev['open'], $fl_ev['quick_3m'], $fl_ev['open_anon'])
                 );
                 $su_grow = score_contribution('su', 'grow', 
-                    array($gr_ev['clsd_met', $gr_ev['clsd_not_met'])
+                    array($gr_ev['clsd_met'], $gr_ev['clsd_not_met'])
                 );
                 $vt_grow = score_contribution('vt', 'grow', array(
                         $gr_ev['open_3m'], $gr_ev['clsd_met'], $gr_ev['clsd_not_met']
