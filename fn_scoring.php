@@ -19,9 +19,9 @@ function weights() { // Provide survey contributions
     );
 };
 
-function score_health($con, $cid, $day, $events) { // Update the Cm..Vt scores and then the overall health
+function score_health($con, $cid, $day, $events, $from) { // Update the Cm..Vt scores and then the overall health
     // Get the days' health row, calculate new values and write it back
-    error_log("score_health...");
+    error_log("score_health... from ".$from);
     $select = "SELECT * FROM health WHERE company_id=$cid AND day<='$day' AND datediff('$day',day)<=5 ORDER BY -day";
     error_log("select: $select");
     

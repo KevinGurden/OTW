@@ -183,9 +183,11 @@ if (connected($con, $response)) {
 
     // Escape the values to ensure no injection vunerability
     $answers = $_POST['answers'];
+    echo '<pre>'; print_r($answers); echo '</pre>';
     $day = escape($con, 'day', '');
     $company_id = got_int('company_id', 0);
     $events = $_POST['events'];
+    echo '<pre>'; print_r($events); echo '</pre>';
     
     $elements = array('cm','co','ca','wo','vi','va','re','ri','su','vt','vb');
 
@@ -226,7 +228,7 @@ if (connected($con, $response)) {
     $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
 
     if ($db_result) { // Success... finally update the overall health scores. This does not use insert_counts
-        $response["day"] = score_health($con, $company_id, $day, $events);
+        $response["day"] = score_health($con, $company_id, $day, $events, "scoreSurvey");
         
         http_response_code(200);
         $response["message"] = "Success";

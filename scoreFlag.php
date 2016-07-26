@@ -148,7 +148,7 @@ if (connected($con, $response)) {
         };
             
         // Finally update the overall health scores. This does not use insert_counts
-        $response["day"] = score_health($con, $company_id, $day, $events);
+        $response["day"] = score_health($con, $company_id, $day, $events, "scoreFlag");
     } else {
         // Failure
         http_response_code(304);

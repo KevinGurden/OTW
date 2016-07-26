@@ -87,7 +87,7 @@ if (connected($con, $response)) {
         // error_log('success');
 
         // Finally update the overall health scores
-        $response["day"] = score_health($con, $company_id, $day, $events);
+        $response["day"] = score_health($con, $company_id, $day, $events, "scoreGrow");
     } else {
         // Failure
         http_response_code(304);
