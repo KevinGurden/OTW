@@ -42,29 +42,29 @@ function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt 
                 
                 // Events
                 $wh_ev = array(
-                    'open_3m'       => score_event('whistle','open_3m', $s_day, $ev_info, 0, 20),
-                    'quick_3m'      => score_event('whistle', 'quick_3m', $s_day, $ev_info, 0, 20),
-                    'open'          => score_event('whistle', 'open', $s_day, $ev_info, 5, 50),
-                    'open_anon'     => score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1)
+                    'open_3m'       => score_event('whistle','open_3m', $s_day, $ev_info, 0, 20, $from),
+                    'quick_3m'      => score_event('whistle', 'quick_3m', $s_day, $ev_info, 0, 20, $from),
+                    'open'          => score_event('whistle', 'open', $s_day, $ev_info, 5, 50, $from),
+                    'open_anon'     => score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1, $from)
                 );
 
                 $fl_ev = array(
-                    'open_3m'       => score_event('flag', 'open_3m', $s_day, $ev_info, 0, 20),
-                    'quick_3m'      => score_event('flag', 'quick_3m', $s_day, $ev_info, 0, 20),
-                    'open'          => score_event('flag', 'open', $s_day, $ev_info, 5, 100),
-                    'open_anon'          => score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1)
+                    'open_3m'       => score_event('flag', 'open_3m', $s_day, $ev_info, 0, 20, $from),
+                    'quick_3m'      => score_event('flag', 'quick_3m', $s_day, $ev_info, 0, 20, $from),
+                    'open'          => score_event('flag', 'open', $s_day, $ev_info, 5, 100, $from),
+                    'open_anon'          => score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1, $from)
                 );
                 
                 $gr_ev = array(
-                    'open_3m'       => score_event('grow', 'open_3m', $s_day, $ev_info, 0, 20),
-                    'clsd_met'      => score_event('grow', 'closed_met', $s_day, $ev_info, 15, 0),
-                    'clsd_not_met'  => score_event('grow', 'closed_not_met', $s_day, $ev_info, 0, 15)
+                    'open_3m'       => score_event('grow', 'open_3m', $s_day, $ev_info, 0, 20, $from),
+                    'clsd_met'      => score_event('grow', 'closed_met', $s_day, $ev_info, 15, 0, $from),
+                    'clsd_not_met'  => score_event('grow', 'closed_not_met', $s_day, $ev_info, 0, 15, $from)
                 );
                 
                 $su_ev = array(
-                    'anon_3m'       => score_event('survey', 'anon_3m', $s_day, $ev_info, 0, 10),
-                    'refuse_3m'     => score_event('survey', 'refuse_3m', $s_day, $ev_info, 0, 50),
-                    '5d'            => score_event('survey', '5d', $s_day, $ev_info, 0, 1)
+                    'anon_3m'       => score_event('survey', 'anon_3m', $s_day, $ev_info, 0, 10, $from),
+                    'refuse_3m'     => score_event('survey', 'refuse_3m', $s_day, $ev_info, 0, 50, $from),
+                    '5d'            => score_event('survey', '5d', $s_day, $ev_info, 0, 1, $from)
                 );
 
                 // $bah = score_all_events($ev_info);
