@@ -45,14 +45,14 @@ function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt 
                     'open_3m'       => score_event('whistle','open_3m', $s_day, $ev_info, 0, 20, $from),
                     'quick_3m'      => score_event('whistle', 'quick_3m', $s_day, $ev_info, 0, 20, $from),
                     'open'          => score_event('whistle', 'open', $s_day, $ev_info, 5, 50, $from),
-                    'open_anon'     => score_event_div($s_day['whistle_anon'], $score['whistle_open'], 0, 1, $from)
+                    'open_anon'     => score_event_div('whistle', 'open_anon', 'anon', 'open', $s_day, $ev_info, 0, 1, $from)
                 );
 
                 $fl_ev = array(
                     'open_3m'       => score_event('flag', 'open_3m', $s_day, $ev_info, 0, 20, $from),
                     'quick_3m'      => score_event('flag', 'quick_3m', $s_day, $ev_info, 0, 20, $from),
                     'open'          => score_event('flag', 'open', $s_day, $ev_info, 5, 100, $from),
-                    'open_anon'          => score_event_div($s_day['flag_anon'], $score['flag_open'], 0, 1, $from)
+                    'open_anon'     => score_event_div('flag', 'open_anon', 'anon', 'open', $s_day, $ev_info, 0, 1, $from)
                 );
                 
                 $gr_ev = array(
@@ -218,10 +218,29 @@ function score_rolling($comp, $day_score, $other_scores) {
 //     return null;
 // };
 
+function score_event_div($comp, $event_name, $name1, $name2, $score, $events, $good_def, $bad_def, $from) {
+    // 'open_anon'     => score_event_div('whistle', 'anon', 'open', $s_day, $ev_info, 0, 1, $from)
+    // Calculate value1/value2 and return a percentage score between $good (100%) and bad (0%).
+    $bad = $bad_def; $good = $good_def; $value1 = $score[$comp.'_'.$name1]; $value2 = $score[$comp.'_'.$name2];
+
+    if (array_key_exists($event_name, $events)) {
+        $bad = $events[$event_name]['low']; $good = $events[$event_name]['high'];
+    };
+
+    if (!is_null($value2) && $value2>0) {
+        if (!isset($value1)) {
+            $value1=0;
+        };
+    };
+
+    return event_effect($value1/$value2, $good, $bad);
+};
+
 function score_event($comp, $event_name, $score, $events, $good_def, $bad_def, $from) {
     // Return a percentage score between $good (100%) and bad (0%).
     //
     $bad = $bad_def; $good = $good_def; $value = $score[$comp.'_'.$event_name];
+    $event_name = $comp.'_'.$event_name;
     error_log($from.' '.$comp.'/'.$event_name.': bad_def:'.$bad_def.', good_def:'.$good_def.', value:'.$value);
     
     if (isset($events)) {
@@ -239,6 +258,10 @@ function score_event($comp, $event_name, $score, $events, $good_def, $bad_def, $
         };
     };
 
+    return event_effect($value, $good, $bad);
+};
+
+function event_effect($value, $good, $bad) {
     if (is_null($value)) {
         return $value;
     } else {
@@ -262,19 +285,6 @@ function score_event($comp, $event_name, $score, $events, $good_def, $bad_def, $
         } else {
             return $res; // Positive effect
         };
-    };
-};
-
-function score_event_div($value1, $value2, $good, $bad) {
-    // Calculate value1/value2 and return a percentage score between $good (100%) and bad (0%).
-    if (!is_null($value2) && $value2>0) {
-        if (!isset($value1)) {
-            $value1=0;
-        };
-        //score_event($comp, $event_name, $score, $events, $good_def, $bad_def) {
-        return score_event($value1/$value2, $good, $bad);
-    } else {
-        return null;
     };
 };
 
