@@ -219,12 +219,13 @@ function score_rolling($comp, $day_score, $other_scores) {
 // };
 
 function score_event_div($comp, $event_name, $name1, $name2, $score, $events, $good_def, $bad_def, $from) {
-    // 'open_anon'     => score_event_div('whistle', 'anon', 'open', $s_day, $ev_info, 0, 1, $from)
     // Calculate value1/value2 and return a percentage score between $good (100%) and bad (0%).
     $bad = $bad_def; $good = $good_def; $value1 = $score[$comp.'_'.$name1]; $value2 = $score[$comp.'_'.$name2];
 
     if (array_key_exists($event_name, $events)) {
         $bad = $events[$event_name]['low']; $good = $events[$event_name]['high'];
+    } else {
+        error_log($comp.'/'.$event_name.' (div): event_name:'.$event_name.' is not in events');
     };
 
     if (!is_null($value2) && $value2>0) {
@@ -241,20 +242,14 @@ function score_event($comp, $event_name, $score, $events, $good_def, $bad_def, $
     //
     $bad = $bad_def; $good = $good_def; $value = $score[$comp.'_'.$event_name];
     $event_name = $comp.'_'.$event_name;
-    error_log($from.' '.$comp.'/'.$event_name.': bad_def:'.$bad_def.', good_def:'.$good_def.', value:'.$value);
     
     if (isset($events)) {
         // error_log($comp.'/'.$event_name.': events is set');
         if (array_key_exists($event_name, $events)) {
-            error_log($from.' '.$comp.'/'.$event_name.': event_name:'.$event_name.' exists in events');
             $bad = $events[$event_name]['low']; 
             $good = $events[$event_name]['high'];
-            error_log($from.' '.$comp.'_'.$event_name.' is '.$bad.'/'.$good);
         } else {
             error_log($comp.'/'.$event_name.': event_name:'.$event_name.' is not in events');
-            foreach ($events as $key => $ev) {
-                error_log($from.' '.$comp.' key:'.$key.', event name:'.$ev['name']);
-            };
         };
     };
 
