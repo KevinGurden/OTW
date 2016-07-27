@@ -31,29 +31,24 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
             lookup=$cid:$day,
             company_id=$cid,
             grow_closed_met = (
-                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'achieved'
+                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'achieved' AND submitted<='$day'
             ),
             grow_closed_not_met = (
-                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'fail'
+                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'fail' AND submitted<='$day'
             ),
             grow_open_3m = (
-                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'ongoing' AND submitted >= CURRENT_DATE() - INTERVAL 3 MONTH
+                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'ongoing' AND submitted<='$day' AND datediff(curdate(),submitted)<=90
             )
     ON DUPLICATE KEY 
-        UPDATE grow_closed_met = (
-                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'achieved'
-            ),
-            grow_closed_not_met = (
-                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'fail'
-            ),
-            grow_open_3m = (
-                SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'ongoing' AND submitted >= CURRENT_DATE() - INTERVAL 3 MONTH
-            );
+        UPDATE grow_closed_met = etc
     */
     $lookup = $cid . ':' . $day;
-    $grow_closed_met = "grow_closed_met = (SELECT COUNT(*) FROM goals WHERE company_id=$cid AND status='achieved')";
-    $grow_closed_not_met = "grow_closed_not_met = (SELECT COUNT(*) FROM goals WHERE company_id=$cid AND status='fail')";
-    $grow_open_3m = "grow_open_3m = (SELECT COUNT(*) FROM goals WHERE company_id = $cid AND status = 'ongoing' AND submitted >= CURRENT_DATE() - INTERVAL 3 MONTH)";
+    $days_90 = "DATEDIFF(CURDATE(),submitted)<=90";
+    $before = "submitted<='$day'";
+
+    $grow_closed_met = "grow_closed_met = (SELECT COUNT(*) FROM goals WHERE company_id=$cid AND status='achieved' AND $before)";
+    $grow_closed_not_met = "grow_closed_not_met = (SELECT COUNT(*) FROM goals WHERE company_id=$cid AND status='fail' AND $before)";
+    $grow_open_3m = "grow_open_3m = (SELECT COUNT(*) FROM goals WHERE company_id=$cid AND status='ongoing' AND $before AND $days_90)";
     $grow_fields = "$grow_closed_met, $grow_closed_not_met, $grow_open_3m";
 
     $on_dup = "ON DUPLICATE KEY UPDATE $grow_fields";
