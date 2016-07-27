@@ -62,7 +62,7 @@ function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt 
                 );
                 
                 $su_ev = array(
-                    'anon_3m'       => score_event('survey', 'anon_3m', $s_day, $ev_info, 0, 10, $from),
+                    'anon'          => score_event_div('survey', 'anon', 'anon_3d', 'all_3d', $s_day, $ev_info, 0, 1, $from),
                     'refuse_3m'     => score_event('survey', 'refuse_3m', $s_day, $ev_info, 0, 50, $from),
                     '5d'            => score_event('survey', '5d', $s_day, $ev_info, 0, 1, $from)
                 );
