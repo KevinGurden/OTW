@@ -137,7 +137,7 @@ function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt 
                 /* 
                 INSERT INTO health  
                     SET day='$day',lookup=$cid:$day,company_id=$cid,
-                        health=.., health_avg_recent=.., cm_score=.., cm_avg_recent=.., cm_grow_score=... etc
+                        health=.., cm_score=.., cm_avg_recent=.., cm_grow_score=... etc
                 ON DUPLICATE KEY 
                     UPDATE 
                         health=.., health_avg_recent=.., cm_score=.., cm_avg_recent=.., cm_grow_score=... etc
