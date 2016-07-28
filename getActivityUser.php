@@ -5,7 +5,7 @@ Get a list of activity records a particular user from the encol database.
 Parameters:
     cat: the category object that we want activity for e.g. 'whistles'. String
     table: the table name to check a user match. String
-    user: the users identifier including an anonymous secret. String
+    user: the users identifier or an anonymous secret id. String
 
 Return:
     status: 200 for success, 400+ for error
@@ -19,6 +19,10 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
+include 'fn_connected.php';
+include 'fn_http_response.php';
+include 'fn_get_escape.php';
+
 error_log("----- getActivityUser.php ---------------------------"); // Announce us in the log
 
 // Array for JSON response
@@ -26,21 +30,17 @@ $response = array();
 
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (mysqli_connect_errno()) {
-    error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    $response["status"] = 401;
-    $response["message"] = "Failed to connect to DB";
-    $response["sqlerror"] = mysqli_connect_error();
-    echo json_encode($response);
-} else {
+if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8"); // Set the character set to use
+
     if ( isset($_GET['user']) and isset($_GET['cat']) and isset($_GET['table']) ) {
         // Escape the values to ensure no injection vunerability
-        $user = mysqli_real_escape_string($con, $_GET['user']);
-        $cat = mysqli_real_escape_string($con, $_GET['cat']);
-        $table = mysqli_real_escape_string($con, $_GET['table']);
+        $user = escape($con, 'user', '');
+        $cat = escape($con, 'cat', '');
+        $table = escape($con, 'table');
 
         // Get a list of activity. Select any table record that has the correct user defined and return any activity associiated with that user.
-        if ($table == 'whistles') { // Add whistle title
+        if ($table == 'whistles' || $table == 'flags') { // Add whistle/flag title
             $query = "SELECT a.*, t.title AS 'cat_title' FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
         } else {
             $query = "SELECT a.* FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
