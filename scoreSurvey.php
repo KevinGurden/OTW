@@ -88,7 +88,7 @@ function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new r
     $days_5 = "DATEDIFF('$day',subdate)<=5";
 
     $survey_anon_3m = "survey_anon_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND anon=1 AND $before AND $days_90)";
-    $survey_all_3m = "survey_all=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND $before AND $days_90)";
+    $survey_all_3m = "survey_all_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND $before AND $days_90)";
     $survey_refuse_3m = "survey_refuse_3m=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND refused=1 AND $before AND $days_90)";
     $survey_5d = "survey_5d=(SELECT COUNT(*) FROM answers WHERE company_id=$cid AND $before AND $days_5)";
     $survey_events = "$survey_anon_3m, $survey_all_3m, $survey_refuse_3m, $survey_5d";
