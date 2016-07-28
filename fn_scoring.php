@@ -229,13 +229,15 @@ function score_event_div($comp, $event_name, $name1, $name2, $score, $events, $g
         error_log($comp.'/'.$event_name.' (div): event_name:'.$event_name.' is not in events');
     };
 
-    if (!is_null($value2) && $value2>0) {
-        if (!isset($value1)) {
-            $value1=0;
+    if (is_null($value2) || $value2==0) {
+        return null;
+    } else {
+        if (is_null($value1)) {
+            return null;    
+        } else {
+            return event_effect($value1/$value2, $good, $bad);     
         };
     };
-
-    return event_effect($value1/$value2, $good, $bad);
 };
 
 function score_event($comp, $event_name, $score, $events, $good_def, $bad_def, $from) {
