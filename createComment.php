@@ -1,6 +1,13 @@
 <?php
 /*
-Create a new whistle comment in the encol database.
+Create a new comment in the activity table within the encol database.
+
+Parameters:
+    cat: what type of comment; 'whistle', 'flag', etc. String
+    catid: The id of the whistle/flag etc. Integer
+    type: 'comment' or 'feedback' if the cat item is now in closed status. String
+    content: The text of the comment. String
+    etc
 
 Return:
     status: 200 for success, 400+ for error
@@ -17,16 +24,9 @@ header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
+include 'fn_escape.php';
 
-function escape($con, $field, $default) {
-    if (isset($_POST[$field])) {
-    	return mysqli_real_escape_string($con, $_POST[$field]);
-    } else {
-    	return $default;
-    };
-};
-
-error_log("----- createWhistleComment.php ---------------------------"); // Announce us in the log
+error_log("----- createComment.php ---------------------------"); // Announce us in the log
 
 // Array for JSON response
 $response = array();
@@ -40,18 +40,18 @@ if (connected($con, $response)) {
 
 	// Escape the values to ensure no injection vunerability
 	$cat = escape($con, 'cat', '');
-	$catid = $anon = $_POST['catid'];
+	$catid = got_int('catid', -1);
 	$type = escape($con, 'type', 'comment');
 	$content = escape($con, 'content', '');
 	$fromuser = escape($con, 'fromuser', '');
     $fromnick = escape($con, 'fromnick', '');
 	$date = escape($con, 'date', '');
 	$anon = $_POST['anon'];
-	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
+	$company_id = got_int($con, 'company_id', 0); // Default to 0-Unknown
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, fromuser, fromnick, date, anon, company_id";
-	$vals = "'whistle', $catid, '$type', '$content', '$fromuser', '$fromnick', '$date', $anon, $company_id";
+	$vals = "'$cat', $catid, '$type', '$content', '$fromuser', '$fromnick', '$date', $anon, $company_id";
 
 	$insert = "INSERT INTO activity($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
@@ -71,12 +71,14 @@ if (connected($con, $response)) {
     echo json_encode($response);
 };
 
-/*
+/* 
 Useful stuff:
     SSH for mac:
         chmod 400 otwkey.pem to encrypt key. Do this in the otwkey directory
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
         sudo cat getwhistlesphp-error.log | more to show the error log
+    GIT commands
+        'git status' then 'git add <file>.php' then 'git commit -m 'message'' then 'git push origin master'
  */
 ?>
