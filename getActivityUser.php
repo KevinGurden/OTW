@@ -4,7 +4,7 @@ Get a list of activity records a particular user from the encol database.
 
 Parameters:
     cat: the category object that we want activity for e.g. 'whistles'. String
-    table: the table names to check a user match. Comma separated string
+    tables: the table names to check a user match. Comma separated string
     user: the users identifier or an anonymous secret id. String
 
 Return:
@@ -36,8 +36,7 @@ if (connected($con, $response)) {
     if ( isset($_GET['user']) and isset($_GET['cat']) and isset($_GET['table']) ) {
         // Escape the values to ensure no injection vunerability
         $user = escape($con, 'user', '');
-        $cat = escape($con, 'cat', '');
-        $tables = escape($con, 'table', '');
+        $tables = escape($con, 'tables', '');
 
         $tables = explode(" ", $tables);
         $selects = array();
@@ -45,6 +44,7 @@ if (connected($con, $response)) {
             $cols = "a.*,t".$count." t".$count."title AS 'cat_title'";
             $from = $table." t".$count;
             $on = "t".$count.".id=a.catid";
+            $cat = substr($table, 0, -1); // Drop the s at the end of the table name
             $where = "t".$count.".user='".$user."' AND a.cat='".$cat."'";
             $selects[$count] = "SELECT "$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
         };
