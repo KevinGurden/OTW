@@ -33,11 +33,11 @@ $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin
 if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-    if ( isset($_GET['user']) and isset($_GET['table']) ) {
+    if ( isset($_GET['user']) and isset($_GET['tables']) ) {
         // Escape the values to ensure no injection vunerability
         $user = escape($con, 'user', '');
         $tables = escape($con, 'tables', '');
-        error_log("tables: '".$tables.".");
+        error_log("tables: '".$tables."'");
 
         $tables = explode(" ", $tables);
         $selects = array();
@@ -86,9 +86,9 @@ if (connected($con, $response)) {
             echo json_encode($response);
         };
     } else {
-        error_log("getActivityUser: 'user', 'table' and 'cat' must be provided");
+        error_log("getActivityUser: 'user' and 'table' must be provided");
         $response["status"] = 402;
-        $response["message"] = "'user', 'table' and 'cat' must be provided";
+        $response["message"] = "'user' and 'table' must be provided";
         $response["sqlerror"] = "";
         echo json_encode($response);
     };
