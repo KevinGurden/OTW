@@ -37,11 +37,12 @@ if (connected($con, $response)) {
         // Escape the values to ensure no injection vunerability
         $user = escape($con, 'user', '');
         $tables = escape($con, 'tables', '');
+        error_log("tables: '".$tables.".");
 
         $tables = explode(" ", $tables);
         $selects = array();
         foreach ($tables as $count => $table) {
-            $cols = "a.*,t".$count." t".$count."title AS 'cat_title'";
+            $cols = "a.*,t".$count.".title AS 'cat_title'";
             $from = $table." t".$count;
             $on = "t".$count.".id=a.catid";
             $cat = substr($table, 0, -1); // Drop the s at the end of the table name
