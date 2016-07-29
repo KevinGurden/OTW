@@ -37,7 +37,7 @@ if (connected($con, $response)) {
         // Escape the values to ensure no injection vunerability
         $user = escape($con, 'user', '');
         $cat = escape($con, 'cat', '');
-        $table = escape($con, 'table');
+        $table = escape($con, 'table', '');
 
         // Get a list of activity. Select any table record that has the correct user defined and return any activity associiated with that user.
         if ($table == 'whistles' || $table == 'flags') { // Add whistle/flag title
