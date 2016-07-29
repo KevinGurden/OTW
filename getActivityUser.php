@@ -4,7 +4,7 @@ Get a list of activity records a particular user from the encol database.
 
 Parameters:
     cat: the category object that we want activity for e.g. 'whistles'. String
-    table: the table name to check a user match. String
+    table: the table names to check a user match. Comma separated string
     user: the users identifier or an anonymous secret id. String
 
 Return:
@@ -37,14 +37,26 @@ if (connected($con, $response)) {
         // Escape the values to ensure no injection vunerability
         $user = escape($con, 'user', '');
         $cat = escape($con, 'cat', '');
-        $table = escape($con, 'table', '');
+        $tables = escape($con, 'table', '');
+
+        $tables = explode(" ", $tables);
+        $selects = array();
+        foreach ($tables as $count => $table) {
+            $cols = "a.*,t".$count." t".$count."title AS 'cat_title'";
+            $from = $table." t".$count;
+            $on = "t".$count.".id=a.catid";
+            $where = "t".$count.".user='".$user."' AND a.cat='".$cat."'";
+            $selects[$count] = "SELECT "$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
+        };
+        $query = implode(" UNION ", $selects);
+        error_log("getActivityUser: query: ".$query);
 
         // Get a list of activity. Select any table record that has the correct user defined and return any activity associiated with that user.
-        if ($table == 'whistles' || $table == 'flags') { // Add whistle/flag title
-            $query = "SELECT a.*, t.title AS 'cat_title' FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
-        } else {
-            $query = "SELECT a.* FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
-        };
+        // if ($table == 'whistles' || $table == 'flags') { // Add whistle/flag title
+        //     $query = "SELECT a.*, t.title AS 'cat_title' FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
+        // } else {
+        //     $query = "SELECT a.* FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
+        // };
         $result = mysqli_query($con, $query);
         
         if (mysqli_num_rows($result) > 0) { // Check for empty result
