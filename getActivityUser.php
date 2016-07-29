@@ -33,7 +33,7 @@ $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin
 if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-    if ( isset($_GET['user']) and isset($_GET['cat']) and isset($_GET['table']) ) {
+    if ( isset($_GET['user']) and isset($_GET['table']) ) {
         // Escape the values to ensure no injection vunerability
         $user = escape($con, 'user', '');
         $tables = escape($con, 'tables', '');
@@ -46,7 +46,7 @@ if (connected($con, $response)) {
             $on = "t".$count.".id=a.catid";
             $cat = substr($table, 0, -1); // Drop the s at the end of the table name
             $where = "t".$count.".user='".$user."' AND a.cat='".$cat."'";
-            $selects[$count] = "SELECT "$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
+            $selects[$count] = "SELECT ".$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
         };
         $query = implode(" UNION ", $selects);
         error_log("getActivityUser: query: ".$query);

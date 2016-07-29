@@ -40,14 +40,23 @@ if (connected($con, $response)) {
 
 	// Escape the values to ensure no injection vunerability
 	$cat = escape($con, 'cat', '');
+    error_log('cat:'.$cat);
 	$catid = got_int('catid', -1);
+    error_log('catid:'.$catid);
 	$type = escape($con, 'type', 'comment');
+    error_log('type:'.$type);
 	$content = escape($con, 'content', '');
+    error_log('content:'.$content);
 	$fromuser = escape($con, 'fromuser', '');
+    error_log('fromuser:'.$fromuser);
     $fromnick = escape($con, 'fromnick', '');
+    error_log('fromnick:'.$fromnick);
 	$date = escape($con, 'date', '');
+    error_log('date:'.$date);
 	$anon = $_POST['anon'];
-	$company_id = got_int($con, 'company_id', 0); // Default to 0-Unknown
+    error_log('anon:'.$anon);
+	$company_id = got_int('company_id', 0); // Default to 0-Unknown
+    error_log('company_id:'.$company_id);
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, fromuser, fromnick, date, anon, company_id";
