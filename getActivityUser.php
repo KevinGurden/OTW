@@ -39,13 +39,23 @@ if (connected($con, $response)) {
         $tables = escape($con, 'tables', '');
         error_log("tables: '".$tables."'");
 
+        /*
+        SELECT a.*,t0.title AS 'whistle_title' 
+            FROM whistles t0 
+                INNER JOIN activity a ON t0.id = a.catid WHERE t0.user='$user' AND a.cat='whistle'
+        UNION
+        SELECT a.*,t1.title AS 'flag_title1' 
+            FROM flags t0 
+                INNER JOIN activity a ON t1.id = a.catid WHERE t1.user='$user' AND a.cat='flag'
+        */
+
         $tables = explode(" ", $tables);
         $selects = array();
         foreach ($tables as $count => $table) {
-            $cols = "a.*,t".$count.".title AS 'cat_title'";
+            $cat = substr($table, 0, -1); // Drop the s at the end of the table name
+            $cols = "a.*,t".$count.".title AS '".$cat."_title'";
             $from = $table." t".$count;
             $on = "t".$count.".id=a.catid";
-            $cat = substr($table, 0, -1); // Drop the s at the end of the table name
             $where = "t".$count.".user='".$user."' AND a.cat='".$cat."'";
             $selects[$count] = "SELECT ".$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
         };
