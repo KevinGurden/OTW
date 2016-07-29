@@ -40,11 +40,11 @@ if (connected($con, $response)) {
         error_log("tables: '".$tables."'");
 
         /*
-        SELECT a.*,t0.title AS 'whistle_title' 
+        SELECT a.*,t0.title AS 'cat_title' 
             FROM whistles t0 
                 INNER JOIN activity a ON t0.id = a.catid WHERE t0.user='$user' AND a.cat='whistle'
         UNION
-        SELECT a.*,t1.title AS 'flag_title1' 
+        SELECT a.*,t1.title AS 'cat_title' 
             FROM flags t0 
                 INNER JOIN activity a ON t1.id = a.catid WHERE t1.user='$user' AND a.cat='flag'
         */
@@ -53,7 +53,7 @@ if (connected($con, $response)) {
         $selects = array();
         foreach ($tables as $count => $table) {
             $cat = substr($table, 0, -1); // Drop the s at the end of the table name
-            $cols = "a.*,t".$count.".title AS '".$cat."_title'";
+            $cols = "a.*,t".$count.".title AS 'cat_title'";
             $from = $table." t".$count;
             $on = "t".$count.".id=a.catid";
             $where = "t".$count.".user='".$user."' AND a.cat='".$cat."'";
@@ -62,12 +62,6 @@ if (connected($con, $response)) {
         $query = implode(" UNION ", $selects);
         error_log("getActivityUser: query: ".$query);
 
-        // Get a list of activity. Select any table record that has the correct user defined and return any activity associiated with that user.
-        // if ($table == 'whistles' || $table == 'flags') { // Add whistle/flag title
-        //     $query = "SELECT a.*, t.title AS 'cat_title' FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
-        // } else {
-        //     $query = "SELECT a.* FROM $table t INNER JOIN activity a ON t.id = a.catid WHERE t.user='$user'";
-        // };
         $result = mysqli_query($con, $query);
         
         if (mysqli_num_rows($result) > 0) { // Check for empty result
