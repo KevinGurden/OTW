@@ -25,7 +25,7 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
 
-error_log("----- updateWhistle.php ---------------------------"); // Announce us in the log
+error_log("----- updateAnything.php ---------------------------"); // Announce us in the log
 
 // Array for JSON response
 $response = array();

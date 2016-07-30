@@ -1,12 +1,12 @@
 <?php
 /*
-Create a new comment in the activity table within the encol database.
+Create a new activity in the activity table within the encol database.
 
 Parameters:
-    cat: what type of comment; 'whistle', 'flag', etc. String
+    cat: what type of activity to apply it to; 'whistle', 'flag', etc. String
     catid: The id of the whistle/flag etc. Integer
-    type: 'comment' or 'feedback' if the cat item is now in closed status. String
-    content: The text of the comment. String
+    type: 'comment', 'feedback' (if closed), 'rating'. String
+    content: The content to be applied to this event. E.g a rating of '5', or a comment 'Hello'. String
     etc
 
 Return:
@@ -36,27 +36,17 @@ if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
 	$_POST = json_decode(file_get_contents('php://input'), true);
-	$response["received"] = $_POST;
 
 	// Escape the values to ensure no injection vunerability
 	$cat = escape($con, 'cat', '');
-    error_log('cat:'.$cat);
 	$catid = got_int('catid', -1);
-    error_log('catid:'.$catid);
 	$type = escape($con, 'type', 'comment');
-    error_log('type:'.$type);
 	$content = escape($con, 'content', '');
-    error_log('content:'.$content);
 	$fromuser = escape($con, 'fromuser', '');
-    error_log('fromuser:'.$fromuser);
     $fromnick = escape($con, 'fromnick', '');
-    error_log('fromnick:'.$fromnick);
 	$date = escape($con, 'date', '');
-    error_log('date:'.$date);
 	$anon = $_POST['anon'];
-    error_log('anon:'.$anon);
 	$company_id = got_int('company_id', 0); // Default to 0-Unknown
-    error_log('company_id:'.$company_id);
 	    
 	// Issue the database create
 	$cols = "cat, catid, type, content, fromuser, fromnick, date, anon, company_id";
