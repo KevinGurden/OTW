@@ -1,9 +1,10 @@
 <?php
 /*
-Create a new whistle in the encol database.
+Update any table with an id in the encol database.
 
 Data passed:
-	id
+	table: The encol table name. String
+    id: The unique id of the item. Integer
 	set1: A field to be updated, string
 	val1: The value to assign to set1
 	set2: A field to be updated, string
@@ -35,13 +36,13 @@ if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     $_POST = json_decode(file_get_contents('php://input'), true);
-    $id = $_POST['id'];
-    $field1 = $_POST['field1']; $val1 = $_POST['val1'];
-    $field2 = $_POST['field2']; $val2 = $_POST['val2'];
+    $id = got_int('id', null);
+    $field1 = escape($con, 'field1', ''); $val1 = $_POST['val1'];
+    $field2 = escape($con, 'field2', ''); $val2 = $_POST['val2'];
 
 	// Issue the database update
 	/*
-	UPDATE whistles 
+	UPDATE $table 
 		SET $field1=$val1,$field1=$val1 
 		WHERE id=$id
 	 */
@@ -74,5 +75,7 @@ Useful stuff:
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
         sudo cat getwhistlesphp-error.log | more to show the error log
+    GIT commands
+        'git status' then 'git add <file>.php' then 'git commit -m 'message'' then 'git push origin master'
  */
 ?>
