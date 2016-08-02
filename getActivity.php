@@ -39,6 +39,7 @@ if (mysqli_connect_errno()) {
 
         // Get a list of activity
         $query = "SELECT * FROM activity WHERE catid='$catid' AND cat='$cat'";
+        $response["query"] = $query;
         $result = mysqli_query($con, $query);
 
         // Check for empty result
