@@ -49,6 +49,8 @@ if (mysqli_connect_errno()) {
             
             while ($act = mysqli_fetch_assoc($result)) {
                 $activity[] = $act;
+                error_log("content: ".$act['content']);
+                error_log("content1: ".$act['content1']);
             }
             $response["activity"] = $activity;
 
