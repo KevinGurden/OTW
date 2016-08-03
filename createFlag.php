@@ -2,7 +2,7 @@
 /*
 Create a new flag in the encol database.
 
-Data passed:
+Parameters:
 	tba
 
 Return:
@@ -44,6 +44,7 @@ if (connected($con, $response)) {
 	$loc_main = escape($con, 'loc_main', '');
 	$loc_detail = escape($con, 'loc_detail', '');
 	$user = escape($con, 'user', '');
+	$user_nick = escape($con, 'user_nick', '');
 	$anon = escape($con, 'anon', 0);
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
@@ -51,8 +52,8 @@ if (connected($con, $response)) {
 	$cols = "title, description, recommendation, status, cat, subdate, date, type_selected, type_policy, ";
 	$vals = "'$title', '$description', '$recommendation', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
-	$cols = $cols . "loc_main, loc_detail, user, anon, company_id";
-	$vals = $vals . "'$loc_main','$loc_detail', '$user', '$anon', $company_id";
+	$cols = $cols . "loc_main, loc_detail, user, user_nick, anon, company_id";
+	$vals = $vals . "'$loc_main','$loc_detail', '$user', '$nick', '$anon', $company_id";
 
 	$insert = "INSERT INTO flags($cols) VALUES($vals)";
 	$result = mysqli_query($con, $insert);
