@@ -3,7 +3,8 @@
 Get any test information from the encol database.
 
 Parameters:
-    id: the id of the test record to return. String
+    id: The id of the test record to return. String
+    debug: Turn on debugging
 
 Return:
     status: 200 for success, 400+ for error
@@ -32,7 +33,7 @@ if (connected($con, $response)) {
 
     if (isset($_GET['id'])) {
         $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
-        error_log('getTest: id: $id');
+        // error_log('getTest: id: $id');
     
         // Get a test record
         $select = "SELECT * FROM test WHERE id=$id";
@@ -43,16 +44,15 @@ if (connected($con, $response)) {
         if (mysqli_num_rows($result) > 0) {
             // Get the first result
             $response["test"] = mysqli_fetch_assoc($result);
-            $response["status"] = 200;
+            http_response_code(200); // Success
             $response["message"] = "Success";
             $response["sqlerror"] = "";
         } else {
-            // no record found
-            $response["status"] = 401;
+            http_response_code(401); // Failure. No questions found
             $response["message"] = "No test information found for 'test$id'";
         };
     } else { // no id present
-        $response["status"] = 402;
+        http_response_code(402); // Failure
         $response["message"] = "Missing id parameter";
     };
 };

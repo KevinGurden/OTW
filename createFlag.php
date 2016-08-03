@@ -67,9 +67,9 @@ if (connected($con, $response)) {
         $response["message"] = "Create flag failed";
         $response["sqlerror"] = mysqli_error($con);
     };
-    header('Content-Type: application/json');
-    echo json_encode($response);
 };
+header('Content-Type: application/json');
+echo json_encode($response);
 
 /* 
 Useful stuff:

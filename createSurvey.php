@@ -95,9 +95,9 @@ if (connected($con, $response)) {
         $response["message"] = "One or more creates failed";
         $response["sqlerror"] = mysqli_error($con);
     };
-    header('Content-Type: application/json');
-    echo json_encode($response);
 };
+header('Content-Type: application/json');
+echo json_encode($response);
 
 /* 
 Useful stuff:

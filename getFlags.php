@@ -55,26 +55,19 @@ if (connected($con, $response)) {
             $response["flags"] = $flags;
 
             // Success
-            $response["status"] = 200;
+            http_response_code(200); // Success
             $response["message"] = "Success";
             $response["sqlerror"] = "";
-
-            // Echoing JSON response
-            echo json_encode($response);
         } else {
-            // no flags found
-            $response["status"] = 200;
+            http_response_code(200); // Success but no flags found
             $response["message"] = "No flags found for user '$user' and company '$id'";
-
-            // echo no flags JSON
-            echo json_encode($response);
         };
     } else { // no id or user present
-        $response["status"] = 402;
+        http_response_code(402); // Failure
         $response["message"] = "Missing 'id' or 'user' parameter";
-        echo json_encode($response);
     };
 };
+echo json_encode($response);
 
 /* 
 Useful stuff:

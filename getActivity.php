@@ -18,24 +18,23 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
+include 'fn_connected.php';
+include 'fn_http_response.php';
+include 'fn_get_escape.php';
+
 error_log("----- getActivity.php ---------------------------"); // Announce us in the log
 
 // Array for JSON response
 $response = array();
 
-// Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (mysqli_connect_errno()) {
-    error_log("Failed to connect to MySQL: " . mysqli_connect_error());
-    $response["status"] = 401;
-    $response["message"] = "Failed to connect to DB";
-    $response["sqlerror"] = mysqli_connect_error();
-    echo json_encode($response);
-} else {
+if (connected($con, $response)) {
+    mysqli_set_charset($con, "utf8"); // Set the character set to use
+
     if ( isset($_GET['catid']) and isset($_GET['cat']) ) {
         // Escape the values to ensure no injection vunerability
-        $catid = mysqli_real_escape_string($con, $_GET['catid']);
-        $cat = mysqli_real_escape_string($con, $_GET['cat']);
+        $catid = escape($con, 'catid', '');
+        $cat = escape($con, 'cat', '');
 
         // Get a list of activity
         $query = "SELECT * FROM activity WHERE catid='$catid' AND cat='$cat'";
@@ -54,30 +53,24 @@ if (mysqli_connect_errno()) {
             }
             $response["activity"] = $activity;
 
-            // Success
-            $response["status"] = 200;
+            http_response_code(200); // Success
             $response["message"] = "Success";
             $response["sqlerror"] = "";
-
-            // Echoing JSON response
-            echo json_encode($response);
+            
         } else {
             // no activity found
-            $response["status"] = 200;
+            http_response_code(200); // Success but no activity
             $response["query"] = $query;
             $response["message"] = "No activity found";
-
-            // echo no whistles JSON
-            echo json_encode($response);
         };
     } else {
         error_log("'catid' and 'cat' must be provided");
-        $response["status"] = 402;
+        http_response_code(402); // Failure
         $response["message"] = "'cat' and 'catid' must be provided";
         $response["sqlerror"] = "";
-        echo json_encode($response);
     };
 };
+echo json_encode($response);
 
 /* 
 Useful stuff:
@@ -86,6 +79,7 @@ Useful stuff:
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
         sudo cat getwhistlesphp-error.log | more to show the error log
+    GIT commands
+        'git status' then 'git add <file>.php' then 'git commit -m 'message'' then 'git push origin master'
  */
-
 ?>

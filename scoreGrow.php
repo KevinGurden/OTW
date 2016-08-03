@@ -90,7 +90,7 @@ if (connected($con, $response)) {
         // $response["status"] = 304;
         $response["message"] = "Failed to create/update record";
         $response["sqlerror"] = mysqli_error($con);
-        error_log('failure');
+        error_log('Failed to create/update record');
     };
 }; 
 

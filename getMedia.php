@@ -36,11 +36,11 @@ if (connected($con, $response)) {
     $user = escape($con, 'user', '');
     $mediaId = escape($con, 'mediaId', '');
     $type = escape($con, 'type', 'full');
-    error_log("getMedia: ".$type);
+    // error_log("getMedia: ".$type);
 
     // Get 1 record only
     $select = "SELECT * FROM media WHERE company_id=$id AND user='$user' AND id=$mediaId LIMIT 1";
-    error_log("getMedia: ".$select);
+    // error_log("getMedia: ".$select);
     $result = mysqli_query($con, $select);
     $response["query"] = "$select";
 

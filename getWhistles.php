@@ -54,27 +54,19 @@ if (connected($con, $response)) {
             }
             $response["whistles"] = $whistles;
 
-            // Success
-            $response["status"] = 200;
+            http_response_code(200); // Success
             $response["message"] = "Success";
             $response["sqlerror"] = "";
-
-            // Echoing JSON response
-            echo json_encode($response);
         } else {
-            // no whistles found
-            $response["status"] = 200;
+            http_response_code(200); // Success but no whistles found
             $response["message"] = "No whistles found for user '$user' and company '$id'";
-
-            // echo no whistles JSON
-            echo json_encode($response);
         };
     } else { // no id or user present
-        $response["status"] = 402;
+        http_response_code(402); // Failure
         $response["message"] = "Missing 'id' or 'user' parameter";
-        echo json_encode($response);
     };
 };
+echo json_encode($response);
 
 /* 
 Useful stuff:

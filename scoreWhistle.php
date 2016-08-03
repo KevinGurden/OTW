@@ -73,7 +73,7 @@ function insert($con, $cid, $day) { // Insert a new record into 'health' or upda
     $on_dup = "ON DUPLICATE KEY UPDATE $whistle_events";
     $insert = "INSERT INTO health SET day='$day', lookup='$lookup', $comp, $whistle_events $on_dup";
     $insert_result = mysqli_query($con, $insert);
-    error_log($insert, $insert_result);
+    // error_log($insert, $insert_result);
     return $insert_result;
 };
 

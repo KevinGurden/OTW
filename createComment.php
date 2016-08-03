@@ -67,8 +67,8 @@ if (connected($con, $response)) {
         $response["sqlerror"] = mysqli_error($con);
     };
     header('Content-Type: application/json');
-    echo json_encode($response);
 };
+echo json_encode($response);
 
 /* 
 Useful stuff:

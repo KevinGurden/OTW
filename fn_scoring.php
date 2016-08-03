@@ -21,9 +21,9 @@ function weights() { // Provide survey contributions
 
 function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt scores and then the overall health
     // Get the days' health row, calculate new values and write it back
-    error_log("score_health... from ".$from);
+    // error_log("score_health... from ".$from);
     $select = "SELECT * FROM health WHERE company_id=$cid AND day<='$day' AND datediff('$day',day)<=5 ORDER BY -day";
-    error_log("select: $select");
+    // error_log("select: $select");
     
     $select_result = mysqli_query($con, $select);
     if ($select_result === false) { // Will either be false or an array
@@ -159,7 +159,7 @@ function score_health($con, $cid, $day, $ev_info, $from) { // Update the Cm..Vt 
                 
                 $on_dup = "ON DUPLICATE KEY UPDATE $sets";
                 $insert = "INSERT INTO health SET day='$day', lookup='$lookup', company_id=$cid, $sets $on_dup";
-                error_log("insert: $insert");
+                // error_log("insert: $insert");
                 $insert_result = mysqli_query($con, $insert);
 
                 if ($insert_result) {
@@ -192,17 +192,12 @@ function score_rolling($comp, $day_score, $other_scores) {
     foreach ($other_scores as $other_score) {
         $comp_score = $comp.'_score';
         if (array_key_exists($comp_score, $other_score) && !is_null($other_score[$comp_score])) {
-            // error_log('score_rolling: '.$comp.' + '.$other_score[$comp_score]);
             $roll_total = $roll_total + $other_score[$comp_score];
             $count = $count + 1;
-            // error_log('score_rolling: '.$comp.': count now '.$count);
-        // } else {
-        //  error_log('score_rolling: '.$comp.'_score is null');
         };
     };
 
     $roll_score = round($roll_total/$count);
-    // error_log('score_rolling: '.$comp.': '.$roll_total.' / '.$count.' = '.$roll_score);
     return $comp."_avg_recent=".$roll_score;
 };
 

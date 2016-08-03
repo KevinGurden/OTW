@@ -78,8 +78,7 @@ if (connected($con, $response)) {
             $init = mysqli_fetch_assoc($init_store);
             
             if ($events_needed) {
-                error_log('init length: '.count($init));
-
+                
                 $events_result = mysqli_next_result($con);
                 if ($events_result == false) { // no events found
                     http_response_code(204);
@@ -109,8 +108,8 @@ if (connected($con, $response)) {
         $response["message"] = "'username' and 'password' must be provided";
         $response["sqlerror"] = "";
     };
-    echo json_encode($response);
 };
+echo json_encode($response);
 
 /* 
 Useful stuff:

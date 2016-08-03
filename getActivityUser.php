@@ -37,7 +37,6 @@ if (connected($con, $response)) {
         // Escape the values to ensure no injection vunerability
         $user = escape($con, 'user', '');
         $tables = escape($con, 'tables', '');
-        error_log("tables: '".$tables."'");
 
         /*
         SELECT a.*,t0.title AS 'cat_title' 
@@ -60,7 +59,7 @@ if (connected($con, $response)) {
             $selects[$count] = "SELECT ".$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
         };
         $query = implode(" UNION ", $selects);
-        error_log("getActivityUser: query: ".$query);
+        // error_log("getActivityUser: query: ".$query);
 
         $result = mysqli_query($con, $query);
         
@@ -73,30 +72,23 @@ if (connected($con, $response)) {
             }
             $response["activity"] = $activity;
 
-            // Success
-            $response["status"] = 200;
+            http_response_code(200); // Success
             $response["message"] = "Success";
             $response["sqlerror"] = "";
 
-            // Echoing JSON response
-            echo json_encode($response);
         } else {
-            // no activity found
-            $response["status"] = 200;
+            http_response_code(200); // Success but no activity found
             $response["query"] = $query;
             $response["message"] = "No activity found for user '$user'";
-
-            // echo no whistles JSON
-            echo json_encode($response);
         };
     } else {
         error_log("getActivityUser: 'user' and 'table' must be provided");
-        $response["status"] = 402;
+        http_response_code(402); // Failure
         $response["message"] = "'user' and 'table' must be provided";
         $response["sqlerror"] = "";
-        echo json_encode($response);
     };
 };
+echo json_encode($response);
 
 /* 
 Useful stuff:
