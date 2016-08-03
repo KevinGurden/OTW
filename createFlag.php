@@ -44,7 +44,7 @@ if (connected($con, $response)) {
 	$loc_main = escape($con, 'loc_main', '');
 	$loc_detail = escape($con, 'loc_detail', '');
 	$user = escape($con, 'user', '');
-	$user_nick = escape($con, 'user_nick', '');
+	$nick = escape($con, 'user_nick', '');
 	$anon = escape($con, 'anon', 0);
 	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 	    
