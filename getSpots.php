@@ -28,7 +28,9 @@ function debug($text) {
     global $debug_on, $debug_name;
 
     if ($debug_on) {
-        error_log($debugName.": ".$text);
+        error_log($debug_name.": ".$text);
+    } else {
+        error_log($debug_on."! ".$debug_name.": ".$text);
     };
 };
 
@@ -42,6 +44,7 @@ function announce($name, $params) {
 };
 
 announce('getSpots', $_GET);
+error_log("----- ! getSpots.php ! ---------------------------"); // Announce us in the log
 
 // Array for JSON response
 $response = array();
