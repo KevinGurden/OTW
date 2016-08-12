@@ -40,14 +40,16 @@ if (connected($con, $response)) {
     $photo_type = escape($con, 'photo_type', '');
 	$user = escape($con, 'user', '');
 	$cId = escape($con, 'cId', 0); // Default to 0-Unknown
+    $created = escape($con, 'created', '');
     $file64 = $_POST['file64'];
 
     // Issue the database create
-    $cols = "type, photo_type, file, user, company_id";
-    $vals = "'$type', '$photo_type', '$file64', '$user', $cId";
+    $cols = "type, photo_type, file, created, user, company_id";
+    $vals = "'$type', '$photo_type', '$file64', '$created', $user', $cId";
 
     $insert = "INSERT INTO media($cols) VALUES($vals)";
     $result = mysqli_query($con, $insert);
+    $insert_short = "INSERT INTO media($cols) VALUES($vals)";
     debug('insert: '.$insert);
 
     if ($result) {
@@ -59,7 +61,9 @@ if (connected($con, $response)) {
     } else { // Failure
         http_response_code(304);
         $response["message"] = "media create failed";
-        $response["sqlerror"] = mysqli_error($con);
+        $sql_error = mysqli_error($con);
+        $response["sqlerror"] = $sql_error;
+        debug('error: '.$sql_error);
     };
 };
 header('Content-Type: application/json');
