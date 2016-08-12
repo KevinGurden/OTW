@@ -45,12 +45,12 @@ if (connected($con, $response)) {
 
     // Issue the database create
     $cols = "type, photo_type, file, created, user, company_id";
-    $vals = "'$type', '$photo_type', '$file64', '$created', $user', $cId";
+    $vals = "'$type', '$photo_type', '$file64', '$created', '$user', $cId";
 
     $insert = "INSERT INTO media($cols) VALUES($vals)";
     $result = mysqli_query($con, $insert);
 
-    $vals_short = "'$type', '$photo_type', '<file64>', '$created', $user', $cId";
+    $vals_short = "'$type', '$photo_type', '<file64>', '$created', '$user', $cId";
     $insert_short = "INSERT INTO media($cols) VALUES($vals_short)";
     debug('insert: '.$insert_short);
 
