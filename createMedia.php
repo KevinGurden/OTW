@@ -23,8 +23,10 @@ header('Content-Type: application/json');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+include 'fn_debug.php';
 
-error_log("----- createMedia.php ---------------------------"); // Announce us in the log
+$_POST = json_decode(file_get_contents('php://input'), true);
+announce('createMedia', $_POST);
 
 // Array for JSON response
 $response = array();
@@ -32,8 +34,6 @@ $response = array();
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
     // mysqli_set_charset($con, "utf8");
-
-	$_POST = json_decode(file_get_contents('php://input'), true);
 
 	// Escape the values to ensure no injection vunerability
     $type = escape($con, 'type', 'photo');
@@ -48,6 +48,8 @@ if (connected($con, $response)) {
 
     $insert = "INSERT INTO media($cols) VALUES($vals)";
     $result = mysqli_query($con, $insert);
+    debug('insert: '.$insert);
+
     if ($result) {
         http_response_code(200);
         $id = mysqli_insert_id($con);
