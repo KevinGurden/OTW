@@ -49,8 +49,10 @@ if (connected($con, $response)) {
 
     $insert = "INSERT INTO media($cols) VALUES($vals)";
     $result = mysqli_query($con, $insert);
-    $insert_short = "INSERT INTO media($cols) VALUES($vals)";
-    debug('insert: '.$insert);
+
+    $vals_short = "'$type', '$photo_type', '<file64>', '$created', $user', $cId";
+    $insert_short = "INSERT INTO media($cols) VALUES($vals_short)";
+    debug('insert: '.$insert_short);
 
     if ($result) {
         http_response_code(200);
