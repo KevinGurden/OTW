@@ -3,11 +3,11 @@
 Create a new media item in the 'media' encol database.
 
 Data passed:
-	file64:     Base64 encoded file. Blob
-    type:       Type of media object e.g. 'photo', 'video'. String
-    photo_type: Type of photo if type=photo e.g. 'jpeg'. String
-    user:       Username. String
-    cId:        Company identifier in the 'company' table within the encol database. Integer
+	file64:         Base64 encoded file. Blob
+    type:           Type of media object e.g. 'photo', 'video'. String
+    photo_format:   Type of photo if type=photo e.g. 'jpeg'. String
+    user:           Username. String
+    cId:            Company identifier in the 'company' table within the encol database. Integer
 
 Return:
     status: 200 for success, 300+ for error
@@ -37,20 +37,20 @@ if (connected($con, $response)) {
 
 	// Escape the values to ensure no injection vunerability
     $type = escape($con, 'type', 'photo');
-    $photo_type = escape($con, 'photo_type', '');
+    $photo_format = escape($con, 'photo_format', '');
 	$user = escape($con, 'user', '');
 	$cId = escape($con, 'cId', 0); // Default to 0-Unknown
     $created = escape($con, 'created', '');
     $file64 = $_POST['file64'];
 
     // Issue the database create
-    $cols = "type, photo_type, file, created, user, company_id";
-    $vals = "'$type', '$photo_type', '$file64', '$created', '$user', $cId";
+    $cols = "type, photo_format, file, created, user, company_id";
+    $vals = "'$type', '$photo_format', '$file64', '$created', '$user', $cId";
 
     $insert = "INSERT INTO media($cols) VALUES($vals)";
     $result = mysqli_query($con, $insert);
 
-    $vals_short = "'$type', '$photo_type', '<file64>', '$created', '$user', $cId";
+    $vals_short = "'$type', '$photo_format', '<file64>', '$created', '$user', $cId";
     $insert_short = "INSERT INTO media($cols) VALUES($vals_short)";
     debug('insert: '.$insert_short);
 
