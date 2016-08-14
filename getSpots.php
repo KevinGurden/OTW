@@ -1,6 +1,7 @@
 <?php
 /*
-Get a list of spots from the encol database. If the user is '' then return all spots for the company
+Get a list of spots from the encol database. 
+If the user is '' then return all spots for the company otherwise return spots that are owned, raised or watched by the user.
 
 Parameters:
     id: company identifier. Integer
@@ -22,31 +23,11 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
-// include 'fn_debug.php';
-
-function debug($text) {
-    global $debug_on, $debug_name;
-
-    if ($debug_on) {
-        error_log($debug_name.": ".$text);
-    } else {
-        error_log($debug_on."! ".$debug_name.": ".$text);
-    };
-};
-
-function announce($name, $params) {
-    global $debug_on, $debug_name;
-
-    $debug_on = (isset($params['debug']) && $params['debug']==true);
-
-    $debug_name = $name;
-    error_log("----- ".$debug_name.".php ---------------------------"); // Announce us in the log
-};
+include 'fn_debug.php';
 
 announce('getSpots', $_GET);
 
-// Array for JSON response
-$response = array();
+$response = array(); // Array for JSON response
 
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
@@ -61,23 +42,23 @@ if (connected($con, $response)) {
         if ($user == '') {
             $and_user = '';                     // Return flags for all users
         } else {
-            $and_user = "AND owned_user='$user'";     // Limit to a particular user
+            // Limit to a particular user
+            $and_user = "AND (owned_user='$user' OR raised_user='$user' OR watchers LIKE '%$user%')";     
         }
         $select = "SELECT * FROM spots WHERE company_id=$id $and_user";
+        debug('select: '.$select);
         $result = mysqli_query($con, $select);
         $response["query"] = "$select";
 
         // Check for empty result
-        if (mysqli_num_rows($result) > 0) {
-            // Loop through all results
+        if (mysqli_num_rows($result) > 0) { 
             $spots = array();
             
-            while ($spot = mysqli_fetch_assoc($result)) {
+            while ($spot = mysqli_fetch_assoc($result)) { // Loop through all results
                 $spots[] = $spot;
             }
             $response["spots"] = $spots;
 
-            // Success
             http_response_code(200); // Success
             $response["message"] = "Success";
             $response["sqlerror"] = "";
