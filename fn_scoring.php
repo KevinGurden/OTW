@@ -11,7 +11,7 @@ function weights() { // Provide survey contributions
         "Workplace" =>      array( 10,  10,  10, 100,   0,  10,  20,  10,  10,  10,  20), // Wo (E1)
         "Vision" =>         array( 10,  20,  20,  10, 100,  25,  20,  10,   0,  20,  20), // Vi (V1)
         "Values" =>         array( 10,  20,  20,  10,  25, 100,   0,  20,   0,  20,  20), // Va (V2)
-        "Recognistion" =>   array( 10,   0,  20,  20,  20,  20, 100,  40,  20,  20,  20), // Re (V3)
+        "Recognition" =>    array( 10,   0,  20,  20,  20,  20, 100,  40,  20,  20,  20), // Re (V3)
         "Risk" =>           array( 10,   0,  20,  10,   0,   0,  40, 100,  10,  10,  20), // Ri (V4)
         "Success" =>        array( 10,   0,   0,   0,   0,   0,   0,   0, 100,  10,  20), // Su (V5)
         "Vitality" =>       array( 20,  10,   0,   0,  10,   0,   0,   0,  20, 100,   0), // Vt (V6)
