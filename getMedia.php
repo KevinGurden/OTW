@@ -23,8 +23,9 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
+include 'fn_debug.php';
 
-error_log("----- getMedia.php ---------------------------"); // Announce us in the log
+announce('getMedia', $_GET); // Announce us in the log
 
 $response = array(); // Array for JSON response
 
@@ -40,7 +41,7 @@ if (connected($con, $response)) {
 
     // Get 1 record only
     $select = "SELECT * FROM media WHERE company_id=$id AND user='$user' AND id=$mediaId LIMIT 1";
-    // error_log("getMedia: ".$select);
+    debug("select: ".$select);
     $result = mysqli_query($con, $select);
     $response["query"] = "$select";
 
