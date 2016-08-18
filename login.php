@@ -23,6 +23,7 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+include 'fn_debug.php';
 
 function collect_events($query) { // Mop up the eents query into an array
     if (mysqli_num_rows($query) > 0) {
@@ -37,9 +38,8 @@ function collect_events($query) { // Mop up the eents query into an array
     };
 };
         
-error_log("----- login.php ---------------------------"); // Announce us in the log
+announce('login', $_GET); // Announce us in the log
 
-// Array for JSON response
 $response = array();
 
 // Connect to db
@@ -61,7 +61,7 @@ if (connected($con, $response)) {
         };
         $events_needed = isset($_GET['events']) && $_GET['events']==1;
 
-        $query = "SELECT * FROM company WHERE id=$company";
+        $query = "SELECT * FROM company JOIN licences ON company_id=id WHERE id=$company";
         if ($events_needed) {
             $query = $query."; SELECT * FROM events";
         };
