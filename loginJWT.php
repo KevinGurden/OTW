@@ -61,17 +61,18 @@ function checkbrute($given_username, $c_id, $con) {
     }
 };
 
-function login($given_username, $given_password, $c_id, $con, $login_result) {
+function login($given_username, $given_password, $con, $login_result) {
     // Prepare statement to avoid SQL injection
-    $query = "SELECT * FROM users WHERE given_username=? AND company_id=? LIMIT 1";
+    $query = "SELECT * FROM users WHERE given_username=? LIMIT 1";
     debug('query: '.$query);
     if ($stmt = mysqli_prepare($con, $query)) { 
-        mysqli_stmt_bind_param($stmt, 'si', $given_username, $c_id);
+        mysqli_stmt_bind_param($stmt, 's', $given_username);
         mysqli_stmt_execute($stmt); // Execute the prepared query
         
         if (mysqli_stmt_fetch($stmt)) {
             $user_row = mysqli_fetch_assoc($stmt);
             debug('email: '.$user_row['email']);
+            $c_id = $user_row['company_id'];
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
                 return false;
@@ -86,7 +87,7 @@ function login($given_username, $given_password, $c_id, $con, $login_result) {
                     $login_result['username'] = $username;
                     // $login_result['login_string'] = hash('sha512', $password . $user_browser);
                     $login_result['login_string'] = $password . $user_browser; // Unhashed test
-                    $login_result['result'] = true;
+                    $login_result['company_id'] = $c_id;
                     return true;
                 } else {
                     debug('not correct');
@@ -115,17 +116,18 @@ if (connected($con, $response)) {
     
     // Escape the values to ensure no injection vunerability
     $username = escape($con, 'username', '');
-    $c_id = got_int('company_id', 0);
     $password = escape($con, 'password', '');
 
     $login_result = array();
-    if (login($username, $password, $c_id, $con, $login_result) == true) {
-        $response["token"] 
+    if (login($username, $password, $con, $login_result) == true) {
+        $response["login_string"] = $login_result["login_string"];
+        $c_id = $login_result["company_id"];
 
-        $query = "SELECT * FROM company JOIN licences ON company_id=id WHERE id=$company";
+        $query = "SELECT * FROM company JOIN licences ON company_id=".$c_id." WHERE id=$company";
         if ($events_needed) {
             $query = $query."; SELECT * FROM events";
         };
+        debug('query: '.$query);
 
         $init_result = mysqli_multi_query($con, $query);
 
