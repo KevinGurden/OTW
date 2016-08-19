@@ -70,7 +70,7 @@ function login($given_username, $given_password, $c_id, $con, $login_result) {
         mysqli_stmt_execute($stmt); // Execute the prepared query
         
         if (mysqli_stmt_fetch($stmt)) {
-            $user_row = mysqli_fetch_assoc($stmt));
+            $user_row = mysqli_fetch_assoc($stmt);
             debug('email: '.$user_row['email']);
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
@@ -80,6 +80,7 @@ function login($given_username, $given_password, $c_id, $con, $login_result) {
                 // We are using the password_verify function to avoid timing attacks.
                 debug('verifying password');
                 if (password_verify($given_password, $password)) {
+                    debug('correct');
                     // Password is correct! Get the user-agent string of the user.
                     $user_browser = $_SERVER['HTTP_USER_AGENT'];
                     $login_result['username'] = $username;
@@ -88,6 +89,7 @@ function login($given_username, $given_password, $c_id, $con, $login_result) {
                     $login_result['result'] = true;
                     return true;
                 } else {
+                    debug('not correct');
                     // Password is not correct so record this attempt in the database
                     $now = time();
                     $insert = "INSERT INTO logins(username, time) VALUES ('$username', '$now')";
