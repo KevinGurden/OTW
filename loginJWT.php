@@ -63,8 +63,8 @@ function checkbrute($given_username, $c_id, $con) {
 
 function login($given_username, $given_password, $con, $login_result) {
     // Prepare statement to avoid SQL injection
-    $query = "SELECT * FROM users WHERE given_username=? LIMIT 1";
-    debug("query: SELECT * FROM users WHERE given_username='".$given_username."' LIMIT 1");
+    $query = "SELECT * FROM users WHERE username=? LIMIT 1";
+    debug("query: SELECT * FROM users WHERE username='".$given_username."' LIMIT 1");
     
     if ($stmt = mysqli_prepare($con, $query)) { 
         mysqli_stmt_bind_param($stmt, 's', $given_username);
