@@ -53,8 +53,6 @@ function checkbrute($given_username, $c_id, $con) {
         mysqli_stmt_execute($stmt); // Execute the prepared query
         mysqli_stmt_store_result($stmt);
 
-        mysqli_stmt_num_rows($stmt));
-        
         if (mysqli_stmt_num_rows($stmt) > 5) { // More than 5 failed logins?
             return true;
         } else {
