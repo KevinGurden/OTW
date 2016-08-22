@@ -114,6 +114,7 @@ function login($given_username, $given_password, $con, $login_result) {
     } else {
         debug('sql failed');
         return false; // SQL failed
+    };
 };
         
 $_POST = json_decode(file_get_contents('php://input'), true);
