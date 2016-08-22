@@ -181,7 +181,6 @@ if (connected($con, $response)) {
 
     $login_result = login($username, $password, $con);
     if ($login_result['result'] == true) {
-        $response["login_string"] = $login_result["login_string"];
         $response["jwt"] = $login_result["jwt"];
         $c_id = $login_result["company_id"];
 

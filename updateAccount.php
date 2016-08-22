@@ -3,8 +3,9 @@
 Update account information in the encol database.
 
 Data passed:
-	pass: The hashed new password. String
-    nick: The nickname of the user. String
+	password: The hashed new password. String
+    nickname: The nickname of the user. String
+    username: The username of the user. String
 	company_id: The id of the company in the company table
 
 Return:
@@ -21,8 +22,10 @@ header('Content-Type: application/json');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+include 'fn_debug.php';
 
-error_log("----- updateAnything.php ---------------------------"); // Announce us in the log
+$_POST = json_decode(file_get_contents('php://input'), true);
+announce('updateAccount', $_POST); // Announce us in the log
 
 // Array for JSON response
 $response = array();
@@ -32,34 +35,53 @@ $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin
 if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-    $_POST = json_decode(file_get_contents('php://input'), true);
-    $id = got_int('id', null);
-    $field1 = escape($con, 'field1', ''); $val1 = $_POST['val1'];
-    $field2 = escape($con, 'field2', ''); $val2 = $_POST['val2'];
+    // Various updates are possible
+    $new_password = $_POST('password');
+    $new_nickname = escape($con, 'nickname', '');
+    $username = escape($con, 'username', ''); 
+    $company_id = escape($con, 'company_id', null); 
 
-	// Issue the database update
-	/*
-	UPDATE $table 
-		SET $field1=$val1,$field1=$val1 
-		WHERE id=$id
-	 */
-	$sets = "SET ".$field1."=".$val1;
-	if (isset($field2) && isset($val2)) {
-		$sets = $sets.",".$field2."=".$val2;
-	};
-	$update = "UPDATE whistles ".$sets." WHERE id=$id";
-	
-	$result = mysqli_query($con, $update);
-	if ($result) { // Success
-        http_response_code(200);
-        $response["message"] = "Whistle updated";
+    if ($username != '' && $company_id != null) { // We have enough to target the user
+        $sets = array();
+        if ($new_password != '') {
+            $sets[] = "password='".$new_password."'";
+        };
+
+        if ($new_nickname != '') {
+            $sets[] = "nickname='".$new_nickname."'";
+        };
+
+        // Issue the database update
+        // UPDATE users 
+        //     SET password='$new_password', nickname='$new_nickname'
+        //     WHERE username='$username' AND company_id=$company_id
+        
+        if (count($sets) > 0) {
+            $sets_comma = implode(',', $sets);
+            $update = "UPDATE users SET ".$sets_comma." WHERE username='$username' AND company_id=$company_id";
+            debug('update: '.$update);  
+            $result = mysqli_query($con, $update);
+            if ($result) { // Success
+                http_response_code(200);
+                $response["message"] = "Account updated";
+                $response["sqlerror"] = "";
+            } else { // Failure
+                error_log("$result: from $update");
+                http_response_code(402);
+                $response["message"] = "Update Account failed";
+                $response["sqlerror"] = mysqli_error($con);
+            };
+        } else { // Success, but nothing to do
+            http_response_code(200);
+            $response["message"] = "Nothing to update";
+            $response["sqlerror"] = "";
+        };
+
+    } else { // Failure
+        debug("Need username and company id");
+        http_response_code(401);
+        $response["message"] = "Need username and company id";
         $response["sqlerror"] = "";
-	} else { // Failure
-		error_log("$result: from $update");
-        http_response_code(402);
-        $response["status"] = 402;
-        $response["message"] = "Update whistle failed";
-        $response["sqlerror"] = mysqli_error($con);
     };
 };
 
