@@ -135,7 +135,7 @@ function login($given_username, $given_password, $con) {
                     // $login_result['login_string'] = hash('sha512', $password . $user_browser);
                     $login_result['login_string'] = $password . $user_browser; // Unhashed test
                     
-                    $claims = array('iss'=>'encol', 'onc'==>);
+                    $claims = array('iss'=>'encol');
                     $time = time();
                     $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
                     $login_result['company_id'] = $c_id;
