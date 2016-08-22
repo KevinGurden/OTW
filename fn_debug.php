@@ -16,7 +16,7 @@ function announce($name, $params) {
     $debug_on = (isset($params['debug']) && $params['debug']==true);
 
     $debug_name = $name;
-    error_log("----- ".$debug_name.".php ---------------------------"); // Announce us in the log
+    error_log("----- ".$debug_name.".php --------------- php:".phpversion()); // Announce us in the log
 };
 
 ?>

@@ -61,6 +61,12 @@ function checkbrute($given_username, $c_id, $con) {
     }
 };
 
+function pw_verify($given, $stored) { // Replace with password_verify when PHP 5.5 is available
+    debug('given: '.$given);
+    debug('stored: '.$stored);
+    return true;
+};
+
 function login($given_username, $given_password, $con, $login_result) {
     // Prepare statement to avoid SQL injection
     $query = "SELECT * FROM users WHERE username='$given_username' LIMIT 1";
@@ -89,7 +95,7 @@ function login($given_username, $given_password, $con, $login_result) {
                 // Check if the password in the database matches the password the user gave
                 // We are using the password_verify function to avoid timing attacks.
                 debug('verifying password');
-                if (password_verify($given_password, $password)) {
+                if (pw_verify($given_password, $password)) {
                     debug('correct');
                     // Password is correct! Get the user-agent string of the user.
                     $user_browser = $_SERVER['HTTP_USER_AGENT'];
@@ -122,7 +128,6 @@ announce('login', $_POST); // Announce us in the log
 
 $response = array();
 $response['php'] = phpversion();
-debug(phpversion());
 
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
