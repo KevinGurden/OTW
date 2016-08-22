@@ -148,18 +148,18 @@ function login($given_username, $given_password, $con) {
                     $init_result = mysqli_query($con, $insert);
                     debug('insert: '.$insert);
 
-                    $login_result = array('result' => false, 'message' => 'Incorrect password'] = false;
+                    $login_result = array('result' => false, 'message' => 'Incorrect password');
                     return $login_result;
                 };
             }
         } else {
             debug('no row found for '.$given_username);
-            $login_result = array('result' => false, 'message' => 'Username not recognised'] = false;
+            $login_result = array('result' => false, 'message' => 'Username not recognised');
             return $login_result; // No row in users.
         }
     } else {
         debug('sql failed');
-        $login_result = array('result' => false, 'message' => 'Login failed'] = false;
+        $login_result = array('result' => false, 'message' => 'Login failed');
         return $login_result; // SQL failed
     };
 };
