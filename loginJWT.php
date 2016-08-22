@@ -121,6 +121,7 @@ $_POST = json_decode(file_get_contents('php://input'), true);
 announce('login', $_POST); // Announce us in the log
 
 $response = array();
+$response['php'] = phpversion();
 
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
