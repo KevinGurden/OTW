@@ -61,10 +61,37 @@ function checkbrute($given_username, $c_id, $con) {
     }
 };
 
-function pw_verify($given, $stored) { // Replace with password_verify when PHP 5.5 is available
+function pw_verify($given, $stored) { // Replace with password_verify() when PHP 5.5 is available
     debug('given: '.$given);
     debug('stored: '.$stored);
-    return true;
+    return $given == $stored;
+};
+
+function generate_token($claims, $time, $once, $algorithm, $secret) {
+    $algorithms = array('HS256'=>'sha256','HS384'=>'sha384','HS512'=>'sha512');
+    
+    $header = array();
+    $header['typ'] = 'JWT';
+    $header['alg'] = $algorithm;
+    $token = array();
+    $token[0] = rtrim(strtr(base64_encode(json_encode((object)$header)),'+/','-_'),'=');
+    
+    $claims['iat'] = $time;
+    if ($once) {
+        $claims['ex1'] = true; // Expire after 1st use
+        $claims['exp'] = $time + 60 * 60 * 24; // 1 day
+    } else {
+        $claims['iat'] = $time;
+        $claims['exp'] = $time + 60 * 60 * 24 * 7; // 7 days
+    };
+    $token[1] = rtrim(strtr(base64_encode(json_encode((object)$claims)),'+/','-_'),'=');
+    
+    if (!isset($algorithms[$algorithm])) return false;
+    $hmac = $algorithms[$algorithm];
+
+    $signature = hash_hmac($hmac, "$token[0].$token[1]", $secret, true);
+    $token[2] = rtrim(strtr(base64_encode($signature),'+/','-_'),'=');
+    return implode('.', $token);
 };
 
 function login($given_username, $given_password, $con) {
@@ -85,10 +112,10 @@ function login($given_username, $given_password, $con) {
         if (mysqli_num_rows($result) > 0) {
             debug('got rows');
             $user_row = mysqli_fetch_assoc($result);
-            debug('email: '.$user_row['email']);
             
             $c_id = $user_row['company_id'];
             $password = $user_row['password'];
+            $once = $user_row == 1;
 
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
@@ -108,60 +135,39 @@ function login($given_username, $given_password, $con) {
                     // $login_result['login_string'] = hash('sha512', $password . $user_browser);
                     $login_result['login_string'] = $password . $user_browser; // Unhashed test
                     
-                    $claims = array('iss'=>'encol');
+                    $claims = array('iss'=>'encol', 'onc'==>);
                     $time = time();
-                    $login_result['jwt'] = generate_token($claims, $time, 600, 'HS256', 'secret');
+                    $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
                     $login_result['company_id'] = $c_id;
                     return $login_result;
                 } else {
                     debug('not correct');
                     // Password is not correct so record this attempt in the database
                     $now = time();
-                    $insert = "INSERT INTO logins(username, time) VALUES ('$username', '$now')";
+                    $insert = "INSERT INTO logins(username, company_id, time) VALUES('$username', $c_id, '$now')";
                     $init_result = mysqli_query($con, $insert);
+                    debug('insert: '.$insert);
 
-                    $login_result['result'] = false;
+                    $login_result = array('result' => false, 'message' => 'Incorrect password'] = false;
                     return $login_result;
                 };
             }
         } else {
             debug('no row found for '.$given_username);
-            $login_result['result'] = false;
+            $login_result = array('result' => false, 'message' => 'Username not recognised'] = false;
             return $login_result; // No row in users.
         }
     } else {
         debug('sql failed');
-        $login_result['result'] = false;
+        $login_result = array('result' => false, 'message' => 'Login failed'] = false;
         return $login_result; // SQL failed
     };
 };
 
-function generate_token($claims, $time, $ttl, $algorithm, $secret) {
-    $algorithms = array('HS256'=>'sha256','HS384'=>'sha384','HS512'=>'sha512');
-    
-    $header = array();
-    $header['typ'] = 'JWT';
-    $header['alg'] = $algorithm;
-    $token = array();
-    $token[0] = rtrim(strtr(base64_encode(json_encode((object)$header)),'+/','-_'),'=');
-    
-    $claims['iat'] = $time;
-    $claims['exp'] = $time + $ttl;
-    $token[1] = rtrim(strtr(base64_encode(json_encode((object)$claims)),'+/','-_'),'=');
-    
-    if (!isset($algorithms[$algorithm])) return false;
-    $hmac = $algorithms[$algorithm];
-
-    $signature = hash_hmac($hmac, "$token[0].$token[1]", $secret, true);
-    $token[2] = rtrim(strtr(base64_encode($signature),'+/','-_'),'=');
-    return implode('.', $token);
-};
-        
 $_POST = json_decode(file_get_contents('php://input'), true);
 announce('login', $_POST); // Announce us in the log
 
 $response = array();
-$response['php'] = phpversion();
 
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
@@ -173,7 +179,7 @@ if (connected($con, $response)) {
     $password = escape($con, 'password', '');
     $events_needed = got_int('events', 0) == 1;
 
-    $login_result = login($username, $password, $con, $login_result);
+    $login_result = login($username, $password, $con);
     if ($login_result['result'] == true) {
         $response["login_string"] = $login_result["login_string"];
         $response["jwt"] = $login_result["jwt"];
