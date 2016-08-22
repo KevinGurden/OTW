@@ -115,7 +115,7 @@ function login($given_username, $given_password, $con) {
             
             $c_id = $user_row['company_id'];
             $password = $user_row['password'];
-            $once = $user_row == 1;
+            $once = $user_row['one_time_use'] == 1;
 
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
