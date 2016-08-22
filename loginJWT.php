@@ -86,6 +86,7 @@ function login($given_username, $given_password, $con, $login_result) {
             debug('email: '.$user_row['email']);
             
             $c_id = $user_row['company_id'];
+            $password = $user_row['password'];
 
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
@@ -99,7 +100,7 @@ function login($given_username, $given_password, $con, $login_result) {
                     debug('correct');
                     // Password is correct! Get the user-agent string of the user.
                     $user_browser = $_SERVER['HTTP_USER_AGENT'];
-                    $login_result['username'] = $username;
+                    $login_result['username'] = $given_username;
                     // $login_result['login_string'] = hash('sha512', $password . $user_browser);
                     $login_result['login_string'] = $password . $user_browser; // Unhashed test
                     $login_result['company_id'] = $c_id;
@@ -143,7 +144,7 @@ if (connected($con, $response)) {
         $response["login_string"] = $login_result["login_string"];
         $c_id = $login_result["company_id"];
 
-        $query = "SELECT * FROM company JOIN licences ON company_id=".$c_id." WHERE id=$company";
+        $query = "SELECT * FROM company JOIN licences ON company_id=".$c_id." WHERE id=$c_id";
         if ($events_needed) {
             $query = $query."; SELECT * FROM events";
         };
