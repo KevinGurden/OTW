@@ -171,10 +171,12 @@ if (connected($con, $response)) {
     // Escape the values to ensure no injection vunerability
     $username = escape($con, 'username', '');
     $password = escape($con, 'password', '');
+    $events_needed = got_int('events', 0) == 1;
 
-    $login_result = array();
-    if (login($username, $password, $con, $login_result) == true) {
+    $login_result = login($username, $password, $con, $login_result);
+    if ($login_result['result'] == true) {
         $response["login_string"] = $login_result["login_string"];
+        $response["jwt"] = $login_result["jwt"];
         $c_id = $login_result["company_id"];
 
         $query = "SELECT * FROM company JOIN licences ON company_id=".$c_id." WHERE id=$c_id";
@@ -189,7 +191,7 @@ if (connected($con, $response)) {
         if ($init_result == false) { // no init found
             http_response_code(204);
             $response["query"] = $query;
-            $response["message"] = "No initialisation match for company $company";
+            $response["message"] = "No initialisation match for company $c_id";
         } else { // Init success
             $init_store = mysqli_store_result($con);
             $init = mysqli_fetch_assoc($init_store);
