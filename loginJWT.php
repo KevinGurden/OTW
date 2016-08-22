@@ -63,20 +63,27 @@ function checkbrute($given_username, $c_id, $con) {
 
 function login($given_username, $given_password, $con, $login_result) {
     // Prepare statement to avoid SQL injection
-    $query = "SELECT * FROM users WHERE username=? LIMIT 1";
+    $query = "SELECT * FROM users WHERE username='$given_username' LIMIT 1";
     debug("query: SELECT * FROM users WHERE username='".$given_username."' LIMIT 1");
     
-    if ($stmt = mysqli_prepare($con, $query)) { 
-        mysqli_stmt_bind_param($stmt, 's', $given_username);
-        mysqli_stmt_execute($stmt); // Execute the prepared query
-        
-        if (mysqli_stmt_affected_rows($stmt)>0) {
+    // if ($stmt = mysqli_prepare($con, $query)) { 
+    // mysqli_stmt_bind_param($stmt, 's', $given_username);
+    //     mysqli_stmt_execute($stmt); // Execute the prepared query 
+    //     if (mysqli_stmt_affected_rows($stmt)>0) {
+    //          $user_row = mysqli_fetch_assoc($stmt);
+
+    $result = mysqli_query($con, $query)
+    if ($result != false) { 
+        if (mysqli_num_rows($result) > 0) {
             debug('got rows');
-            $user_row = mysqli_fetch_assoc($stmt);
+            $user_row = mysqli_fetch_assoc($result);
             debug('email: '.$user_row['email']);
+            
             $c_id = $user_row['company_id'];
+
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
+                debug('brute is true');
                 return false;
             } else {
                 // Check if the password in the database matches the password the user gave
@@ -101,9 +108,12 @@ function login($given_username, $given_password, $con, $login_result) {
                 };
             }
         } else {
-            return false; // No user exists.
+            debug('no row found for '.$given_username);
+            return false; // No row in users.
         }
-    }
+    } else {
+        debug('sql failed');
+        return false; // SQL failed
 };
         
 $_POST = json_decode(file_get_contents('php://input'), true);
