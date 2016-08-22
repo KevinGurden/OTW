@@ -72,7 +72,7 @@ function login($given_username, $given_password, $con, $login_result) {
     //     if (mysqli_stmt_affected_rows($stmt)>0) {
     //          $user_row = mysqli_fetch_assoc($stmt);
 
-    $result = mysqli_query($con, $query)
+    $result = mysqli_query($con, $query);
     if ($result != false) { 
         if (mysqli_num_rows($result) > 0) {
             debug('got rows');
