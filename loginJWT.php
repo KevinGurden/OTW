@@ -67,7 +67,9 @@ function pw_verify($given, $stored) { // Replace with password_verify when PHP 5
     return true;
 };
 
-function login($given_username, $given_password, $con, $login_result) {
+function login($given_username, $given_password, $con) {
+    $login_result = array();
+
     // Prepare statement to avoid SQL injection
     $query = "SELECT * FROM users WHERE username='$given_username' LIMIT 1";
     debug("query: SELECT * FROM users WHERE username='".$given_username."' LIMIT 1");
@@ -91,37 +93,68 @@ function login($given_username, $given_password, $con, $login_result) {
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
                 debug('brute is true');
-                return false;
+                $login_result['result'] = false;
+                return $login_result;
             } else {
                 // Check if the password in the database matches the password the user gave
                 // We are using the password_verify function to avoid timing attacks.
                 debug('verifying password');
                 if (pw_verify($given_password, $password)) {
                     debug('correct');
+                    $login_result['result'] = true;
                     // Password is correct! Get the user-agent string of the user.
                     $user_browser = $_SERVER['HTTP_USER_AGENT'];
                     $login_result['username'] = $given_username;
                     // $login_result['login_string'] = hash('sha512', $password . $user_browser);
                     $login_result['login_string'] = $password . $user_browser; // Unhashed test
+                    
+                    $claims = array('iss'=>'encol');
+                    $time = time();
+                    $login_result['jwt'] = generate_token($claims, $time, 600, 'HS256', 'secret');
                     $login_result['company_id'] = $c_id;
-                    return true;
+                    return $login_result;
                 } else {
                     debug('not correct');
                     // Password is not correct so record this attempt in the database
                     $now = time();
                     $insert = "INSERT INTO logins(username, time) VALUES ('$username', '$now')";
                     $init_result = mysqli_query($con, $insert);
-                    return false;
+
+                    $login_result['result'] = false;
+                    return $login_result;
                 };
             }
         } else {
             debug('no row found for '.$given_username);
-            return false; // No row in users.
+            $login_result['result'] = false;
+            return $login_result; // No row in users.
         }
     } else {
         debug('sql failed');
-        return false; // SQL failed
+        $login_result['result'] = false;
+        return $login_result; // SQL failed
     };
+};
+
+function generate_token($claims, $time, $ttl, $algorithm, $secret) {
+    $algorithms = array('HS256'=>'sha256','HS384'=>'sha384','HS512'=>'sha512');
+    
+    $header = array();
+    $header['typ'] = 'JWT';
+    $header['alg'] = $algorithm;
+    $token = array();
+    $token[0] = rtrim(strtr(base64_encode(json_encode((object)$header)),'+/','-_'),'=');
+    
+    $claims['iat'] = $time;
+    $claims['exp'] = $time + $ttl;
+    $token[1] = rtrim(strtr(base64_encode(json_encode((object)$claims)),'+/','-_'),'=');
+    
+    if (!isset($algorithms[$algorithm])) return false;
+    $hmac = $algorithms[$algorithm];
+
+    $signature = hash_hmac($hmac, "$token[0].$token[1]", $secret, true);
+    $token[2] = rtrim(strtr(base64_encode($signature),'+/','-_'),'=');
+    return implode('.', $token);
 };
         
 $_POST = json_decode(file_get_contents('php://input'), true);
@@ -203,5 +236,4 @@ Useful stuff:
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
         sudo cat getwhistlesphp-error.log | more to show the error log
  */
-
 ?>
