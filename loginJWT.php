@@ -122,6 +122,7 @@ announce('login', $_POST); // Announce us in the log
 
 $response = array();
 $response['php'] = phpversion();
+debug(phpversion());
 
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
