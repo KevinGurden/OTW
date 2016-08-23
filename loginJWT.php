@@ -132,8 +132,6 @@ function login($given_username, $given_password, $con) {
                     // Password is correct! Get the user-agent string of the user.
                     $user_browser = $_SERVER['HTTP_USER_AGENT'];
                     $login_result['username'] = $given_username;
-                    // $login_result['login_string'] = hash('sha512', $password . $user_browser);
-                    $login_result['login_string'] = $password . $user_browser; // Unhashed test
                     
                     $claims = array('iss'=>'encol');
                     $time = time();
@@ -144,7 +142,7 @@ function login($given_username, $given_password, $con) {
                     debug('not correct');
                     // Password is not correct so record this attempt in the database
                     $now = time();
-                    $insert = "INSERT INTO logins(username, company_id, time) VALUES('$username', $c_id, '$now')";
+                    $insert = "INSERT INTO logins(username, company_id, time) VALUES('$given_username', $c_id, '$now')";
                     $init_result = mysqli_query($con, $insert);
                     debug('insert: '.$insert);
 
