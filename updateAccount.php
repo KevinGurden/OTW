@@ -31,7 +31,7 @@ $_POST = json_decode(file_get_contents('php://input'), true);
 announce('updateAccount', $_POST); // Announce us in the log
 $response = array();
 
-$claims = token();
+$claims = token($response);
 if ($claims != false) { // Token was OK
     debug('claims: '.$cls);
 

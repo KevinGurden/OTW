@@ -35,6 +35,7 @@ function token_valid($token) {
     //     if ($time-$leeway>$claims['iat']+$ttl) return false;
     // };
     debug('claims good');
+    return $claims;
 };
 
 function token() {
