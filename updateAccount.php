@@ -64,7 +64,6 @@ if (isset($headers['Authorization'])) {
 // Array for JSON response
 $response = array();
 
-if ()
 // Connect to db
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
