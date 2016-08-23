@@ -44,11 +44,11 @@ if (connected($con, $response)) {
     if ($username != '' && $company_id != null) { // We have enough to target the user
         $sets = array();
         if ($new_password != '') {
-            $sets[] = "password='".$new_password."'";
+            $sets[] = "password='".$new_password."',one_time_use=0"; // Turn off one time as well as the password has been changed
         };
 
         if ($new_nickname != '') {
-            $sets[] = "nick='".$new_nickname."',one_time_use=0"; // Turn off one time as well as the password has been changed
+            $sets[] = "nick='".$new_nickname."'";
         };
 
         // Issue the database update
