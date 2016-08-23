@@ -36,7 +36,7 @@ if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     // Various updates are possible
-    $new_password = $_POST('password');
+    $new_password = $_POST['password'];
     $new_nickname = escape($con, 'nickname', '');
     $username = escape($con, 'username', ''); 
     $company_id = escape($con, 'company_id', null); 
