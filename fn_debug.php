@@ -5,8 +5,6 @@ function debug($text) {
 
     if ($debug_on) {
         error_log($debug_name.": ".$text);
-    } else {
-        error_log($debug_on."! ".$debug_name.": ".$text);
     };
 };
 
