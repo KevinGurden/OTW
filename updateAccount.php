@@ -48,7 +48,7 @@ if (connected($con, $response)) {
         };
 
         if ($new_nickname != '') {
-            $sets[] = "nickname='".$new_nickname."'";
+            $sets[] = "nick='".$new_nickname."',one_time_use=0"; // Turn off one time as well as the password has been changed
         };
 
         // Issue the database update
