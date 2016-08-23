@@ -2,6 +2,8 @@
 /*
 Get a list of whistles from the encol database. If the user is '' then return all whistles for the company
 
+Security: Requires JWT "Bearer <token>" 
+
 Parameters:
     id: company identifier. Integer
     user: username. String
@@ -15,55 +17,60 @@ Return:
 See bottom for useful commands
  */
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
+include 'fn_jwt.php';
+include 'fn_debug.php';
 
-error_log("----- getWhistles.php ---------------------------"); // Announce us in the log
-
-// Array for JSON response
+announce('getWhistles', $_GET); // Announce us in the log
 $response = array();
 
-$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (connected($con, $response)) {
-    mysqli_set_charset($con, "utf8"); // Set the character set to use
-    if (isset($_GET['id']) && isset($_GET['user'])) {
-        $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
-        $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
-    
-        // Get a list of whistles
-        if ($user == '') {
-            $and_user = '';                     // Return whistles for all users
-        } else {
-            $and_user = "AND user='$user'";     // Limit to a particular user
-        }
-        $select = "SELECT * FROM whistles WHERE company_id=$id $and_user";
-        $result = mysqli_query($con, $select);
-        $response["query"] = "$select";
+$claims = token();
+if ($claims != false) { // Token was OK
+    debug('claims: '.$cls);
 
-        // Check for empty result
-        if (mysqli_num_rows($result) > 0) {
-            // Loop through all results
-            $whistles = array();
-            
-            while ($whistle = mysqli_fetch_assoc($result)) {
-                $whistles[] = $whistle;
+    $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
+    if (connected($con, $response)) {
+        mysqli_set_charset($con, "utf8"); // Set the character set to use
+        if (isset($_GET['id']) && isset($_GET['user'])) {
+            $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
+            $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
+        
+            // Get a list of whistles
+            if ($user == '') {
+                $and_user = '';                     // Return whistles for all users
+            } else {
+                $and_user = "AND user='$user'";     // Limit to a particular user
             }
-            $response["whistles"] = $whistles;
+            $select = "SELECT * FROM whistles WHERE company_id=$id $and_user";
+            $result = mysqli_query($con, $select);
+            $response["query"] = "$select";
 
-            http_response_code(200); // Success
-            $response["message"] = "Success";
-            $response["sqlerror"] = "";
-        } else {
-            http_response_code(200); // Success but no whistles found
-            $response["message"] = "No whistles found for user '$user' and company '$id'";
+            // Check for empty result
+            if (mysqli_num_rows($result) > 0) {
+                // Loop through all results
+                $whistles = array();
+                
+                while ($whistle = mysqli_fetch_assoc($result)) {
+                    $whistles[] = $whistle;
+                }
+                $response["whistles"] = $whistles;
+
+                http_response_code(200); // Success
+                $response["message"] = "Success";
+                $response["sqlerror"] = "";
+            } else {
+                http_response_code(200); // Success but no whistles found
+                $response["message"] = "No whistles found for user '$user' and company '$id'";
+            };
+        } else { // no id or user present
+            http_response_code(402); // Failure
+            $response["message"] = "Missing 'id' or 'user' parameter";
         };
-    } else { // no id or user present
-        http_response_code(402); // Failure
-        $response["message"] = "Missing 'id' or 'user' parameter";
     };
 };
 echo json_encode($response);

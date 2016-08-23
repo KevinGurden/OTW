@@ -2,6 +2,8 @@
 /*
 Update account information in the encol database.
 
+Security: Requires JWT "Bearer <token>" 
+
 Data passed:
 	password: The hashed new password. String
     nickname: The nickname of the user. String
@@ -15,7 +17,7 @@ Return:
 
 See bottom for useful commands
 */
-header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
