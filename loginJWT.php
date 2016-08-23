@@ -62,8 +62,6 @@ function checkbrute($given_username, $c_id, $con) {
 };
 
 function pw_verify($given, $stored) { // Replace with password_verify() when PHP 5.5 is available
-    debug('given: '.$given);
-    debug('stored: '.$stored);
     return $given == $stored;
 };
 
