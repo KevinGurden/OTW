@@ -38,35 +38,26 @@ function token_valid($token) {
     return $claims;
 };
 
-function token($response) {
+function token() {
     $headers = apache_request_headers();
     if (isset($headers['Authorization'])) {
         $auth = $headers['Authorization'];
         debug('auth: '.$auth);
         if (strlen($auth) >= 8) { // It's long enough to have a Bearer JWT token
             $token = substr($auth, 7);
-            $token_len = strlen($token);
-            debug('token length:', $token_len);
-
             $claims = token_valid($token);
             debug('got claims: '.var_export($claims, true));
             if ($claims == false) {
-                http_response_code(401);
-                $response["message"] = "Not authorised (1)";
-                debug('claims if false. response: '.var_export($response, true));
-                return false;
+                return array('result'=>false, 'status'=>401, 'message'=>"Not authorised (1)");
             } else {
+                $claims['result'] = true;
                 return $claims;
             };
         } else {
-            http_response_code(401);
-            $response["message"] = "Invalid authorisation (2)";
-            return false;
+            return array('result'=>false, 'status'=>401, 'message'=>"Invalid authorisation (2)");
         };
     } else {
-        http_response_code(401);
-        $response["message"] = "Invalid authorisation (3)";
-        return false;
+        return array('result'=>false, 'status'=>401, 'message'=>"Invalid authorisation (3)");
     };
 };
 

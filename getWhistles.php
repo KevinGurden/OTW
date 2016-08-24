@@ -30,7 +30,7 @@ announce('getWhistles', $_GET); // Announce us in the log
 $response = array();
 
 $claims = token($response);
-if ($claims != false) { // Token was OK
+if ($claims['result'] == true) { // Token was OK
     debug('got claims');
 
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
@@ -72,8 +72,10 @@ if ($claims != false) { // Token was OK
             $response["message"] = "Missing 'id' or 'user' parameter";
         };
     };
+} else {
+    http_response_code($claims['code']); // Token Failure
+    $response["message"] = $claims['message'];
 };
-debug('response: '.var_export($claims, true));
 echo json_encode($response);
 
 /* 

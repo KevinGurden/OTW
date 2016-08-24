@@ -31,8 +31,8 @@ $_POST = json_decode(file_get_contents('php://input'), true);
 announce('updateAccount', $_POST); // Announce us in the log
 $response = array();
 
-$claims = token($response);
-if ($claims != false) { // Token was OK
+$claims = token();
+if ($claims['result'] == true) { // Token was OK
     debug('claims: '.$claims);
 
     // Connect to db
@@ -89,6 +89,9 @@ if ($claims != false) { // Token was OK
             $response["sqlerror"] = "";
         };
     };
+} else {
+    http_response_code($claims['code']); // Token Failure
+    $response["message"] = $claims['message'];
 };
 
 header('Content-Type: application/json');
