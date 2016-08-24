@@ -49,6 +49,7 @@ function token() {
             debug('token length:', $token_len);
 
             $claims = token_valid($token);
+            debug('got claims: '.var_export($claims, true));
             if ($claims == false) {
                 http_response_code(401);
                 $response["message"] = "Not authorised (1)";
