@@ -51,6 +51,7 @@ function token() {
                 return array('result'=>false, 'status'=>401, 'message'=>"Not authorised (1)");
             } else {
                 $claims['result'] = true;
+                debug('claims not false: '.var_export($claims, true));
                 return $claims;
             };
         } else {

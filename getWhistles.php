@@ -29,7 +29,8 @@ include 'fn_debug.php';
 announce('getWhistles', $_GET); // Announce us in the log
 $response = array();
 
-$claims = token($response);
+$claims = token();
+debug('back in w: '.var_export($claims, true));
 if ($claims['result'] == true) { // Token was OK
     debug('got claims');
 
