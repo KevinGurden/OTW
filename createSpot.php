@@ -2,6 +2,8 @@
 /*
 Create a new spot in the encol database.
 
+Security: Requires JWT "Bearer <token>" 
+
 Parameters:
 	title: String
 	description: String
@@ -30,72 +32,78 @@ Return:
 
 See bottom for useful commands
 */
-header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Methods: POST OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+include 'fn_jwt.php';
 include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('createMedia', $_POST);
+announce('createSpot', $_POST);
 
-error_log("----- createSpot.php ---------------------------"); // Announce us in the log
-
-// Array for JSON response
 $response = array();
 
-$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (connected($con, $response)) {
-    mysqli_set_charset($con, "utf8"); // Set the character set to use
+$claims = token();
+if ($claims['result'] == true) { // Token was OK
 
-	$_POST = json_decode(file_get_contents('php://input'), true);
+	$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
+	if (connected($con, $response)) {
+	    mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-	// Escape the values to ensure no injection vunerability
-	$title = escape($con, 'title', '');
-	$description = escape($con, 'description', '');
-	$status = escape($con, 'status', ''); 
-	$status_detail = escape($con, 'status_detail', '');
-	$cat = escape($con, 'cat','');
-	$sub_date = escape($con, 'sub_date', '');
-	$date = escape($con, 'date', '');
-	$priority = escape($con, 'priority', 2);
-	$type_selected = escape($con, 'type_selected', '');
-	$loc_main = escape($con, 'loc_main', '');
-	$loc_detail = escape($con, 'loc_detail', '');
-	$raised_user = escape($con, 'raised_user', '');
-	$raised_nick = escape($con, 'raised_nick', '');
-	$owned_user = escape($con, 'owned_user', '');
-	$owned_nick = escape($con, 'owned_nick', '');
-	$media_large = escape($con, 'media_large', '');
-	$media_photos = escape($con, 'media_photos', '');
-	$anon = escape($con, 'anon', 0);
-	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
-	    
-	// Issue the database create
-	$cols1 = "title, description, status, status_detail, cat, sub_date, date, priority, media_large, media_photos";
-	$cols2 = "type_selected, loc_main, loc_detail, raised_user, raised_nick, owned_user, owned_nick, anon, company_id";
-	$vals1 = "'$title', '$description', '$status', '$status_detail', '$cat', '$sub_date', '$date', '$priority', '$media_large', '$media_photos'";
-	$vals2 = "'$type_selected', '$loc_main', '$loc_detail', '$raised_user', '$raised_nick', '$owned_user', '$owned_nick', '$anon', $company_id";
-	
-	$insert = "INSERT INTO spots($cols1, $cols2) VALUES($vals1, $vals2)";
-	$result = mysqli_query($con, $insert);
-	debug("insert: ".$insert);
+		$_POST = json_decode(file_get_contents('php://input'), true);
 
-	if ($result) { // Success
-        http_response_code(200);
-        $response["message"] = "Spot created";
-        $response["id"] = mysqli_insert_id($con); // Return the id of the record added
-        $response["sqlerror"] = "";
-	} else { // Failure
-        http_response_code(402);
-        debug("insert result: ".mysqli_error($con));
-        $response["message"] = "Create spot failed";
-        $response["sqlerror"] = mysqli_error($con);
-    };
+		// Escape the values to ensure no injection vunerability
+		$title = escape($con, 'title', '');
+		$description = escape($con, 'description', '');
+		$status = escape($con, 'status', ''); 
+		$status_detail = escape($con, 'status_detail', '');
+		$cat = escape($con, 'cat','');
+		$sub_date = escape($con, 'sub_date', '');
+		$date = escape($con, 'date', '');
+		$priority = escape($con, 'priority', 2);
+		$type_selected = escape($con, 'type_selected', '');
+		$loc_main = escape($con, 'loc_main', '');
+		$loc_detail = escape($con, 'loc_detail', '');
+		$raised_user = escape($con, 'raised_user', '');
+		$raised_nick = escape($con, 'raised_nick', '');
+		$owned_user = escape($con, 'owned_user', '');
+		$owned_nick = escape($con, 'owned_nick', '');
+		$media_large = escape($con, 'media_large', '');
+		$media_photos = escape($con, 'media_photos', '');
+		$anon = escape($con, 'anon', 0);
+		$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
+		    
+		// Issue the database create
+		$cols1 = "title, description, status, status_detail, cat, sub_date, date, priority, media_large, media_photos";
+		$cols2 = "type_selected, loc_main, loc_detail, raised_user, raised_nick, owned_user, owned_nick, anon, company_id";
+		$vals1 = "'$title', '$description', '$status', '$status_detail', '$cat', '$sub_date', '$date', '$priority', '$media_large', '$media_photos'";
+		$vals2 = "'$type_selected', '$loc_main', '$loc_detail', '$raised_user', '$raised_nick', '$owned_user', '$owned_nick', '$anon', $company_id";
+		
+		$insert = "INSERT INTO spots($cols1, $cols2) VALUES($vals1, $vals2)";
+		$result = mysqli_query($con, $insert);
+		debug("insert: ".$insert);
+
+		if ($result) { // Success
+	        http_response_code(200);
+	        $response["message"] = "Spot created";
+	        $response["id"] = mysqli_insert_id($con); // Return the id of the record added
+	        $response["sqlerror"] = "";
+		} else { // Failure
+	        http_response_code(402);
+	        debug("insert result: ".mysqli_error($con));
+	        $response["message"] = "Create spot failed";
+	        $response["sqlerror"] = mysqli_error($con);
+	    };
+	};
+} else {
+    http_response_code($claims['status']); // Token Failure
+    $response["message"] = $claims['message'];
 };
+
 header('Content-Type: application/json');
 echo json_encode($response);
 

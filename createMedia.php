@@ -2,6 +2,8 @@
 /*
 Create a new media item in the 'media' encol database.
 
+Security: Requires JWT "Bearer <token>" 
+
 Data passed:
 	file64:         Base64 encoded file. Blob
     type:           Type of media object e.g. 'photo', 'video'. String
@@ -16,13 +18,14 @@ Return:
 
 See bottom for useful commands
 */
-header('Access-Control-Allow-Methods: GET, POST, JSONP, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+include 'fn_jwt.php';
 include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
@@ -31,43 +34,51 @@ announce('createMedia', $_POST);
 // Array for JSON response
 $response = array();
 
-$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (connected($con, $response)) {
-    // mysqli_set_charset($con, "utf8");
+$claims = token();
+if ($claims['result'] == true) { // Token was OK
 
-	// Escape the values to ensure no injection vunerability
-    $type = escape($con, 'type', 'photo');
-    $photo_format = escape($con, 'photo_format', '');
-	$user = escape($con, 'user', '');
-	$cId = escape($con, 'cId', 0); // Default to 0-Unknown
-    $created = escape($con, 'created', '');
-    $file64 = $_POST['file64'];
+    $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
+    if (connected($con, $response)) {
+        // mysqli_set_charset($con, "utf8");
 
-    // Issue the database create
-    $cols = "type, photo_format, file, created, user, company_id";
-    $vals = "'$type', '$photo_format', '$file64', '$created', '$user', $cId";
+    	// Escape the values to ensure no injection vunerability
+        $type = escape($con, 'type', 'photo');
+        $photo_format = escape($con, 'photo_format', '');
+    	$user = escape($con, 'user', '');
+    	$cId = escape($con, 'cId', 0); // Default to 0-Unknown
+        $created = escape($con, 'created', '');
+        $file64 = $_POST['file64'];
 
-    $insert = "INSERT INTO media($cols) VALUES($vals)";
-    $result = mysqli_query($con, $insert);
+        // Issue the database create
+        $cols = "type, photo_format, file, created, user, company_id";
+        $vals = "'$type', '$photo_format', '$file64', '$created', '$user', $cId";
 
-    $vals_short = "'$type', '$photo_format', '<file64>', '$created', '$user', $cId";
-    $insert_short = "INSERT INTO media($cols) VALUES($vals_short)";
-    debug('insert: '.$insert_short);
+        $insert = "INSERT INTO media($cols) VALUES($vals)";
+        $result = mysqli_query($con, $insert);
 
-    if ($result) {
-        http_response_code(200);
-        $id = mysqli_insert_id($con);
-        $response["id"] = $id;
-        $response["message"] = "media ".$id." created";
-        $response["sqlerror"] = "";
-    } else { // Failure
-        http_response_code(304);
-        $response["message"] = "media create failed";
-        $sql_error = mysqli_error($con);
-        $response["sqlerror"] = $sql_error;
-        debug('error: '.$sql_error);
+        $vals_short = "'$type', '$photo_format', '<file64>', '$created', '$user', $cId";
+        $insert_short = "INSERT INTO media($cols) VALUES($vals_short)";
+        debug('insert: '.$insert_short);
+
+        if ($result) {
+            http_response_code(200);
+            $id = mysqli_insert_id($con);
+            $response["id"] = $id;
+            $response["message"] = "media ".$id." created";
+            $response["sqlerror"] = "";
+        } else { // Failure
+            http_response_code(304);
+            $response["message"] = "media create failed";
+            $sql_error = mysqli_error($con);
+            $response["sqlerror"] = $sql_error;
+            debug('error: '.$sql_error);
+        };
     };
+} else {
+    http_response_code($claims['status']); // Token Failure
+    $response["message"] = $claims['message'];
 };
+
 header('Content-Type: application/json');
 echo json_encode($response);
 
