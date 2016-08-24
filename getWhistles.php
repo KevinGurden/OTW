@@ -29,9 +29,9 @@ include 'fn_debug.php';
 announce('getWhistles', $_GET); // Announce us in the log
 $response = array();
 
-$claims = token();
+$claims = token($response);
 if ($claims != false) { // Token was OK
-    debug('claims: '.$cls);
+    debug('got claims');
 
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
     if (connected($con, $response)) {

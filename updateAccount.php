@@ -5,7 +5,7 @@ Update account information in the encol database.
 Security: Requires JWT "Bearer <token>" 
 
 Data passed:
-	password: The hashed new password. String
+	hash: The hashed new password. String
     nickname: The nickname of the user. String
     username: The username of the user. String
 	company_id: The id of the company in the company table
@@ -33,7 +33,7 @@ $response = array();
 
 $claims = token($response);
 if ($claims != false) { // Token was OK
-    debug('claims: '.$cls);
+    debug('claims: '.$claims);
 
     // Connect to db
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
@@ -41,7 +41,7 @@ if ($claims != false) { // Token was OK
         mysqli_set_charset($con, "utf8"); // Set the character set to use
 
         // Various updates are possible
-        $new_password = $_POST['password'];
+        $new_password_hash = $_POST['hash'];
         $new_nickname = escape($con, 'nickname', '');
         $username = escape($con, 'username', ''); 
         $company_id = escape($con, 'company_id', null); 
@@ -49,7 +49,7 @@ if ($claims != false) { // Token was OK
         if ($username != '' && $company_id != null) { // We have enough to target the user
             $sets = array();
             if ($new_password != '') {
-                $sets[] = "password='".$new_password."',one_time_use=0"; // Turn off one time as well as the password has been changed
+                $sets[] = "password='".$new_password_hash."',one_time_use=0"; // Turn off one time as well as the password has been changed
             };
 
             if ($new_nickname != '') {
