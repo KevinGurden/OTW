@@ -38,12 +38,12 @@ function token_valid($token) {
     return $claims;
 };
 
-function token() {
+function token($response) {
     $headers = apache_request_headers();
     if (isset($headers['Authorization'])) {
         $auth = $headers['Authorization'];
         debug('auth: '.$auth);
-        if (strlen($auth) >= 8) { // It's long enough to have a Bearer JWT token 
+        if (strlen($auth) >= 8) { // It's long enough to have a Bearer JWT token
             $token = substr($auth, 7);
             $token_len = strlen($token);
             debug('token length:', $token_len);
