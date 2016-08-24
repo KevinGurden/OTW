@@ -24,6 +24,7 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_escape.php';
+include 'fn_jwt.php';
 include 'fn_debug.php';
 
 function collect_events($query) { // Mop up the eents query into an array
@@ -63,33 +64,6 @@ function checkbrute($given_username, $c_id, $con) {
 
 function pw_verify($given, $stored) { // Replace with password_verify() when PHP 5.5 is available
     return $given == $stored;
-};
-
-function generate_token($claims, $time, $once, $algorithm, $secret) {
-    $algorithms = array('HS256'=>'sha256','HS384'=>'sha384','HS512'=>'sha512');
-    
-    $header = array();
-    $header['typ'] = 'JWT';
-    $header['alg'] = $algorithm;
-    $token = array();
-    $token[0] = rtrim(strtr(base64_encode(json_encode((object)$header)),'+/','-_'),'=');
-    
-    $claims['iat'] = $time;
-    if ($once) {
-        $claims['ex1'] = true; // Expire after 1st use
-        $claims['exp'] = $time + 60 * 60 * 24; // 1 day
-    } else {
-        $claims['iat'] = $time;
-        $claims['exp'] = $time + 60 * 60 * 24 * 7; // 7 days
-    };
-    $token[1] = rtrim(strtr(base64_encode(json_encode((object)$claims)),'+/','-_'),'=');
-    
-    if (!isset($algorithms[$algorithm])) return false;
-    $hmac = $algorithms[$algorithm];
-
-    $signature = hash_hmac($hmac, "$token[0].$token[1]", $secret, true);
-    $token[2] = rtrim(strtr(base64_encode($signature),'+/','-_'),'=');
-    return implode('.', $token);
 };
 
 function login($given_username, $given_password, $con) {
