@@ -90,7 +90,7 @@ if ($claims['result'] == true) { // Token was OK
         };
     };
 } else {
-    http_response_code($claims['code']); // Token Failure
+    http_response_code($claims['status']); // Token Failure
     $response["message"] = $claims['message'];
 };
 
