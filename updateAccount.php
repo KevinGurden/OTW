@@ -48,7 +48,7 @@ if ($claims != false) { // Token was OK
 
         if ($username != '' && $company_id != null) { // We have enough to target the user
             $sets = array();
-            if ($new_password != '') {
+            if ($new_password_hash != '') {
                 $sets[] = "password='".$new_password_hash."',one_time_use=0"; // Turn off one time as well as the password has been changed
             };
 
@@ -58,7 +58,7 @@ if ($claims != false) { // Token was OK
 
             // Issue the database update
             // UPDATE users 
-            //     SET password='$new_password', nickname='$new_nickname'
+            //     SET password='$new_password_hash', nickname='$new_nickname'
             //     WHERE username='$username' AND company_id=$company_id
             
             if (count($sets) > 0) {

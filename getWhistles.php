@@ -73,6 +73,7 @@ if ($claims != false) { // Token was OK
         };
     };
 };
+debug('response: '.var_export($claims, true));
 echo json_encode($response);
 
 /* 
