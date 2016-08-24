@@ -34,25 +34,52 @@ function token_valid($token) {
     $secret = 'ABeKGnSScKWol';
 
     $algorithms = array('HS256'=>'sha256','HS384'=>'sha384','HS512'=>'sha512');
-    if (!isset($algorithms[$algorithm])) return false;
+    if (!isset($algorithms[$algorithm])) {
+        debug('algarithm not found');
+        return false;
+    };
     $hmac = $algorithms[$algorithm];
     
     $token = explode('.',$token);
-    if (count($token)<3) return false;
+    if (count($token)<3) {
+        debug('token not in 3 parts');
+        return false;
+    };
     
     $header = json_decode(base64_decode(strtr($token[0],'-_','+/')),true);
-    if (!$secret) return false;
-    if ($header['typ']!='JWT') return false;
-    if ($header['alg']!=$algorithm) return false;
+    if (!$secret) {
+        debug('missing secret');
+        return false;
+    };
+    if ($header['typ']!='JWT') {
+        debug('typ not JWT');
+        return false;
+    };
+    if ($header['alg']!=$algorithm) {
+        debug('alg not ok');
+        return false;
+    };
     
     $signature = bin2hex(base64_decode(strtr($token[2],'-_','+/')));
-    if ($signature!=hash_hmac($hmac,"$token[0].$token[1]",$secret)) return false;
+    if ($signature!=hash_hmac($hmac,"$token[0].$token[1]",$secret)) {
+        debug('secret different');
+        return false;
+    };
     
     $claims = json_decode(base64_decode(strtr($token[1],'-_','+/')),true);
     if (!$claims) return false;
-    if (isset($claims['nbf']) && $time+$leeway<$claims['nbf']) return false;
-    if (isset($claims['iat']) && $time+$leeway<$claims['iat']) return false;
-    if (isset($claims['exp']) && $time-$leeway>$claims['exp']) return false;
+    if (isset($claims['nbf']) && $time+$leeway<$claims['nbf']) {
+        debug('nbf bad');
+        return false;
+    };
+    if (isset($claims['iat']) && $time+$leeway<$claims['iat']) {
+        debug('iat bad');
+        return false;
+    };
+    if (isset($claims['exp']) && $time-$leeway>$claims['exp']) {
+        debug('exp bad');
+        return false;
+    };
 
     return $claims;
 };
