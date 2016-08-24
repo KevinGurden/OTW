@@ -53,16 +53,20 @@ function token($response) {
             if ($claims == false) {
                 http_response_code(401);
                 $response["message"] = "Not authorised (1)";
+                debug('claims if false. response: '.var_export($response, true));
+                return false;
             } else {
                 return $claims;
             };
         } else {
             http_response_code(401);
             $response["message"] = "Invalid authorisation (2)";
+            return false;
         };
     } else {
         http_response_code(401);
         $response["message"] = "Invalid authorisation (3)";
+        return false;
     };
 };
 
