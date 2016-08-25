@@ -23,17 +23,16 @@ header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_escape.php';
+include 'fn_post_escape.php';
 include 'fn_jwt.php';
 include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('updateAccount', $_POST); // Announce us in the log
+announce(__FILE__, $_POST); // Announce us in the log
 $response = array();
 
 $claims = token();
 if ($claims['result'] == true) { // Token was OK
-    debug('claims: '.$claims);
 
     // Connect to db
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");

@@ -22,7 +22,7 @@ header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_escape.php';
+include 'fn_post_escape.php';
 include 'fn_debug.php';
 
 function collect_events($query) { // Mop up the eents query into an array

@@ -2,6 +2,8 @@
 /*
 Get a list of survey questions from the encol database.
 
+Security: Requires JWT "Bearer <token>" 
+
 Parameters:
     none
 
@@ -20,43 +22,51 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
+include 'fn_jwt.php';
+include 'fn_debug.php';
 
-error_log("----- getSurveyQuestions.php ---------------------------"); // Announce us in the log
-
-// Array for JSON response
+announce(__FILE__, $_GET); // Announce us in the log
 $response = array();
 
-$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (connected($con, $response)) {
-    mysqli_set_charset($con, "utf8"); // Set the character set to use
-    
-    $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
-    $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
-    
-    // Get a list of questions
-    $select = "SELECT * FROM questions";
-    $result = mysqli_query($con, $select);
-    $response["query"] = "$select";
+$claims = token();
+if ($claims['result'] == true) { // Token was OK
 
-    // Check for empty result
-    if (mysqli_num_rows($result) > 0) {
-        // Loop through all results
-        $questions = array();
+    $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
+    if (connected($con, $response)) {
+        mysqli_set_charset($con, "utf8"); // Set the character set to use
         
-        while ($question = mysqli_fetch_assoc($result)) {
-            $questions[] = $question;
-            $response["lastquestion"] = $question;
-        }
-        $response["questions"] = $questions;
+        $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
+        $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
+        
+        // Get a list of questions
+        $select = "SELECT * FROM questions";
+        $result = mysqli_query($con, $select);
+        $response["query"] = "$select";
 
-        http_response_code(200); // Success
-        $response["message"] = "Success";
-        $response["sqlerror"] = "";
-    } else {
-        http_response_code(200); // Success but no questions found
-        $response["message"] = "No questions found";
+        // Check for empty result
+        if (mysqli_num_rows($result) > 0) {
+            // Loop through all results
+            $questions = array();
+            
+            while ($question = mysqli_fetch_assoc($result)) {
+                $questions[] = $question;
+                $response["lastquestion"] = $question;
+            }
+            $response["questions"] = $questions;
+
+            http_response_code(200); // Success
+            $response["message"] = "Success";
+            $response["sqlerror"] = "";
+        } else {
+            http_response_code(200); // Success but no questions found
+            $response["message"] = "No questions found";
+        };
     };
+} else {
+    http_response_code($claims['status']); // Token Failure
+    $response["message"] = $claims['message'];
 };
+    
 echo json_encode($response);
 
 /* 

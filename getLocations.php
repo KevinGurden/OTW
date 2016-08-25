@@ -2,6 +2,8 @@
 /*
 Get a list of defined locations from the encol database.
 
+Security: Requires JWT "Bearer <token>" 
+
 Parameters:
     id: company identifier. Integer
     debug: Turn on debug statements. Boolean
@@ -21,48 +23,55 @@ header('Access-Control-Allow-Origin: *');
 include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_get_escape.php';
+include 'fn_jwt.php';
 include 'fn_debug.php';
 
-announce('getLocations', $_GET);
-
-// Array for JSON response
+announce(__FILE__, $_GET); // Announce us in the log
 $response = array();
 
-$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (connected($con, $response)) {
-    mysqli_set_charset($con, "utf8"); // Set the character set to use
+$claims = token();
+if ($claims['result'] == true) { // Token was OK
 
-    if (isset($_GET['id'])) {
-        $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
-        debug('got id '.$id);
-    
-        // Get a list of locations
-        $select = "SELECT * FROM locations WHERE company_id=$id";
-        $result = mysqli_query($con, $select);
-        $response["query"] = "$select";
+    $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
+    if (connected($con, $response)) {
+        mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-        // Check for empty result
-        if (mysqli_num_rows($result) > 0) {
-            // Loop through all results
-            $locations = array();
-            
-            while ($loc = mysqli_fetch_assoc($result)) {
-                $locations[] = $loc;
-            }
-            $response["locations"] = $locations;
+        if (isset($_GET['id'])) {
+            $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
+            debug('got id '.$id);
+        
+            // Get a list of locations
+            $select = "SELECT * FROM locations WHERE company_id=$id";
+            $result = mysqli_query($con, $select);
+            $response["query"] = "$select";
 
-            http_response_code(200); // Success
-            $response["message"] = "Success";
-            $response["sqlerror"] = "";
-        } else {
-            http_response_code(200); // Success but no locations found
-            $response["message"] = "No locations found for company '$id'";
+            // Check for empty result
+            if (mysqli_num_rows($result) > 0) {
+                // Loop through all results
+                $locations = array();
+                
+                while ($loc = mysqli_fetch_assoc($result)) {
+                    $locations[] = $loc;
+                }
+                $response["locations"] = $locations;
+
+                http_response_code(200); // Success
+                $response["message"] = "Success";
+                $response["sqlerror"] = "";
+            } else {
+                http_response_code(200); // Success but no locations found
+                $response["message"] = "No locations found for company '$id'";
+            };
+        } else { // no id or user present
+            http_response_code(402); // Failure
+            $response["message"] = "Missing 'id' parameter";
         };
-    } else { // no id or user present
-        http_response_code(402); // Failure
-        $response["message"] = "Missing 'id' parameter";
     };
+} else {
+    http_response_code($claims['status']); // Token Failure
+    $response["message"] = $claims['message'];
 };
+
 echo json_encode($response);
 
 /* 

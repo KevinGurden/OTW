@@ -28,12 +28,11 @@ include 'fn_get_escape.php';
 include 'fn_jwt.php';
 include 'fn_debug.php';
 
-announce('getSpots', $_GET);
+announce(__FILE__, $_GET);
 $response = array(); // Array for JSON response
 
 $claims = token($response);
 if ($claims['result'] == true) { // Token was OK
-    debug('got claims');
 
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
     if (connected($con, $response)) {

@@ -88,20 +88,23 @@ function token() {
     $headers = apache_request_headers();
     if (isset($headers['Authorization'])) {
         $auth = $headers['Authorization'];
-        if (strlen($auth) >= 8) { // It's long enough to have a Bearer JWT token
+        if (strlen($auth) >= 8 && substr($auth, 0, 6) == 'Bearer') { // It's long enough to have a Bearer JWT token
             $token = substr($auth, 7);
             $claims = token_valid($token);
             
             if ($claims == false) {
+                error('Invalid Token provided. Error '.$claims['status']);
                 return array('result'=>false, 'status'=>401, 'message'=>"Not authorised (1)");
             } else {
                 $claims['result'] = true;
                 return $claims;
             };
         } else {
+            error('JWT Token not provided. Error '.$claims['status']);
             return array('result'=>false, 'status'=>401, 'message'=>"Invalid authorisation (2)");
         };
     } else {
+        error('Authorisation header & JWT Token not provided. Error '.$claims['status']);
         return array('result'=>false, 'status'=>401, 'message'=>"Invalid authorisation (3)");
     };
 };

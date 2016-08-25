@@ -3,6 +3,8 @@
 Update the the whistle health metrics in the health table for a particular day.
 This should be executed after a whistle has been submitted to the database.
 
+Security: Requires JWT "Bearer <token>" 
+
 Parameters:
     day: The day to apply the scores. Date stamp
     company_id: company that this applies to. Integer
@@ -22,8 +24,10 @@ header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_escape.php';
+include 'fn_post_escape.php';
 include 'fn_scoring.php';
+include 'fn_jwt.php';
+include 'fn_debug.php';
 
 function insert($con, $cid, $day) { // Insert a new record into 'health' or update if it already exists
     /* 
@@ -109,48 +113,56 @@ function insert_counts($con, $cid, $day, $types) { // Update category type count
     return $update_result;
 };
 
-error_log("----- scoreWhistle.php ---------------------------"); // Announce us in the log
+$_POST = json_decode(file_get_contents('php://input'), true);
+announce('createComment', $_POST); // Announce us in the log
 
-$response = array(); // Array for JSON response
-$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (connected($con, $response)) {
-    mysqli_set_charset($con, "utf8"); // Set the character set to use
+$response = array();
 
-    // Escape the values to ensure no injection vunerability
-    $_POST = json_decode(file_get_contents('php://input'), true);
-    $day = escape($con, 'day', '');
-    $company_id = got_int('company_id', 0);
-    $types = $_POST['types'];
-    $events = $_POST['events'];
-    $response['events'] = $events;
-    $response['types'] = $types;
-    
-    $db_result1 = insert($con, $company_id, $day); // Update any whistle events first e.g. Open > 3 months
-    if ($db_result1) { // Completed
+$claims = token();
+if ($claims['result'] == true) { // Token was OK
+    $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
+    if (connected($con, $response)) {
+        mysqli_set_charset($con, "utf8"); // Set the character set to use
+
+        // Escape the values to ensure no injection vunerability
+        $_POST = json_decode(file_get_contents('php://input'), true);
+        $day = escape($con, 'day', '');
+        $company_id = got_int('company_id', 0);
+        $types = $_POST['types'];
+        $events = $_POST['events'];
+        $response['events'] = $events;
+        $response['types'] = $types;
         
-        $db_result2 = insert_counts($con, $company_id, $day, $types); // Now add category counts e.g. Bribery
+        $db_result1 = insert($con, $company_id, $day); // Update any whistle events first e.g. Open > 3 months
+        if ($db_result1) { // Completed
+            
+            $db_result2 = insert_counts($con, $company_id, $day, $types); // Now add category counts e.g. Bribery
 
-        if ($db_result2) { // Success
-            http_response_code(200);
-            $response["message"] = "Success";
-            $response["sqlerror"] = "";
-        } else { // Partial failure
+            if ($db_result2) { // Success
+                http_response_code(200);
+                $response["message"] = "Success";
+                $response["sqlerror"] = "";
+            } else { // Partial failure
+                http_response_code(304);
+                $response["message"] = "Partially failed to create/update record";
+                $response["sqlerror"] = mysqli_error($con);
+                error_log('partial failure');
+            };
+            
+            // Finally update the overall health scores. This does not use insert_counts
+            $response["day"] = score_health($con, $company_id, $day, $events, "scoreWhistle");
+        
+        } else { // Failure
             http_response_code(304);
-            $response["message"] = "Partially failed to create/update record";
+            $response["message"] = "Failed to create/update record";
             $response["sqlerror"] = mysqli_error($con);
-            error_log('partial failure');
+            error_log('failure');
         };
-        
-        // Finally update the overall health scores. This does not use insert_counts
-        $response["day"] = score_health($con, $company_id, $day, $events, "scoreWhistle");
-    
-    } else { // Failure
-        http_response_code(304);
-        $response["message"] = "Failed to create/update record";
-        $response["sqlerror"] = mysqli_error($con);
-        error_log('failure');
     };
-}; 
+} else {
+    http_response_code($claims['status']); // Token Failure
+    $response["message"] = $claims['message'];
+};
 
 echo json_encode($response); // Echo JSON response
 

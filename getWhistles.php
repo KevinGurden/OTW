@@ -32,7 +32,6 @@ $response = array();
 $claims = token();
 debug('back in w: '.var_export($claims, true));
 if ($claims['result'] == true) { // Token was OK
-    debug('got claims');
 
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
     if (connected($con, $response)) {

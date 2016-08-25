@@ -26,12 +26,12 @@ header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_escape.php';
+include 'fn_post_escape.php';
 include 'fn_jwt.php';
 include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('createComment', $_POST); // Announce us in the log
+announce(__FILE__, $_POST); // Announce us in the log
 
 $response = array();
 
@@ -41,8 +41,6 @@ if ($claims['result'] == true) { // Token was OK
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
     if (connected($con, $response)) {
         mysqli_set_charset($con, "utf8"); // Set the character set to use
-
-    	$_POST = json_decode(file_get_contents('php://input'), true);
 
     	// Escape the values to ensure no injection vunerability
     	$cat = escape($con, 'cat', '');

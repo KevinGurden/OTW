@@ -8,6 +8,12 @@ function debug($text) {
     };
 };
 
+function error($text) {
+    global $debug_name;
+
+    error_log($debug_name.": ".$text);
+};
+
 function announce($name, $params) {
     global $debug_on, $debug_name;
 

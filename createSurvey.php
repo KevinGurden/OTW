@@ -26,7 +26,7 @@ header('Content-Type: application/json');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_escape.php';
+include 'fn_post_escape.php';
 include 'fn_jwt.php';
 include 'fn_debug.php';
 

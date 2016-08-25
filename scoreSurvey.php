@@ -3,6 +3,8 @@
 Update the the survey health metrics in the health table for a particular day.
 This should be executed after a survey has been submitted to the database but is also called at other times.
 
+Security: Requires JWT "Bearer <token>" 
+
 Parameters:
     day: The day to apply the scores. Date stamp
     answers: An array of answers. Can be []
@@ -25,13 +27,15 @@ Process:
 See bottom for useful commands
  */
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
 include 'fn_http_response.php';
-include 'fn_escape.php';
+include 'fn_post_escape.php';
 include 'fn_scoring.php';
+include 'fn_jwt.php';
+include 'fn_debug.php';
 
 function update($con, $old_h, $new_h, $cid, $day, $elements) { // Insert a new record into 'health'
     // If new_h is [] then this is an event update only (probably a refusal to answer a survey)
@@ -177,73 +181,81 @@ function weight_survey($ans, $old_health, $new_health, $els) {
     return $new_health; 
 };
 
-error_log("----- scoreSurvey.php ---------------------------"); // Announce us in the log
+$_POST = json_decode(file_get_contents('php://input'), true);
+announce('createComment', $_POST); // Announce us in the log
 
-$response = array(); // Array for JSON response
-$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
-if (connected($con, $response)) {
-    mysqli_set_charset($con, "utf8");
-    $_POST = json_decode(file_get_contents('php://input'), true);
+$response = array();
 
-    // Escape the values to ensure no injection vunerability
-    $answers = $_POST['answers'];
-    $response['answers'] = $answers;
-    $day = escape($con, 'day', '');
-    $company_id = got_int('company_id', 0);
-    $events = $_POST['events'];
-    $response['events'] = $events;
-    
-    $elements = array('cm','co','ca','wo','vi','va','re','ri','su','vt','vb');
+$claims = token();
+if ($claims['result'] == true) { // Token was OK
+    $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
+    if (connected($con, $response)) {
+        mysqli_set_charset($con, "utf8");
+        $_POST = json_decode(file_get_contents('php://input'), true);
 
-    $select = "SELECT * FROM health WHERE day='$day' AND company_id=$company_id";
-    $result = mysqli_query($con, $select);
-    if ($result === false || mysqli_num_rows($result) == 0) { // No record so create one
-        $tinsert = true;
-        foreach($elements as $e) {
-            $old_health[$e.'_survey_score'] = null;
-            $old_health[$e.'_survey_count'] = 0;
-        };
-    } else { // We found at least 1 record
-        $tinsert = false;
-        $old_health = mysqli_fetch_assoc($result); // Just take the first
-    };
-    
-    // Set the new health scores initially to those returned from the current day's health
-    $new_health = array(
-        "cm_score" => $old_health['cm_survey_score'], "cm_count" => $old_health['cm_survey_count'],
-        "co_score" => $old_health['co_survey_score'], "co_count" => $old_health['co_survey_count'],
-        "ca_score" => $old_health['ca_survey_score'], "ca_count" => $old_health['ca_survey_count'],
-        "wo_score" => $old_health['wo_survey_score'], "wo_count" => $old_health['wo_survey_count'],
-        "vi_score" => $old_health['vi_survey_score'], "vi_count" => $old_health['vi_survey_count'],
-        "va_score" => $old_health['va_survey_score'], "va_count" => $old_health['va_survey_count'],
-        "re_score" => $old_health['re_survey_score'], "re_count" => $old_health['re_survey_count'],
-        "ri_score" => $old_health['ri_survey_score'], "ri_count" => $old_health['ri_survey_count'],
-        "su_score" => $old_health['su_survey_score'], "su_count" => $old_health['su_survey_count'],
-        "vt_score" => $old_health['vt_survey_score'], "vt_count" => $old_health['vt_survey_count'],
-        "vb_score" => $old_health['vb_survey_score'], "vb_count" => $old_health['vb_survey_count'],
-    );
-    // Cycle through each question to build a running score/count for each element
-    foreach ($answers as $answer) {
-        // Weight the score according to the contributions in fn_scoring
-        $new_health = weight_survey($answer, $old_health, $new_health, $elements); // Adjust for an individual answer
-        // error_log("after  question ".$answer["id"]." new_health[v4] is ".$new_health["v4_score"].",".$new_health["v4_count"]);
-    };
-
-    $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
-
-    if ($db_result) { // Success... finally update the overall health scores. This does not use insert_counts
-        $response["day"] = score_health($con, $company_id, $day, $events, "scoreSurvey");
+        // Escape the values to ensure no injection vunerability
+        $answers = $_POST['answers'];
+        $response['answers'] = $answers;
+        $day = escape($con, 'day', '');
+        $company_id = got_int('company_id', 0);
+        $events = $_POST['events'];
+        $response['events'] = $events;
         
-        http_response_code(200);
-        $response["message"] = "Success";
-        $response["sqlerror"] = "";
-    } else { // Failure
-        $response["sqlerror"] = mysqli_error($con);
-        error_log('scoreSurvey: Failed to update survey ('.$response['sqlerror'].')');
-        http_response_code(403);
-        $response["message"] = "Failed to create/update record";
+        $elements = array('cm','co','ca','wo','vi','va','re','ri','su','vt','vb');
+
+        $select = "SELECT * FROM health WHERE day='$day' AND company_id=$company_id";
+        $result = mysqli_query($con, $select);
+        if ($result === false || mysqli_num_rows($result) == 0) { // No record so create one
+            $tinsert = true;
+            foreach($elements as $e) {
+                $old_health[$e.'_survey_score'] = null;
+                $old_health[$e.'_survey_count'] = 0;
+            };
+        } else { // We found at least 1 record
+            $tinsert = false;
+            $old_health = mysqli_fetch_assoc($result); // Just take the first
+        };
+        
+        // Set the new health scores initially to those returned from the current day's health
+        $new_health = array(
+            "cm_score" => $old_health['cm_survey_score'], "cm_count" => $old_health['cm_survey_count'],
+            "co_score" => $old_health['co_survey_score'], "co_count" => $old_health['co_survey_count'],
+            "ca_score" => $old_health['ca_survey_score'], "ca_count" => $old_health['ca_survey_count'],
+            "wo_score" => $old_health['wo_survey_score'], "wo_count" => $old_health['wo_survey_count'],
+            "vi_score" => $old_health['vi_survey_score'], "vi_count" => $old_health['vi_survey_count'],
+            "va_score" => $old_health['va_survey_score'], "va_count" => $old_health['va_survey_count'],
+            "re_score" => $old_health['re_survey_score'], "re_count" => $old_health['re_survey_count'],
+            "ri_score" => $old_health['ri_survey_score'], "ri_count" => $old_health['ri_survey_count'],
+            "su_score" => $old_health['su_survey_score'], "su_count" => $old_health['su_survey_count'],
+            "vt_score" => $old_health['vt_survey_score'], "vt_count" => $old_health['vt_survey_count'],
+            "vb_score" => $old_health['vb_survey_score'], "vb_count" => $old_health['vb_survey_count'],
+        );
+        // Cycle through each question to build a running score/count for each element
+        foreach ($answers as $answer) {
+            // Weight the score according to the contributions in fn_scoring
+            $new_health = weight_survey($answer, $old_health, $new_health, $elements); // Adjust for an individual answer
+            // error_log("after  question ".$answer["id"]." new_health[v4] is ".$new_health["v4_score"].",".$new_health["v4_count"]);
+        };
+
+        $db_result = update($con, $old_health, $new_health, $company_id, $day, $elements);
+
+        if ($db_result) { // Success... finally update the overall health scores. This does not use insert_counts
+            $response["day"] = score_health($con, $company_id, $day, $events, "scoreSurvey");
+            
+            http_response_code(200);
+            $response["message"] = "Success";
+            $response["sqlerror"] = "";
+        } else { // Failure
+            $response["sqlerror"] = mysqli_error($con);
+            error_log('scoreSurvey: Failed to update survey ('.$response['sqlerror'].')');
+            http_response_code(403);
+            $response["message"] = "Failed to create/update record";
+        };
     };
-}; 
+} else {
+    http_response_code($claims['status']); // Token Failure
+    $response["message"] = $claims['message'];
+};
 
 echo json_encode($response); // Echo JSON response
 
