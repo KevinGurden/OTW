@@ -6,7 +6,8 @@ Security: Requires JWT "Bearer <token>"
 
 Parameters:
     cat: the category object that we want activity for e.g. 'whistle'. String
-    catid: the identifier within the category. String
+    catid: the identifier within the category. Integer
+    company_id: the company identifier. Integer
     debug: Turn on debug statements. Boolean
 
 Return:
@@ -18,7 +19,7 @@ Return:
 See bottom for useful commands
  */
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
@@ -37,13 +38,15 @@ if ($claims['result'] == true) { // Token was OK
     if (connected($con, $response)) {
         mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-        if ( isset($_GET['catid']) and isset($_GET['cat']) ) {
+        if ( isset($_GET['catid']) && isset($_GET['cat']) && isset($_GET['company_id']) ) {
             // Escape the values to ensure no injection vunerability
-            $catid = escape($con, 'catid', '');
+            $catid = got_int('catid', null);
+            $company_id = got_int('company_id', null);
             $cat = escape($con, 'cat', '');
 
             // Get a list of activity
-            $query = "SELECT * FROM activity WHERE catid='$catid' AND cat='$cat'";
+            $query = "SELECT * FROM activity WHERE catid=$catid AND cat='$cat' AND company_id=$company_id";
+            debug('query: '.$query);
             $response["query"] = $query;
             $result = mysqli_query($con, $query);
 
@@ -54,8 +57,8 @@ if ($claims['result'] == true) { // Token was OK
                 
                 while ($act = mysqli_fetch_assoc($result)) {
                     $activity[] = $act;
-                    error_log("content: ".$act['content']);
-                    $act['content1'] = $act['content']; // Bug: Content is being retuned as NaN in the receiving app. 
+                    debug("content: ".$act['content']);
+                    // $act['content1'] = $act['content']; // Bug: Content is being retuned as NaN in the receiving app. 
                 }
                 $response["activity"] = $activity;
 
@@ -70,9 +73,9 @@ if ($claims['result'] == true) { // Token was OK
                 $response["message"] = "No activity found";
             };
         } else {
-            error_log("'catid' and 'cat' must be provided");
+            debug("'catid', 'cat' and 'company_id' must be provided");
             http_response_code(402); // Failure
-            $response["message"] = "'cat' and 'catid' must be provided";
+            $response["message"] = "'catid', 'cat' and 'company_id' must be provided";
             $response["sqlerror"] = "";
         };
     };
