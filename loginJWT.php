@@ -14,6 +14,7 @@ Return:
     sqlerror: detailed sql error
     init: a json object of company specific information
     token: a JWT token
+    debug: Turn on debug statements. Boolean
 
 See bottom for useful commands
  */
@@ -197,7 +198,7 @@ if (connected($con, $response)) {
             };
         };
     } else {
-        error_log("Login failed");
+        debug("Login failed");
         http_response_code(401);
         $response["message"] = "Login failed";
         $response["sqlerror"] = "";

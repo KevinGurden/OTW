@@ -9,6 +9,7 @@ Data passed:
     nickname: The nickname of the user. String
     username: The username of the user. String
 	company_id: The id of the company in the company table
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

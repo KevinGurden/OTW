@@ -9,6 +9,7 @@ Parameters:
     day: The day to apply the scores. Date stamp
     company_id: company that this applies to. Integer
     events: An array of event objects
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 300+ for error

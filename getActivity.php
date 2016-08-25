@@ -7,6 +7,7 @@ Security: Requires JWT "Bearer <token>"
 Parameters:
     cat: the category object that we want activity for e.g. 'whistle'. String
     catid: the identifier within the category. String
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

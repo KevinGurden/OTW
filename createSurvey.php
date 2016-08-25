@@ -12,6 +12,7 @@ Data passed:
     user:       username. String
     anon:       Whether the answers were provided anonymously. Boolean (Integer0, 1)
     company_id: Company identifier in the 'company' table within the encol database
+    debug:      Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 300+ for error

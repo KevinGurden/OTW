@@ -8,6 +8,7 @@ Parameters:
     cat: the category object that we want activity for e.g. 'whistles'. String
     tables: the table names to check a user match. Comma separated string
     user: the users identifier or an anonymous secret id. String
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

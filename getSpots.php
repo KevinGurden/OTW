@@ -15,6 +15,7 @@ Return:
     message: High level error message
     sqlerror: detailed sql error
     spots: an array of spot objects
+    debug: Turn on debug statements. Boolean
 
 See bottom for useful commands
  */

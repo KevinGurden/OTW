@@ -10,6 +10,7 @@ Parameters:
     type: 'comment', 'feedback' (if closed), 'rating'. String
     content: The content to be applied to this event. E.g a rating of '5', or a comment 'Hello'. String
     etc
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

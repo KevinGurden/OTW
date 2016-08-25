@@ -9,6 +9,7 @@ Parameters:
     user: userid. String
     mediaId: Integer
     type: type of return media; 'thumbnail', 'full', 'stock'. String
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 300+ for error

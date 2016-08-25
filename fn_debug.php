@@ -14,12 +14,12 @@ function error($text) {
     error_log($debug_name.": ".$text);
 };
 
-function announce($name, $params) {
+function announce($path, $params) {
     global $debug_on, $debug_name;
 
     $debug_on = (isset($params['debug']) && $params['debug']==true);
-
-    $debug_name = $name;
+    $path_parts = pathinfo($path);
+    $debug_name = $path_parts['basename'];
     error_log("----- ".$debug_name.".php --------------- php:".phpversion()); // Announce us in the log
 };
 

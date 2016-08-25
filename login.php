@@ -13,6 +13,7 @@ Return:
     message: High level error message
     sqlerror: detailed sql error
     init: a json object of company specific information
+    debug: Turn on debug statements. Boolean
 
 See bottom for useful commands
  */

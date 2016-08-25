@@ -10,6 +10,7 @@ Parameters:
     company_id: company that this applies to. Integer
     types: list of comma separated whistle type names
     events: An array of event objects
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 300+ for error

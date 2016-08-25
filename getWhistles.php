@@ -13,6 +13,7 @@ Return:
     message: High level error message
     sqlerror: detailed sql error
     whistles: an array of whistle objects
+    debug: Turn on debug statements. Boolean
 
 See bottom for useful commands
  */
@@ -30,7 +31,6 @@ announce('getWhistles', $_GET); // Announce us in the log
 $response = array();
 
 $claims = token();
-debug('back in w: '.var_export($claims, true));
 if ($claims['result'] == true) { // Token was OK
 
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");

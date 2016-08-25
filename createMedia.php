@@ -10,6 +10,7 @@ Data passed:
     photo_format:   Type of photo if type=photo e.g. 'jpeg'. String
     user:           Username. String
     cId:            Company identifier in the 'company' table within the encol database. Integer
+    debug:          Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 300+ for error

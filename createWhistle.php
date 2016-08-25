@@ -6,6 +6,7 @@ Security: Requires JWT "Bearer <token>"
 
 Data passed:
 	tba
+	debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

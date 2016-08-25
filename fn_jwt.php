@@ -100,11 +100,11 @@ function token() {
                 return $claims;
             };
         } else {
-            error('JWT Token not provided. Error '.$claims['status']);
+            error('JWT Token not provided');
             return array('result'=>false, 'status'=>401, 'message'=>"Invalid authorisation (2)");
         };
     } else {
-        error('Authorisation header & JWT Token not provided. Error '.$claims['status']);
+        error('Authorisation header & JWT Token not provided');
         return array('result'=>false, 'status'=>401, 'message'=>"Invalid authorisation (3)");
     };
 };

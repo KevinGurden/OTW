@@ -11,6 +11,7 @@ Data passed:
 	val1: The value to assign to set1
 	set2: A field to be updated, string
 	val2: The value to assign to set2
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

@@ -10,6 +10,7 @@ Parameters:
     answers: An array of answers. Can be []
     company_id: company that this applies to. Integer
     events: An array of event objects
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

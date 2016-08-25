@@ -13,6 +13,7 @@ Return:
     message: High level error message
     sqlerror: detailed sql error
     test: a test object e.g. the secret code used for testing with user 'test1'
+    debug: Turn on debug statements. Boolean
 
 See bottom for useful commands
  */

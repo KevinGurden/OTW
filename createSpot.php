@@ -24,6 +24,7 @@ Parameters:
 	media_photos: Comma separated string list
 	anon: 0=False, 1=True. Integer
 	company_id: Integer
+	debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

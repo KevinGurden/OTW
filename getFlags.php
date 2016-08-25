@@ -7,6 +7,7 @@ Security: Requires JWT "Bearer <token>"
 Parameters:
     id: company identifier. Integer
     user: username. String
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error

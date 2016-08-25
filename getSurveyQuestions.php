@@ -12,6 +12,7 @@ Return:
     message: High level error message
     sqlerror: detailed sql error
     questions: an array of question objects
+    debug: Turn on debug statements. Boolean
 
 See bottom for useful commands
  */
