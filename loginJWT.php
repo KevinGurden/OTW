@@ -69,8 +69,9 @@ function pw_verify($given, $stored) { // Replace with password_verify() when PHP
 
 function pw_in_date($expireSQL) { // Is the temporary use-once password in date
     $expirePHP = strtotime($expireSQL);
-    debug('now: '.now().', expires: '.$expirePHP);
-    return now() <= $expirePHP;
+    //debug('now: '.now().', expires: '.$expirePHP);
+    debug('expires: '.$expirePHP);
+    return 0 <= $expirePHP;
 };
 
 function login($given_username, $given_password, $con) {
