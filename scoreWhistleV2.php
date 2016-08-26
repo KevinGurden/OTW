@@ -11,6 +11,7 @@ Parameters:
     company_id: company that this applies to. Integer
     types: list of comma separated whistle type names
     events: An array of event objects
+    scores: An array of v2 scores objects
     debug: Turn on debug statements. Boolean
 
 Return:
@@ -32,7 +33,7 @@ include 'fn_jwt.php';
 include 'fn_debug.php';
 
 function insert($con, $cid, $day, $scores) { // Insert a new record into 'health' or update if it already exists
-    // Get current health
+    // Get current health and build V2 element scores
     $select = "SELECT * FROM health WHERE day='$day' AND company_id=.$cid.";
     $result = mysqli_query($con, $select);
     if (mysqli_num_rows($result) = 0) { // Day doesn't exist so create zero record
@@ -46,23 +47,28 @@ function insert($con, $cid, $day, $scores) { // Insert a new record into 'health
     $els = array('ca', 'cm', 'co', 'ra', 're', 'ri', 'su', 'va', 'vb', 'vt', 'wo');
     $v2s = array();
     foreach ($els as $el) {
-        $v2s["v2_".$el."_score"] = comp_score = $comp.'_score';
-        if (array_key_exists($comp_score, $other_score) && !is_null($other_score[$comp_score])) {
-            $roll_total = $roll_total + $other_score[$comp_score];
-            $count = $count + 1;
+        $sc = "v2_".$el."_score"; 
+        if (is_null($current[$sc])) {
+            $v2s[] = $sc."=".$scores[$sc];
+        } else {
+            $tot = $current[$sc] + $scores[$sc];
+            $v2s[] = $sc."=".$tot;
         };
     };
+    $v2sets = implode(",", $v2s);
 
     /* 
     INSERT INTO health  
         SET day='$day',
             lookup=$cid:$day,
             company_id=$cid,
+            v2_ca_score = etc
             whistle_open = (
                 as UPDATE below
             )
     ON DUPLICATE KEY 
         UPDATE 
+            v2_ca_score = etc,
             whistle_open = ( // Count whistles that were submitted before the day and are have been open for 90 days
                 SELECT 
                     COUNT(*) FROM whistles
@@ -97,10 +103,10 @@ function insert($con, $cid, $day, $scores) { // Insert a new record into 'health
     $whistles_open_anon = "whistle_anon = (SELECT COUNT(*) FROM whistles WHERE $comp AND $not_closed AND $cat_whistle AND $before AND anon=1)";
     $whistle_events = "$whistles_open, $whistles_open_3m, $whistles_quick_3m, $whistles_open_anon";
     
-    $on_dup = "ON DUPLICATE KEY UPDATE $whistle_events";
-    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', $comp, $whistle_events $on_dup";
+    $on_dup = "ON DUPLICATE KEY UPDATE $v2sets, $whistle_events";
+    $insert = "INSERT INTO health SET day='$day', lookup='$lookup', $comp, $v2sets, $whistle_events $on_dup";
     $insert_result = mysqli_query($con, $insert);
-    // error_log($insert, $insert_result);
+    debug($insert, $insert_result);
     return $insert_result;
 };
 
