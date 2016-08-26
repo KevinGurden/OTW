@@ -210,9 +210,9 @@ if (connected($con, $response)) {
             };
         };
     } else {
-        debug("Login failed");
+        debug($login_result["message"]);
         http_response_code(401);
-        $response["message"] = "Login failed";
+        $response["message"] = $login_result["message"];
         $response["sqlerror"] = "";
     };
 };
