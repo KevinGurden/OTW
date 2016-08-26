@@ -67,6 +67,12 @@ function pw_verify($given, $stored) { // Replace with password_verify() when PHP
     return $given == $stored;
 };
 
+function pw_in_date($expireSQL) { // Is the temporary use-once password in date
+    $expirePHP = strtotime($expireSQL);
+    debug('now: '.now().', expires: '.$expirePHP);
+    return now() <= $expirePHP;
+};
+
 function login($given_username, $given_password, $con) {
     $login_result = array();
 
@@ -89,6 +95,7 @@ function login($given_username, $given_password, $con) {
             $c_id = $user_row['company_id'];
             $password = $user_row['password'];
             $once = $user_row['one_time_use'] == 1;
+            $expire = $user_row['one_time_expire'];
 
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
@@ -101,16 +108,18 @@ function login($given_username, $given_password, $con) {
                 debug('verifying password');
                 if (pw_verify($given_password, $password)) {
                     debug('correct');
-                    $login_result['result'] = true;
-                    // Password is correct! Get the user-agent string of the user.
-                    $user_browser = $_SERVER['HTTP_USER_AGENT'];
+                    $login_result['result'] = true; // Password is correct!
                     $login_result['username'] = $given_username;
-                    
-                    $claims = array('iss'=>'encol');
-                    $time = time();
-                    $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
-                    $login_result['company_id'] = $c_id;
-                    return $login_result;
+                    if ($once && pw_in_date($expire)) {
+                        $claims = array('iss'=>'encol');
+                        $time = time();
+                        $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
+                        $login_result['company_id'] = $c_id;
+                        return $login_result;
+                    } else {
+                        $login_result = array('result' => false, 'message' => 'Temporary password has expired');
+                        return $login_result;
+                    };
                 } else {
                     debug('not correct');
                     // Password is not correct so record this attempt in the database
