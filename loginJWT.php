@@ -153,6 +153,7 @@ $response = array();
 $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 if (connected($con, $response)) {
     mysqli_set_charset($con, "utf8"); // Set the character set to use
+    date_default_timezone_set('Europe/London');
     
     // Escape the values to ensure no injection vunerability
     $username = escape($con, 'username', '');
