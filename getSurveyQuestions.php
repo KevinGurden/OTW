@@ -1,11 +1,12 @@
 <?php
 /*
-Get a list of survey questions from the encol database.
+Get a list of survey questions from the encol database. 
+Return any that have the right company_id or a null company_id.
 
 Security: Requires JWT "Bearer <token>" 
 
 Parameters:
-    none
+    company_id: id of company within company table. Integer
 
 Return:
     status: 200 for success, 400+ for error
@@ -36,11 +37,10 @@ if ($claims['result'] == true) { // Token was OK
     if (connected($con, $response)) {
         mysqli_set_charset($con, "utf8"); // Set the character set to use
         
-        $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
-        $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
+        $company_id = escape($con, 'company_id', -1); // Escape to avoid injection vunerability
         
         // Get a list of questions
-        $select = "SELECT * FROM questions";
+        $select = "SELECT * FROM questions WHERE company_id=".$company_id." OR company_id=null";
         $result = mysqli_query($con, $select);
         $response["query"] = "$select";
 

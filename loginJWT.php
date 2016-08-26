@@ -110,7 +110,7 @@ function login($given_username, $given_password, $con) {
                     debug('correct');
                     $login_result['result'] = true; // Password is correct!
                     $login_result['username'] = $given_username;
-                    if ($once && pw_in_date($expire)) {
+                    if (($once && pw_in_date($expire)) || !$once {
                         $claims = array('iss'=>'encol');
                         $time = time();
                         $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
