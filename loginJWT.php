@@ -70,6 +70,7 @@ function pw_verify($given, $stored) { // Replace with password_verify() when PHP
 function pw_in_date($expireSQL) { // Is the temporary use-once password in date
     $expirePHP = strtotime($expireSQL);
     debug("expires: ".$expirePHP);
+    debug("time: ".time());
     return 0 <= $expirePHP;
 };
 
