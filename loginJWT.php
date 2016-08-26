@@ -69,8 +69,7 @@ function pw_verify($given, $stored) { // Replace with password_verify() when PHP
 
 function pw_in_date($expireSQL) { // Is the temporary use-once password in date
     $expirePHP = strtotime($expireSQL);
-    // debug('now: '.now().', expires: '.$expirePHP);
-    debug('expires: '.$expirePHP);
+    debug("expires: ".$expirePHP);
     return 0 <= $expirePHP;
 };
 
@@ -111,8 +110,9 @@ function login($given_username, $given_password, $con) {
                     debug('correct');
                     $login_result['result'] = true; // Password is correct!
                     $login_result['username'] = $given_username;
-                    debug("once: ".$once.", expire: ".$expire);
-                    if ($once && pw_in_date($expire)) || !$once {
+                    debug("once: ".$once);
+                    debug("expire: ".$expire);
+                    if ($once && pw_in_date($expire) || !$once) {
                         $claims = array('iss'=>'encol');
                         $time = time();
                         $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
