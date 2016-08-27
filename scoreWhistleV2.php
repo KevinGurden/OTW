@@ -44,7 +44,7 @@ function insert($con, $cid, $day, $scores) { // Insert a new record into 'health
     } else {
         $current = mysqli_fetch_assoc($result);
     };
-    $els = array('ca', 'cm', 'co', 'ra', 're', 'ri', 'su', 'va', 'vb', 'vt', 'wo');
+    $els = array('ca', 'cm', 'co', 're', 'ri', 'su', 'va', 'vb', 'vi', 'vt', 'wo');
     $v2s = array();
     foreach ($els as $el) {
         $sc = "v2_".$el."_score"; 
