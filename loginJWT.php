@@ -113,7 +113,7 @@ function login($given_username, $given_password, $con) {
                     debug("once: ".$once);
                     debug("expire: ".$expire);
                     if ($once && pw_in_date($expire) || !$once) {
-                        $claims = array('iss'=>'encol');
+                        $claims = array('iss'=>'encol', 'usr'=>$given_username);
                         $time = time();
                         $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
                         $login_result['company_id'] = $c_id;
