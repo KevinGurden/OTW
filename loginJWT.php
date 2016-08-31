@@ -97,7 +97,7 @@ function login($given_username, $given_password, $con) {
             $once = $user_row['one_time_use'] == 1;
             $expire = $user_row['one_time_expire'];
             $anon_used = $user_row['anon_used'];
-            $access_code_hash = $user_row['access_code#'];
+            $access_code_hash = $user_row['anon_access#'];
 
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
@@ -151,7 +151,7 @@ function login($given_username, $given_password, $con) {
 };
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('login', $_POST); // Announce us in the log
+announce('__FILE__', $_POST); // Announce us in the log
 
 $response = array();
 
