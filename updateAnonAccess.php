@@ -5,7 +5,7 @@ Update anonymous access information in user table of the encol database.
 Security: Requires JWT "Bearer <token>" 
 
 Data passed:
-	hash: The hashed access. String
+	access_hash: The hashed access. String
     company_id: The id of the company to target the user. Integer
     debug: Turn on debug statements. Boolean
 
