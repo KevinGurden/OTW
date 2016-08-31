@@ -28,7 +28,7 @@ include 'fn_get_escape.php';
 include 'fn_jwt.php';
 include 'fn_debug.php';
 
-announce('getActivity', $_GET); // Announce us in the log
+announce(__FILE__, $_GET); // Announce us in the log
 $response = array();
 
 $claims = token();

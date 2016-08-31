@@ -30,7 +30,7 @@ include 'fn_jwt.php';
 include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('createMedia', $_POST);
+announce(__FILE__, $_POST);
 
 // Array for JSON response
 $response = array();

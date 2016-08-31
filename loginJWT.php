@@ -151,7 +151,7 @@ function login($given_username, $given_password, $con) {
 };
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('__FILE__', $_POST); // Announce us in the log
+announce(__FILE__, $_POST); // Announce us in the log
 
 $response = array();
 

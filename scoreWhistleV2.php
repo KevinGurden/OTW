@@ -143,7 +143,7 @@ function insert_counts($con, $cid, $day, $types) { // Update category type count
 };
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('createComment', $_POST); // Announce us in the log
+announce(__FILE__, $_POST); // Announce us in the log
 
 $response = array();
 

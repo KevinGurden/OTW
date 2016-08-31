@@ -52,7 +52,7 @@ function refuse($con, $sdate, $user, $anon, $cid) {
 };
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('createSurvey', $_POST); // Announce us in the log
+announce(__FILE__, $_POST); // Announce us in the log
 
 $response = array();
 

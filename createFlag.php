@@ -26,7 +26,7 @@ include 'fn_jwt.php';
 include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
-announce('createFlag', $_POST); // Announce us in the log
+announce(__FILE__, $_POST); // Announce us in the log
 $response = array();
 
 $claims = token();
