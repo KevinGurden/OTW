@@ -38,8 +38,8 @@ function insert($con, $cid, $day, $scores) { // Insert a new record into 'health
     $result = mysqli_query($con, $select);
     if (mysqli_num_rows($result) == 0) { // Day doesn't exist so create zero record
         $current = array(
-            'v2_ca_score'=>null, 'v2_cm_score'=>null, 'v2_co_score'=>null, 'v2_ra_score'=>null, 'v2_re_score'=>null, 'v2_ri_score'=>null, 
-            'v2_su_score'=>null, 'v2_va_score'=>null, 'v2_vb_score'=>null, 'v2_vt_score'=>null, 'v2_wo_score'=>null
+            'v2_ca_score'=>null, 'v2_cm_score'=>null, 'v2_co_score'=>null, 'v2_re_score'=>null, 'v2_ri_score'=>null, 'v2_su_score'=>null, 
+            'v2_va_score'=>null, 'v2_vb_score'=>null, 'v2_vi_score'=>null, 'v2_vt_score'=>null, 'v2_wo_score'=>null
         );
     } else {
         $current = mysqli_fetch_assoc($result);
