@@ -49,7 +49,7 @@ if ($claims['result'] == true) { // Token was OK
             //     SET anon_access#='$access_hash',anon_used=1
             //     WHERE username='$username' AND company_id=$company_id
             
-            $update = "UPDATE users SET anon_access#='".$access_hash."',anon_used=1 WHERE username='".$username."' AND company_id='".$company_id."'";
+            $update = "UPDATE users SET anon_access_hash='".$access_hash."',anon_used=1 WHERE username='".$username."' AND company_id='".$company_id."'";
             debug('update: '.$update);  
             $result = mysqli_query($con, $update);
             if ($result) { // Success
