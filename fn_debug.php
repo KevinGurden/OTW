@@ -20,7 +20,7 @@ function announce($path, $params) {
     $debug_on = (isset($params['debug']) && $params['debug']==true);
     $path_parts = pathinfo($path);
     $debug_name = $path_parts['basename'];
-    error_log("----- ".$debug_name.".php --------------- php:".phpversion()); // Announce us in the log
+    error_log("----- ".$debug_name." --------------- php:".phpversion()); // Announce us in the log
 };
 
 ?>
