@@ -38,7 +38,7 @@ if ($claims['result'] == true) { // Token was OK
     if (connected($con, $response)) {
         mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-        // Various updates are possible
+        $anon_code = $_POST['anon_code'];
         $access_hash = $_POST['access_hash'];
         $company_id = got_int('company_id', -1);
         $username = $claims['usr'];
@@ -46,10 +46,11 @@ if ($claims['result'] == true) { // Token was OK
         if ($username != '' && $company_id >= 0) { // We have enough to target the user
             // Issue the database update
             // UPDATE users 
-            //     SET anon_access#='$access_hash',anon_used=1
+            //     SET anon_access_hash='$access_hash',anon_used=1
             //     WHERE username='$username' AND company_id=$company_id
             
-            $update = "UPDATE users SET anon_access_hash='".$access_hash."',anon_used=1 WHERE username='".$username."' AND company_id='".$company_id."'";
+            $set = "SET anon_encrypt='".$anon_code."',anon_access_hash='".$access_hash."',anon_used=1";
+            $update = "UPDATE users ".$set." WHERE username='".$username."' AND company_id='".$company_id."'";
             debug('update: '.$update);  
             $result = mysqli_query($con, $update);
             if ($result) { // Success
