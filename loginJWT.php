@@ -98,6 +98,7 @@ function login($given_username, $given_password, $con) {
             $expire = $user_row['one_time_expire'];
             $anon_used = $user_row['anon_used'];
             $access_hash = $user_row['anon_access_hash'];
+            $anon_encrypt = $user_row['anon_encrypt'];
 
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
@@ -121,6 +122,7 @@ function login($given_username, $given_password, $con) {
                         $login_result['company_id'] = $c_id;
                         $login_result['anon_used'] = $anon_used;
                         $login_result['access_hash'] = $access_hash;
+                        $login_result['anon_encrypt'] = $anon_encrypt;
                         return $login_result;
                     } else {
                         $login_result = array('result' => false, 'message' => 'Temporary password has expired');
@@ -171,6 +173,7 @@ if (connected($con, $response)) {
         $response["jwt"] = $login_result["jwt"];
         $response["anon_used"] = $login_result["anon_used"];
         $response["access_hash"] = $login_result['access_hash'];
+        $response["anon_encrypt"] = $login_result['anon_encypt'];
         $c_id = $login_result["company_id"];
 
         $query = "SELECT * FROM company JOIN licences ON company_id=".$c_id." WHERE id=$c_id";
