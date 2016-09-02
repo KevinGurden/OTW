@@ -51,8 +51,13 @@ if ($claims['result'] == true) { // Token was OK
                     INNER JOIN activity a ON t0.id = a.catid WHERE t0.user='$user' AND a.cat='whistle'
             UNION
             SELECT a.*,t1.title AS 'cat_title' 
-                FROM flags t0 
+                FROM flags t1 
                     INNER JOIN activity a ON t1.id = a.catid WHERE t1.user='$user' AND a.cat='flag'
+            UNION
+            SELECT a.*,t2.title AS 'cat_title' 
+                FROM flags t2 
+                    INNER JOIN activity a ON t2.id = a.catid 
+                        WHERE (t2.raised_user='$user' OR t2.owned_user='$user' OR t2.watchers LIKE '%$user%') AND a.cat='flag'
             etc
             */
 
@@ -63,7 +68,15 @@ if ($claims['result'] == true) { // Token was OK
                 $cols = "a.*,t".$count.".title AS 'cat_title'";
                 $from = $table." t".$count;
                 $on = "t".$count.".id=a.catid";
-                $where = "t".$count.".user='".$user."' AND a.cat='".$cat."'";
+                
+                if ($table == 'flags') { // The format is more complicated
+                    $raised = "t".$count.".raised_user='".$user."'";
+                    $owned = "t".$count.".owned_user='".$user."'";
+                    $watch = "t".$count.".watchers LIKE '%".$user."%'";
+                    $where = "(".$raised." OR ".$owned." OR ".$watch.") AND a.cat='".$cat."'";
+                } else {
+                    $where = "t".$count.".user='".$user."' AND a.cat='".$cat."'";
+                };
                 $selects[$count] = "SELECT ".$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
             };
             $query = implode(" UNION ", $selects);
