@@ -69,7 +69,7 @@ if ($claims['result'] == true) { // Token was OK
                 $from = $table." t".$count;
                 $on = "t".$count.".id=a.catid";
                 
-                if ($table == 'flags') { // The format is more complicated
+                if ($table == 'spots') { // The format is more complicated
                     $raised = "t".$count.".raised_user='".$user."'";
                     $owned = "t".$count.".owned_user='".$user."'";
                     $watch = "t".$count.".watchers LIKE '%".$user."%'";
