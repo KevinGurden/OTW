@@ -71,7 +71,7 @@ if ($claims['result'] == true) { // Token was OK
                     $response["message"] = "Account updated";
                     $response["sqlerror"] = "";
                 } else { // Failure
-                    error_log("$result: from $update");
+                    debug("$result: from $update");
                     http_response_code(402);
                     $response["message"] = "Update Account failed";
                     $response["sqlerror"] = mysqli_error($con);

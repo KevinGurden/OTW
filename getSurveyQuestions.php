@@ -7,13 +7,13 @@ Security: Requires JWT "Bearer <token>"
 
 Parameters:
     company_id: id of company within company table. Integer
+    debug: Turn on debug statements. Boolean
 
 Return:
     status: 200 for success, 400+ for error
     message: High level error message
     sqlerror: detailed sql error
-    questions: an array of question objects
-    debug: Turn on debug statements. Boolean
+    questions: an array of question object
 
 See bottom for useful commands
  */
@@ -40,7 +40,8 @@ if ($claims['result'] == true) { // Token was OK
         $company_id = escape($con, 'company_id', -1); // Escape to avoid injection vunerability
         
         // Get a list of questions
-        $select = "SELECT * FROM questions WHERE company_id=".$company_id." OR company_id=null";
+        $select = "SELECT * FROM questions WHERE company_id=".$company_id." OR company_id IS null";
+        debug('select: '.$select);
         $result = mysqli_query($con, $select);
         $response["query"] = "$select";
 
