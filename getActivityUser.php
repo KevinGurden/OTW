@@ -53,6 +53,7 @@ if ($claims['result'] == true) { // Token was OK
             SELECT a.*,t1.title AS 'cat_title' 
                 FROM flags t0 
                     INNER JOIN activity a ON t1.id = a.catid WHERE t1.user='$user' AND a.cat='flag'
+            etc
             */
 
             $tables = explode(" ", $tables);
@@ -66,9 +67,11 @@ if ($claims['result'] == true) { // Token was OK
                 $selects[$count] = "SELECT ".$cols." FROM ".$from." INNER JOIN activity a ON ".$on." WHERE ".$where;
             };
             $query = implode(" UNION ", $selects);
-            // error_log("getActivityUser: query: ".$query);
+            debug("query: ".$query);
 
             $result = mysqli_query($con, $query);
+            if ($result == false) {
+                Debug('result is false!');
             
             if (mysqli_num_rows($result) > 0) { // Check for empty result
                 // Loop through all results
