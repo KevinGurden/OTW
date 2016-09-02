@@ -72,6 +72,7 @@ if ($claims['result'] == true) { // Token was OK
             $result = mysqli_query($con, $query);
             if ($result == false) {
                 Debug('result is false!');
+            };
             
             if (mysqli_num_rows($result) > 0) { // Check for empty result
                 // Loop through all results
