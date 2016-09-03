@@ -8,6 +8,7 @@ Security: Requires JWT "Bearer <token>"
 
 Parameters:
     day: The day to apply the scores. Date stamp
+    whistle_id: the identifier for the whistle. Integer
     company_id: company that this applies to. Integer
     types: list of comma separated whistle type names
     events: An array of event objects
@@ -32,7 +33,23 @@ include 'fn_scoring.php';
 include 'fn_jwt.php';
 include 'fn_debug.php';
 
-function insert($con, $cid, $day, $scores) { // Insert a new record into 'health' or update if it already exists
+function insert_detail($con, $cid, $day, $wid, $v2sets) { // Insert details record into 'health_detail'
+    /* 
+    INSERT INTO health  
+        SET day='$day',
+            lookup=$cid:$day,
+            company_id=$cid,
+            v2_ca_score = etc
+    */
+    $lookup = $cid . ':' . $day;
+    $comp = "company_id=$cid";
+    $cat = "cat='whistle',cat_id=$wid";
+    $insert = "INSERT INTO health_detail SET day='$day', lookup='$lookup', $cat, $comp, $v2sets";
+    $insert_result = mysqli_query($con, $insert);
+    debug($insert, $insert_result);
+    return
+
+function insert($con, $cid, $day, $wid, $scores) { // Insert a new record into 'health' or update if it already exists
     // Get current health and build V2 element scores
     $select = "SELECT * FROM health WHERE day='$day' AND company_id=.$cid.";
     $result = mysqli_query($con, $select);
@@ -56,6 +73,8 @@ function insert($con, $cid, $day, $scores) { // Insert a new record into 'health
         };
     };
     $v2sets = implode(",", $v2s);
+
+    insert_detail($con, $cid, $day, $wid, $v2sets);
 
     /* 
     INSERT INTO health  
@@ -156,6 +175,7 @@ if ($claims['result'] == true) { // Token was OK
         // Escape the values to ensure no injection vunerability
         $_POST = json_decode(file_get_contents('php://input'), true);
         $day = escape($con, 'day', '');
+        $whistle_id = got_int('whistle_id', 0);
         $company_id = got_int('company_id', 0);
         $types = $_POST['types'];
         $events = $_POST['events'];
@@ -163,7 +183,7 @@ if ($claims['result'] == true) { // Token was OK
         $response['events'] = $events;
         $response['types'] = $types;
         
-        $db_result1 = insert($con, $company_id, $day, $scores); // Update any whistle events first e.g. Open > 3 months
+        $db_result1 = insert($con, $company_id, $day, $whistle_id, $scores); // Update any whistle events first e.g. Open > 3 months
         if ($db_result1) { // Completed
             
             $db_result2 = insert_counts($con, $company_id, $day, $types); // Now add category counts e.g. Bribery
