@@ -36,49 +36,49 @@ function token_valid($token) {
     $algorithms = array('HS256'=>'sha256','HS384'=>'sha384','HS512'=>'sha512');
     if (!isset($algorithms[$algorithm])) {
         debug('algarithm not found');
-        return false;
+        return 1;
     };
     $hmac = $algorithms[$algorithm];
     
     $token = explode('.',$token);
     if (count($token)<3) {
         debug('token not in 3 parts');
-        return false;
+        return 2;
     };
     
     $header = json_decode(base64_decode(strtr($token[0],'-_','+/')),true);
     if (!$secret) {
         debug('missing secret');
-        return false;
+        return 3;
     };
     if ($header['typ']!='JWT') {
         debug('typ not JWT');
-        return false;
+        return 4;
     };
     if ($header['alg']!=$algorithm) {
         debug('alg not ok');
-        return false;
+        return 5;
     };
     
     $signature = bin2hex(base64_decode(strtr($token[2],'-_','+/')));
     if ($signature!=hash_hmac($hmac,"$token[0].$token[1]",$secret)) {
         debug('secret different');
-        return false;
+        return 6;
     };
     
     $claims = json_decode(base64_decode(strtr($token[1],'-_','+/')),true);
     if (!$claims) return false;
     if (isset($claims['nbf']) && $time+$leeway<$claims['nbf']) {
         debug('nbf bad');
-        return false;
+        return 7;
     };
     if (isset($claims['iat']) && $time+$leeway<$claims['iat']) {
         debug('iat bad');
-        return false;
+        return 8;
     };
     if (isset($claims['exp']) && $time-$leeway>$claims['exp']) {
         debug('exp bad');
-        return false;
+        return 9;
     };
 
     return $claims;
@@ -92,9 +92,14 @@ function token() {
             $token = substr($auth, 7);
             $claims = token_valid($token);
             
-            if ($claims == false) {
-                error('Invalid Token provided. Error '.$claims['status']);
-                return array('result'=>false, 'status'=>401, 'message'=>"Not authorised (1)");
+            if (is_int($claims)) {
+                if ($claims == 9) {
+                    debug('Token has expired');
+                    return array('result'=>false, 'status'=>401, 'message'=>"Token expired");
+                } else {
+                    error('Invalid Token provided. Error '.$claims['status']);
+                    return array('result'=>false, 'status'=>401, 'message'=>"Not authorised (".$claims.")");
+                };
             } else {
                 $claims['result'] = true;
                 return $claims;
