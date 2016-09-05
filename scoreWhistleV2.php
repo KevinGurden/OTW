@@ -47,7 +47,7 @@ function insert_detail($con, $cid, $day, $wid, $v2sets) { // Insert details reco
     $insert = "INSERT INTO health_detail SET day='$day', lookup='$lookup', $cat, $comp, $v2sets";
     $insert_result = mysqli_query($con, $insert);
     debug($insert, $insert_result);
-    return
+};
 
 function insert($con, $cid, $day, $wid, $scores) { // Insert a new record into 'health' or update if it already exists
     // Get current health and build V2 element scores
