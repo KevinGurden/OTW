@@ -44,6 +44,7 @@ if ($claims['result'] == true) { // Token was OK
         mysqli_set_charset($con, "utf8"); // Set the character set to use
 
         $id = got_int('id', null);
+        $table = escape($con, 'table', '');
         $field1 = escape($con, 'field1', ''); $val1 = $_POST['val1'];
         $field2 = escape($con, 'field2', ''); $val2 = $_POST['val2'];
 
