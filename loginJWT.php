@@ -178,6 +178,9 @@ if (connected($con, $response)) {
         $response["anon_used"] = $login_result["anon_used"];
         $response["access_hash"] = $login_result['access_hash'];
         $response["anon_encrypt"] = $login_result['anon_encrypt'];
+        $response['use_register'] = $login_result['use_register'];
+        $response['use_compliance'] = $login_result['use_compliance'];
+        $response['use_encol'] = $login_result['use_encol'];
         $c_id = $login_result["company_id"];
 
         $query = "SELECT * FROM company JOIN licences ON company_id=".$c_id." WHERE id=$c_id";
