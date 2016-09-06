@@ -99,6 +99,9 @@ function login($given_username, $given_password, $con) {
             $anon_used = $user_row['anon_used'];
             $access_hash = $user_row['anon_access_hash'];
             $anon_encrypt = $user_row['anon_encrypt'];
+            $use_register = $user_row['use_register'] == 1;
+            $use_compliance = $user_row['use_compliance'] == 1;
+            $use_encol = $user_row['use_encol'] == 1;
 
             if (false && checkbrute($given_username, $c_id, $con) == true) { // Check if the account is locked from too many login attempts 
                 // Account is locked. Send an email to user saying their account is locked
@@ -121,8 +124,9 @@ function login($given_username, $given_password, $con) {
                         $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
                         $login_result['company_id'] = $c_id;
                         $login_result['anon_used'] = $anon_used;
-                        $login_result['access_hash'] = $access_hash;
-                        $login_result['anon_encrypt'] = $anon_encrypt;
+                        $login_result['access_hash'] = $access_hash; $login_result['anon_encrypt'] = $anon_encrypt;
+                        $login_result['use_register'] = $use_register; $login_result['use_compliance'] = $use_compliance;
+                        $login_result['use_encol'] = $use_encol;
                         return $login_result;
                     } else {
                         $login_result = array('result' => false, 'message' => 'Temporary password has expired');
