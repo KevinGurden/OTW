@@ -11,6 +11,8 @@ Data passed:
 	val1: The value to assign to set1
 	set2: A field to be updated, string
 	val2: The value to assign to set2
+    set3: A field to be updated, string
+    val3: The value to assign to set3
     debug: Turn on debug statements. Boolean
 
 Return:
@@ -47,17 +49,21 @@ if ($claims['result'] == true) { // Token was OK
         $table = escape($con, 'table', '');
         $field1 = escape($con, 'field1', ''); $val1 = $_POST['val1'];
         $field2 = escape($con, 'field2', ''); $val2 = $_POST['val2'];
+        $field3 = escape($con, 'field3', ''); $val3 = $_POST['val3'];
 
     	// Issue the database update
     	/*
     	UPDATE $table 
-    		SET $field1=$val1,$field1=$val1 
+    		SET $field1=$val1,$field2=$val2, etc 
     		WHERE id=$id
     	 */
     	$sets = "SET ".$field1."=".$val1;
     	if (isset($field2) && isset($val2)) {
     		$sets = $sets.",".$field2."=".$val2;
     	};
+        if (isset($field3) && isset($val3)) {
+            $sets = $sets.",".$field3."=".$val3;
+        };
     	$update = "UPDATE ".$table." ".$sets." WHERE id=$id";
     	
     	$result = mysqli_query($con, $update);
