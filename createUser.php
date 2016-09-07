@@ -10,7 +10,7 @@ Parameters:
 	email: User's email address. String
 	username: User's username. String
 	password: User's password hash. String
-	useOnce: Whether this password is a use-once: Boolean
+	oneTime: Whether this password is a use-once: Boolean
 	expire: The date the password expires: Timestamp
 	company_id: Integer
 	debug: Turn on debug statements. Boolean
@@ -33,7 +33,7 @@ include 'fn_jwt.php';
 include 'fn_email.php';
 include 'fn_debug.php';
 
-function doesnt_exist($user, $id) { // Is this new user unique
+function doesnt_exist($con, $user, $id) { // Is this new user unique
 	$select = "SELECT * FROM users WHERE username='$user' AND company_id=$id";
     debug('select: '.$select);
     $result = mysqli_query($con, $select);
@@ -62,13 +62,13 @@ if ($claims['result'] == true) { // Token was OK
 		$email = escape($con, 'email', ''); 
 		$username = escape($con, 'username', '');
 		$password_hash = escape($con, 'password','');
-		debug("useOnce: ".$_POST['useOnce']);
-		$use_once = escape($con, 'useOnce', true) == true;
+		debug("oneTime: ".$_POST['oneTime']);
+		$use_once = escape($con, 'oneTime', true) == true;
 		$expire_date = escape($con, 'expire', '');
 		$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 		    
 		// Check that the user doesn't already exist
-		if (doesnt_exist($email, $company_id)) {
+		if (doesnt_exist($con, $email, $company_id)) {
 			$cols = "name, nick, email, username, password, one_time_use, one_time_expire, company_id";
 			$vals = "'$name', '$nick', '$email', '$username', '$password_hash', $use_once, '$expire_date', $company_id";
 			
