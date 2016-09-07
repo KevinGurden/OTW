@@ -13,6 +13,8 @@ Data passed:
 	val2: The value to assign to set2
     set3: A field to be updated, string
     val3: The value to assign to set3
+    set4: A field to be updated, string
+    val4: The value to assign to set4
     debug: Turn on debug statements. Boolean
 
 Return:
@@ -50,6 +52,7 @@ if ($claims['result'] == true) { // Token was OK
         $field1 = escape($con, 'field1', ''); $val1 = $_POST['val1'];
         $field2 = escape($con, 'field2', ''); $val2 = $_POST['val2'];
         $field3 = escape($con, 'field3', ''); $val3 = $_POST['val3'];
+        $field4 = escape($con, 'field4', ''); $val4 = $_POST['val4'];
 
     	// Issue the database update
     	/*
@@ -63,6 +66,9 @@ if ($claims['result'] == true) { // Token was OK
     	};
         if (isset($field3) && isset($val3)) {
             $sets = $sets.",".$field3."=".$val3;
+        };
+        if (isset($field4) && isset($val4)) {
+            $sets = $sets.",".$field4."=".$val4;
         };
     	$update = "UPDATE ".$table." ".$sets." WHERE id=$id";
     	
