@@ -34,7 +34,7 @@ include 'fn_email.php';
 include 'fn_debug.php';
 
 function doesnt_exist($con, $user, $id) { // Is this new user unique
-	$select = "SELECT * FROM users WHERE username='$user' AND company_id=$id";
+	$select = "SELECT * FROM users WHERE LOWER(username)=LOWER('$user') AND company_id=$id";
     debug('select: '.$select);
     $result = mysqli_query($con, $select);
     
@@ -62,8 +62,7 @@ if ($claims['result'] == true) { // Token was OK
 		$email = escape($con, 'email', ''); 
 		$username = escape($con, 'username', '');
 		$password_hash = escape($con, 'password','');
-		debug("oneTime: ".$_POST['oneTime']);
-		$use_once = escape($con, 'oneTime', true) == true;
+		$use_once = escape($con, 'oneTime', true) == 1;
 		$expire_date = escape($con, 'expire', '');
 		$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 		    
@@ -72,7 +71,7 @@ if ($claims['result'] == true) { // Token was OK
 			$cols = "name, nick, email, username, password, one_time_use, one_time_expire, company_id";
 			$vals = "'$name', '$nick', '$email', '$username', '$password_hash', $use_once, '$expire_date', $company_id";
 			
-			$insert = "INSERT INTO spots($cols) VALUES($vals)";
+			$insert = "INSERT INTO users($cols) VALUES($vals)";
 			$result = mysqli_query($con, $insert);
 			debug("insert: ".$insert);
 
