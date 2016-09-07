@@ -54,8 +54,6 @@ if ($claims['result'] == true) { // Token was OK
 	if (connected($con, $response)) {
 	    mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-		$_POST = json_decode(file_get_contents('php://input'), true);
-
 		// Escape the values to ensure no injection vunerability
 		$name = escape($con, 'name', '');
 		$nick = escape($con, 'nick', '');
