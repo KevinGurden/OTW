@@ -35,10 +35,10 @@ function send_email($to_email, $to_name) {
 	$mail->Port = 587;
 
 	// Set the encryption system to use - ssl (deprecated) or tls
-	$mail->SMTPSecure = 'tls';
+	$mail->SMTPSecure = false; // Was tls
 
 	// Whether to use SMTP authentication
-	$mail->SMTPAuth = true;
+	$mail->SMTPAuth = false;
 
 	// Username to use for SMTP authentication - use full email address for gmail
 	$mail->Username = "kevin.gurden@googlemail.com";
@@ -58,12 +58,13 @@ function send_email($to_email, $to_name) {
 	//Set the subject line
 	$mail->Subject = 'Test GMail';
 
-	//Read an HTML message body from an external file, convert referenced images to embedded,
-	//convert HTML into a basic plain-text alternative body
+	// Read an HTML message body from an external file, convert referenced images to embedded,
+	// convert HTML into a basic plain-text alternative body
 	// $mail->msgHTML(file_get_contents('contents.html'), dirname(__FILE__));
+	
 	$mail->msgHTML('<p>Hello</p>');
 
-	//Replace the plain text body with one created manually
+	// Replace the plain text body with one created manually
 	$mail->AltBody = 'Plain hello';
 
 	// Attach an image file
