@@ -36,7 +36,7 @@ function send_email($email, $name, $subject, $body_html, $body_text, $from_email
 	// Send the message, check for errors
 	if (!$mail->send()) {
 	    debug("Mailer Error: " . $mail->ErrorInfo);
-	    return mail->ErrorInfo;
+	    return $mail->ErrorInfo;
 	} else {
 	    debug("Message sent!");
 	    return true;
