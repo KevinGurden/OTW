@@ -62,7 +62,7 @@ if ($claims['result'] == true) { // Token was OK
 		$email = escape($con, 'email', ''); 
 		$username = escape($con, 'username', '');
 		$password_hash = escape($con, 'password','');
-		$use_once = escape($con, 'oneTime', 1) == 1;
+		$use_once = escape($con, 'oneTime', 1);
 		$expire_date = escape($con, 'expire', '');
 		$use_encol = escape($con, 'use_encol', 1);
 		debug("POST use_compliance: ".$_POST['use_compliance']);
