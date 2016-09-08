@@ -64,9 +64,9 @@ if ($claims['result'] == true) { // Token was OK
 		$password_hash = escape($con, 'password','');
 		$use_once = escape($con, 'oneTime', 1) == 1;
 		$expire_date = escape($con, 'expire', '');
-		$use_encol = escape($con, 'use_encol', 1) == 1;
-		$use_compliance = escape($con, 'use_compliance', 1) == 1;
-		$use_register = escape($con, 'use_register', 1) == 1;
+		$use_encol = escape($con, 'use_encol', 1);
+		$use_compliance = escape($con, 'use_compliance', 1);
+		$use_register = escape($con, 'use_register', 1);
 		$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 		    
 		// Check that the user doesn't already exist
