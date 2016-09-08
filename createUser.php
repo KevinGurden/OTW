@@ -65,7 +65,9 @@ if ($claims['result'] == true) { // Token was OK
 		$use_once = escape($con, 'oneTime', 1) == 1;
 		$expire_date = escape($con, 'expire', '');
 		$use_encol = escape($con, 'use_encol', 1);
+		debug("POST use_compliance: ".$_POST['use_compliance']);
 		$use_compliance = escape($con, 'use_compliance', 1);
+		debug("use_compliance: ".$use_compliance);
 		$use_register = escape($con, 'use_register', 1);
 		$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 		    
