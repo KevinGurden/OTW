@@ -4,7 +4,7 @@ Login and get any general info specific to the user's company from the encol dat
 
 Parameters:
     username: the username e.g. 'test1'. String
-    password: the identifier within the category. String
+    password: the password. String
     force: (test only) force the return of a specific company information. Integer
     events: if set will return events information as well. Integer boolean; 0 or 1
 

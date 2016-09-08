@@ -9,7 +9,7 @@ Parameters:
 	nick: User's nickname. String
 	email: User's email address. String
 	username: User's username. String
-	password: User's password hash. String
+	password: User's password. String
 	oneTime: Whether this password is a use-once: Boolean
 	expire: The date the password expires: Timestamp
 	company_id: Integer
@@ -74,7 +74,7 @@ if ($claims['result'] == true) { // Token was OK
 			debug("insert: ".$insert);
 
 			if ($result) { // Success
-				send_email($email, $name);
+				send_new_user($email, $name, $nick, $username, $pass, $expire, $company);
 
 		        http_response_code(200);
 		        $response["message"] = "User created";
