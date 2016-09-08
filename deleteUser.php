@@ -38,7 +38,7 @@ if ($claims['result'] == true) { // Token was OK
 	    mysqli_set_charset($con, "utf8"); // Set the character set to use
 
 		// Escape the values to ensure no injection vunerability
-		$id = get_int('id', -1);
+		$id = got_int('id', -1);
 		$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 		    
 		// Check that we have the correct parameters
