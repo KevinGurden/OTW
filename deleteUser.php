@@ -44,7 +44,7 @@ if ($claims['result'] == true) { // Token was OK
 		// Check that we have the correct parameters
 		if ($id > 0 && $company_id > 0) {
 
-			$delete = "DELETE FROM users WHERE id=$id && compnay_id=$company_id";
+			$delete = "DELETE FROM users WHERE id=$id AND company_id=$company_id";
 			$result = mysqli_query($con, $delete);
 			debug("delete: ".$delete);
 
@@ -61,8 +61,8 @@ if ($claims['result'] == true) { // Token was OK
 		    	};
 			} else { // SQL error
 				http_response_code(409);
-		        debug("User exists already");
-		        $response["message"] = "User name is taken";
+		        debug("Couldn't delete user");
+		        $response["message"] = "Delete failed";
 		        $response["sqlerror"] = mysqli_error($con);
 		    };
 		} else { // Bad params
