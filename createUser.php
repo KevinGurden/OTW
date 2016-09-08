@@ -30,7 +30,6 @@ include 'fn_connected.php';
 include 'fn_http_response.php';
 include 'fn_post_escape.php';
 include 'fn_jwt.php';
-include 'fn_email.php';
 include 'fn_debug.php';
 
 function doesnt_exist($con, $user, $id) { // Is this new user unique
@@ -74,8 +73,6 @@ if ($claims['result'] == true) { // Token was OK
 			debug("insert: ".$insert);
 
 			if ($result) { // Success
-				send_new_user($email, $name, $nick, $username, $pass, $expire, $company);
-
 		        http_response_code(200);
 		        $response["message"] = "User created";
 		        $response["id"] = mysqli_insert_id($con); // Return the id of the record added
