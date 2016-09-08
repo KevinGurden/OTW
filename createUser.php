@@ -12,6 +12,9 @@ Parameters:
 	password: User's password. String
 	oneTime: Whether this password is a use-once: Boolean
 	expire: The date the password expires: Timestamp
+	use_encol: Permission to use. Boolean
+    use_compliance: Permission to use. Boolean
+    use_register: Permission to use. Boolean
 	company_id: Integer
 	debug: Turn on debug statements. Boolean
 
@@ -59,14 +62,19 @@ if ($claims['result'] == true) { // Token was OK
 		$email = escape($con, 'email', ''); 
 		$username = escape($con, 'username', '');
 		$password_hash = escape($con, 'password','');
-		$use_once = escape($con, 'oneTime', true) == 1;
+		$use_once = escape($con, 'oneTime', 1) == 1;
 		$expire_date = escape($con, 'expire', '');
+		$use_encol = escape($con, 'use_encol', 1) == 1;
+		$use_compliance = escape($con, 'use_compliance', 1) == 1;
+		$use_register = escape($con, 'use_register', 1) == 1;
 		$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
 		    
 		// Check that the user doesn't already exist
 		if (doesnt_exist($con, $email, $company_id)) {
-			$cols = "name, nick, email, username, password, one_time_use, one_time_expire, company_id";
-			$vals = "'$name', '$nick', '$email', '$username', '$password_hash', $use_once, '$expire_date', $company_id";
+			$cols1 = "name, nick, email, username, password, one_time_use, one_time_expire, company_id, ";
+			$vals1 = "'$name', '$nick', '$email', '$username', '$password_hash', $use_once, '$expire_date', $company_id, ";
+			$cols = $cols1."use_encol, use_compliance, use_register";
+			$vals = $vals1."$use_encol, $use_compliance, $use_register";
 			
 			$insert = "INSERT INTO users($cols) VALUES($vals)";
 			$result = mysqli_query($con, $insert);
