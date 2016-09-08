@@ -49,6 +49,7 @@ if ($claims['result'] == true) { // Token was OK
 	$body_text = escape(false, 'text', ''); 
 	$from_email = escape(false, 'fromEmail', ''); 
 	$from_name = escape(false, 'fromName', ''); 
+	debug('from_name: '.$from_name);
 	$company_id = escape(false, 'company_id', 0); // Default to 0-Unknown
 		    
 	$sent = send_email($to_email, $to_name, $subject, $body_html, $body_text, $from_email, $from_name);
