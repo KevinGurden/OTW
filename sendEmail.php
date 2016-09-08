@@ -41,17 +41,17 @@ $response = array();
 $claims = token();
 if ($claims['result'] == true) { // Token was OK
 
-	// Escape the values to ensure no injection vunerability
-	$to_email = escape($con, 'toEmail', ''); 
-	$to_name = escape($con, 'toName', ''); 
-	$subject = escape($con, 'subject', ''); 
-	$body_html = escape($con, 'html', ''); 
-	$body_text = escape($con, 'text', ''); 
-	$from_email = escape($con, 'fromEmail', ''); 
-	$from_name = escape($con, 'fromName', ''); 
-	$company_id = escape($con, 'company_id', 0); // Default to 0-Unknown
+	// Get the parameters. No SQL is done so no need to escape the values
+	$to_email = escape(false, 'toEmail', ''); 
+	$to_name = escape(false, 'toName', ''); 
+	$subject = escape(false, 'subject', ''); 
+	$body_html = escape(false, 'html', ''); 
+	$body_text = escape(false, 'text', ''); 
+	$from_email = escape(false, 'fromEmail', ''); 
+	$from_name = escape(false, 'fromName', ''); 
+	$company_id = escape(false, 'company_id', 0); // Default to 0-Unknown
 		    
-	$sent = send_email($to_email, $to_name, $subject, $bodyHTML, $bodyText, $from_email, $from_name);
+	$sent = send_email($to_email, $to_name, $subject, $body_html, $body_text, $from_email, $from_name);
 	if ($sent != false) {
         http_response_code(200);
         $response["message"] = "Email sent";
