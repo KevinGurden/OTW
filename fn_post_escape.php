@@ -2,7 +2,7 @@
 function escape($con, $field, $default) {
     if (isset($_POST[$field])) {
         if ($con == false) {
-            return $_POST[$field]);
+            return $_POST[$field];
         } else {
             return mysqli_real_escape_string($con, $_POST[$field]);
         };
