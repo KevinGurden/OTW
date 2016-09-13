@@ -92,7 +92,7 @@ if ($claims['result'] == true) { // Token was OK
 			$sets_comma = implode(',', $sets);
 			
 			$update = "UPDATE users SET $sets_comma WHERE username='$username' AND company_id=$company_id";
-			$update = mysqli_query($con, $update);
+			$result = mysqli_query($con, $update);
 			debug("update: ".$update);
 
 			if ($result) { // Success
