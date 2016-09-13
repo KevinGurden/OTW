@@ -84,7 +84,7 @@ if ($claims['result'] == true) { // Token was OK
 			if ($password_hash != false && $expire_date != false) {
 				$sets[] = "password='$password_hash'";
 				$sets[] = "one_time_use=$use_once";
-				$sets[] = "one_time_expire='$expire_date'"};
+				$sets[] = "one_time_expire='$expire_date'";
 			};
 			$sets[] = "use_comp_all=$use_comp_all"; $sets[] = "use_comp_assign=$use_comp_assign";
 			$sets[] = "use_encol=$use_encol"; $sets[] = "use_register=$use_register"; $sets[] = "use_ceo360=$use_ceo360";
