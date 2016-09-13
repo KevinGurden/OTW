@@ -78,9 +78,9 @@ if ($claims['result'] == true) { // Token was OK
 			UPDATE users SET name=$name, etc WHERE username="kg@rxh.not" AND company_id=$company_id;
 			*/
 			$sets = array();
-			if ($name != false) {$sets[] = "name='$name'"};
-			if ($nick != false) {$sets[] = "nick='$nick'"};
-			if ($email != false) {$sets[] = "email='$email'"};
+			if ($name != false) {$sets[] = "name='$name'";};
+			if ($nick != false) {$sets[] = "nick='$nick'";};
+			if ($email != false) {$sets[] = "email='$email'";};
 			if ($password_hash != false && $expire_date != false) {
 				$sets[] = "password='$password_hash'";
 				$sets[] = "one_time_use=$use_once";
