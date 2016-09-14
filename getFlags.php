@@ -7,6 +7,7 @@ Security: Requires JWT "Bearer <token>"
 Parameters:
     id: company identifier. Integer
     user: username. String
+    assigned: assignee username. String
     debug: Turn on debug statements. Boolean
 
 Return:
@@ -27,7 +28,7 @@ include 'fn_get_escape.php';
 include 'fn_jwt.php';
 include 'fn_debug.php';
 
-announce('getFlags', $_GET); // Announce us in the log
+announce(__FILE__, $_GET); // Announce us in the log
 $response = array();
 
 $claims = token($response);
@@ -36,9 +37,10 @@ if ($claims['result'] == true) { // Token was OK
     $con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
     if (connected($con, $response)) {
         mysqli_set_charset($con, "utf8"); // Set the character set to use
-        if (isset($_GET['id']) && isset($_GET['user'])) {
+        if (isset($_GET['id']) && (isset($_GET['user']) || isset($_GET['assigned']))) {
             $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
             $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
+            $assigned = escape($con, 'assigned', ''); // Escape to avoid injection vunerability
         
             // Get a list of flags
             if ($user == '') {
