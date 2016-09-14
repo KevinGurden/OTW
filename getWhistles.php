@@ -47,11 +47,13 @@ if ($claims['result'] == true) { // Token was OK
                 $and_user = "AND user='$user'";     // Limit to a particular user
             }
             $select = "SELECT * FROM whistles WHERE company_id=$id $and_user";
+            debug($select);
             $result = mysqli_query($con, $select);
             $response["query"] = "$select";
 
             // Check for empty result
             if (mysqli_num_rows($result) > 0) {
+                debug('found: '.mysqli_num_rows($result));
                 // Loop through all results
                 $whistles = array();
                 
