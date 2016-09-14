@@ -47,8 +47,15 @@ if ($claims['result'] == true) { // Token was OK
                 $and_user = '';                     // Return flags for all users
             } else {
                 $and_user = "AND user='$user'";     // Limit to a particular user
-            }
-            $select = "SELECT * FROM flags WHERE company_id=$id $and_user";
+            };
+
+            if ($assigned == '') {
+                $and_ass = '';                     // Return whistles for an assignee
+            } else {
+                $and_ass = "AND assignee='$assigned'";     // Limit to a particular assignee
+            };
+
+            $select = "SELECT * FROM flags WHERE company_id=$id $and_user $and_ass";
             debug($select);
             $result = mysqli_query($con, $select);
             $response["query"] = "$select";
