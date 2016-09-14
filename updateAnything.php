@@ -50,9 +50,12 @@ if ($claims['result'] == true) { // Token was OK
         $id = got_int('id', null);
         $table = escape($con, 'table', '');
         $field1 = escape($con, 'field1', ''); $val1 = $_POST['val1'];
-        $field2 = escape($con, 'field2', ''); $val2 = $_POST['val2'];
-        $field3 = escape($con, 'field3', ''); $val3 = $_POST['val3'];
-        $field4 = escape($con, 'field4', ''); $val4 = $_POST['val4'];
+        $field2 = escape($con, 'field2', '');
+        if ($field2 == '') {$val2='';} else {$val2=$POST['val2'];};
+        $field3 = escape($con, 'field3', '');
+        if ($field3 == '') {$val3='';} else {$val3=$POST['val3'];};
+        $field4 = escape($con, 'field4', '');
+        if ($field4 == '') {$val4='';} else {$val4=$POST['val4'];};
 
     	// Issue the database update
     	/*
