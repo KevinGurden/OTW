@@ -44,8 +44,8 @@ if ($claims['result'] == true) { // Token was OK
         mysqli_set_charset($con, "utf8"); // Set the character set to use
 
     	// Escape the values to ensure no injection vunerability
-    	$cat = escape($con, 'cat', '');
-    	$catid = got_int('catid', -1);
+    	$cat = escape($con, 'cat', ''); debug('cat: '.$cat);
+    	$catid = got_int('catid', -1); debug('catid: '.$catid);
     	$type = escape($con, 'type', 'comment');
     	$content = escape($con, 'content', '');
     	$fromuser = escape($con, 'fromuser', '');

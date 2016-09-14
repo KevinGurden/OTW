@@ -9,11 +9,11 @@ Data passed:
     id: The unique id of the item. Integer
 	set1: A field to be updated, string
 	val1: The value to assign to set1
-	set2: A field to be updated, string
+	set2: A field to be updated. Optional string
 	val2: The value to assign to set2
-    set3: A field to be updated, string
+    set3: A field to be updated. Optional string
     val3: The value to assign to set3
-    set4: A field to be updated, string
+    set4: A field to be updated. Optional string
     val4: The value to assign to set4
     debug: Turn on debug statements. Boolean
 
@@ -50,12 +50,9 @@ if ($claims['result'] == true) { // Token was OK
         $id = got_int('id', null);
         $table = escape($con, 'table', '');
         $field1 = escape($con, 'field1', ''); $val1 = $_POST['val1'];
-        $field2 = escape($con, 'field2', '');
-        if ($field2 == '') {$val2='';} else {$val2=$POST['val2'];};
-        $field3 = escape($con, 'field3', '');
-        if ($field3 == '') {$val3='';} else {$val3=$POST['val3'];};
-        $field4 = escape($con, 'field4', '');
-        if ($field4 == '') {$val4='';} else {$val4=$POST['val4'];};
+        $field2 = escape($con, 'field2', ''); if ($field2 == '') {$val2='';} else {$val2=$POST['val2'];};
+        $field3 = escape($con, 'field3', ''); if ($field3 == '') {$val3='';} else {$val3=$POST['val3'];};
+        $field4 = escape($con, 'field4', ''); if ($field4 == '') {$val4='';} else {$val4=$POST['val4'];};
 
     	// Issue the database update
     	/*
@@ -64,13 +61,13 @@ if ($claims['result'] == true) { // Token was OK
     		WHERE id=$id
     	 */
     	$sets = "SET ".$field1."=".$val1;
-    	if (isset($field2) && isset($val2)) {
+    	if ($field2 != '' && isset($val2)) {
     		$sets = $sets.",".$field2."=".$val2;
     	};
-        if (isset($field3) && isset($val3)) {
+        if ($field3 != '' && isset($val3)) {
             $sets = $sets.",".$field3."=".$val3;
         };
-        if (isset($field4) && isset($val4)) {
+        if ($field4 != '' && isset($val4)) {
             $sets = $sets.",".$field4."=".$val4;
         };
     	$update = "UPDATE ".$table." ".$sets." WHERE id=$id";
