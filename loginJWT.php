@@ -14,6 +14,7 @@ Return:
     sqlerror: detailed sql error
     init: a json object of company specific information
     token: a JWT token
+    use_<app>: Various permissions
     debug: Turn on debug statements. Boolean
 
 See bottom for useful commands
@@ -117,6 +118,7 @@ function login($given_username, $given_password, $con) {
                         $time = time();
                         $login_result['jwt'] = generate_token($claims, $time, $once, 'HS256', 'secret');
                         $login_result['company_id'] = $c_id;
+                        $login_result['nickname'] = $user_row['nick'];
                         $login_result['anon_used'] = $user_row['anon_used'];
                         $login_result['access_hash'] = $user_row['anon_access_hash']; 
                         $login_result['anon_encrypt'] = $user_row['anon_encrypt'];
@@ -173,6 +175,7 @@ if (connected($con, $response)) {
     $login_result = login($username, $password, $con);
     if ($login_result['result'] == true) {
         $response["jwt"] = $login_result["jwt"];
+        $response["nickname"] = $login_result["nickname"];
         $response["anon_used"] = $login_result["anon_used"];
         $response["access_hash"] = $login_result['access_hash'];
         $response["anon_encrypt"] = $login_result['anon_encrypt'];
