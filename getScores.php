@@ -17,7 +17,7 @@ Return:
 See bottom for useful commands
  */
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Origin: *');
 
 include 'fn_connected.php';
