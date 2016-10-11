@@ -51,6 +51,8 @@ if ($claims['result'] == true) { // Token was OK
 		$type_policy = escape($con, 'type_policy', '');
 		$loc_main = escape($con, 'loc_main', '');
 		$loc_detail = escape($con, 'loc_detail', '');
+		$med_photos = escape($con, 'media_photos');
+		$med_large = escape($con, 'media_large');
 		$user = escape($con, 'user', '');
 		$nick = escape($con, 'user_nick', '');
 		$anon = escape($con, 'anon', 0);
@@ -60,8 +62,8 @@ if ($claims['result'] == true) { // Token was OK
 		$cols = "title, description, recommendation, status, cat, subdate, date, type_selected, type_policy, ";
 		$vals = "'$title', '$description', '$recommendation', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
-		$cols = $cols . "loc_main, loc_detail, user, user_nick, anon, company_id";
-		$vals = $vals . "'$loc_main','$loc_detail', '$user', '$nick', '$anon', $company_id";
+		$cols = $cols . "loc_main, loc_detail, media_photos, media_large, user, user_nick, anon, company_id";
+		$vals = $vals . "'$loc_main','$loc_detail', '$med_photos', '$med_large', '$user', '$nick', '$anon', $company_id";
 
 		$insert = "INSERT INTO whistles($cols) VALUES($vals)";
 		$result = mysqli_query($con, $insert);

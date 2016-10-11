@@ -51,8 +51,8 @@ if ($claims['result'] == true) { // Token was OK
         $file64 = $_POST['file64'];
 
         // Issue the database create
-        $cols = "type, photo_format, file, created, user, company_id";
-        $vals = "'$type', '$photo_format', '$file64', '$created', '$user', $cId";
+        $cols = "type, photo_format, file, created, last_access, user, company_id";
+        $vals = "'$type', '$photo_format', '$file64', '$created', '$created', '$user', $cId";
 
         $insert = "INSERT INTO media($cols) VALUES($vals)";
         $result = mysqli_query($con, $insert);
