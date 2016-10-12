@@ -57,7 +57,7 @@ if ($claims['result'] == true) { // Token was OK
         $insert = "INSERT INTO media($cols) VALUES($vals)";
         $result = mysqli_query($con, $insert);
 
-        $vals_short = "'$type', '$photo_format', '<file64>', '$created', '$user', $cId";
+        $vals_short = "'$type', '$photo_format', '<file64>', '$created', '$created', '$user', $cId";
         $insert_short = "INSERT INTO media($cols) VALUES($vals_short)";
         debug('insert: '.$insert_short);
 

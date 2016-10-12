@@ -51,8 +51,8 @@ if ($claims['result'] == true) { // Token was OK
 		$type_policy = escape($con, 'type_policy', '');
 		$loc_main = escape($con, 'loc_main', '');
 		$loc_detail = escape($con, 'loc_detail', '');
-		$med_photos = escape($con, 'media_photos');
-		$med_large = escape($con, 'media_large');
+		$med_photos = escape($con, 'media_photos', '');
+		$med_large = escape($con, 'media_large', '');
 		$user = escape($con, 'user', '');
 		$nick = escape($con, 'user_nick', '');
 		$anon = escape($con, 'anon', 0);
