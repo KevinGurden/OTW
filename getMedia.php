@@ -85,7 +85,7 @@ if ($claims['result'] == true) { // Token was OK
                 $response["message"] = "Success";
                 $response["sqlerror"] = "";
             } else {
-                http_response_code(200); // Success but null return
+                http_response_code(404); // Null return
                 $response["message"] = "No media found";
                 $response["sqlerror"] = "";
             };
