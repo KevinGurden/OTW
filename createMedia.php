@@ -1,6 +1,6 @@
 <?php
 /*
-Create a new media item in the 'media' encol database.
+Delete a media item in the 'media' encol database.
 
 Security: Requires JWT "Bearer <token>" 
 
