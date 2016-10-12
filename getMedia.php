@@ -43,7 +43,7 @@ if ($claims['result'] == true) { // Token was OK
         $user = escape($con, 'user', '');
         $mediaId = escape($con, 'mediaId', '');
         $type = escape($con, 'type', 'full');
-        // error_log("getMedia: ".$type);
+        debug("getMedia: ".$id."/".$mediaId.": ".$type);
 
         // Get 1 record only
         $select = "SELECT * FROM media WHERE company_id=$id AND user='$user' AND id=$mediaId LIMIT 1";
