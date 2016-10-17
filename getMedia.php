@@ -64,18 +64,20 @@ if ($claims['result'] == true) { // Token was OK
                 $media = mysqli_fetch_assoc($result); // Should only be 1 result
                 
                 if ($type=='full') { // Only convert file/file64 if we want the full transfer
+                    debug('file');
                     $b64 = base64_encode($media["file"]);
                     $media["valid"] = !($b64 === false);
                     if ($media["valid"]) { // Valid conversion
+                        debug('valid');
                         // $b64 = mysqli_real_escape_string($con, $b64);
                         $media["file64"] = $b64;
                     } else {
+                        debug('!valid');
                         $media["file64"] = null;
                     };
                     $media["thumbnail"] = base64_encode($media["thumbnail"]);
                 } elseif ($type=='thumbnail') {
                     $media["file"] = null;
-                    $media["thumbnail"] = base64_encode($media["thumbnail"]);
                     $media["thumbnail"] = base64_encode($media["thumbnail"]);
                 };
 
