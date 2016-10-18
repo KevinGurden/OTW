@@ -75,6 +75,7 @@ if ($claims['result'] == true) { // Token was OK
                         debug('!valid');
                         $media["file64"] = null;
                     };
+                    $media["pre64"] = $media["file"];
                     $media["thumbnail"] = base64_encode($media["thumbnail"]);
                 } elseif ($type=='thumbnail') {
                     $media["file"] = null;
