@@ -45,7 +45,6 @@ include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
 announce(__FILE__, $_POST);
-
 $response = array();
 
 $claims = token();

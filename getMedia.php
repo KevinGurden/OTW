@@ -70,7 +70,7 @@ if ($claims['result'] == true) { // Token was OK
                     $media["file64"] = $media["file"];
                     // $media["thumbnail"] = base64_encode($media["thumbnail"]);
                 } elseif ($type=='thumbnail') {
-                    $media["file"] = null;
+                    $media["file64"] = null;
                     $media["thumbnail"] = base64_encode($media["thumbnail"]);
                 };
 

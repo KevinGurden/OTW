@@ -5,7 +5,23 @@ Create a new whistle in the encol database.
 Security: Requires JWT "Bearer <token>" 
 
 Data passed:
-	tba
+	title: String
+	description: String
+	recommendation: String
+	status: String
+	cat: String
+	sub_date: Date string
+	date: String
+	type_selected: String
+	type_policy: String
+	loc_main: String
+	loc_detail: String
+	media_large: Comma separated string list
+	media_photos: Comma separated string list
+	user: String
+	nick: String
+	anon: 0=False, 1=True. Integer
+	company_id: Integer
 	debug: Turn on debug statements. Boolean
 
 Return:
@@ -27,7 +43,6 @@ include 'fn_debug.php';
 
 $_POST = json_decode(file_get_contents('php://input'), true);
 announce(__FILE__, $_POST); // Announce us in the log
-
 $response = array();
 
 $claims = token();

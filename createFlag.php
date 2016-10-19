@@ -5,8 +5,25 @@ Create a new flag in the encol database.
 Security: Requires JWT "Bearer <token>" 
 
 Parameters:
-	tba
+	title: String
+	description: String
+	recommendation: String
+	status: String
+	cat: String
+	sub_date: Date string
+	date: String
+	type_selected: String
+	type_policy: String
+	loc_main: String
+	loc_detail: String
+	media_large: Comma separated string list
+	media_photos: Comma separated string list
+	user: String
+	nick: String
+	anon: 0=False, 1=True. Integer
+	company_id: Integer
 	debug: Turn on debug statements. Boolean
+
 
 Return:
     status: 200 for success, 400+ for error
@@ -31,7 +48,6 @@ $response = array();
 
 $claims = token();
 if ($claims['result'] == true) { // Token was OK
-    debug('claims: '.$claims);
 
 	$con = mysqli_connect("otw.cvgjunrhiqdt.us-west-2.rds.amazonaws.com", "techkevin", "whistleotw", "encol");
 	if (connected($con, $response)) {
@@ -51,6 +67,8 @@ if ($claims['result'] == true) { // Token was OK
 		$type_policy = escape($con, 'type_policy', '');
 		$loc_main = escape($con, 'loc_main', '');
 		$loc_detail = escape($con, 'loc_detail', '');
+		$med_photos = escape($con, 'media_photos', '');
+		$med_large = escape($con, 'media_large', '');
 		$user = escape($con, 'user', '');
 		$nick = escape($con, 'user_nick', '');
 		$anon = escape($con, 'anon', 0);
@@ -60,8 +78,8 @@ if ($claims['result'] == true) { // Token was OK
 		$cols = "title, description, recommendation, status, cat, subdate, date, type_selected, type_policy, ";
 		$vals = "'$title', '$description', '$recommendation', '$status', '$cat', '$subdate', '$date', '$type_selected', '$type_policy', ";
 
-		$cols = $cols . "loc_main, loc_detail, user, user_nick, anon, company_id";
-		$vals = $vals . "'$loc_main','$loc_detail', '$user', '$nick', '$anon', $company_id";
+		$cols = $cols . "loc_main, loc_detail, media_photos, media_large, user, user_nick, anon, company_id";
+		$vals = $vals . "'$loc_main','$loc_detail', '$med_photos', '$med_large', '$user', '$nick', '$anon', $company_id";
 
 		$insert = "INSERT INTO flags($cols) VALUES($vals)";
 		$result = mysqli_query($con, $insert);
