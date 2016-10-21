@@ -60,7 +60,7 @@ if ($claims['result'] == true) { // Token was OK
                 };
             };
 
-            $select = "SELECT * FROM spots WHERE company_id=$id $and_user" $and_loc;
+            $select = "SELECT * FROM spots WHERE company_id=$id $and_user $and_loc";
             debug('select: '.$select);
             $result = mysqli_query($con, $select);
             $response["query"] = "$select";
