@@ -7,7 +7,8 @@ Security: Requires JWT "Bearer <token>"
 
 Parameters:
     id: company identifier. Integer
-    user: username. String
+    user: username. To return owned and watched spots for a user. String
+    location: location. To return all spots for a location. String
     debug: Turn on debug statements. Boolean
 
 Return:
@@ -39,19 +40,27 @@ if ($claims['result'] == true) { // Token was OK
     if (connected($con, $response)) {
         mysqli_set_charset($con, "utf8"); // Set the character set to use
 
-        if (isset($_GET['id']) && isset($_GET['user'])) {
-            debug('got id and user');
+        if (isset($_GET['id']) && ( isset($_GET['user']) || isset($_GET['user']) )) {
+            debug('got id and (user or location)');
             $id = escape($con, 'id', 0); // Escape to avoid injection vunerability
-            $user = escape($con, 'user', ''); // Escape to avoid injection vunerability
+            $user = escape($con, 'user', ''); 
+            $location = escape($con, 'location', ''); 
         
             // Get a list of flags
-            if ($user == '') {
-                $and_user = '';                     // Return flags for all users
-            } else {
-                // Limit to a particular user
-                $and_user = "AND (owned_user='$user' OR raised_user='$user' OR watchers LIKE '%$user%')";     
-            }
-            $select = "SELECT * FROM spots WHERE company_id=$id $and_user";
+            $and_loc = "";
+            if ($user == '') { // Return flags for all users
+                $and_user = ''; 
+                if ($location != '') {
+                    $and_loc = "AND loc_main='$location'";
+                };
+            } else { // Limit to a particular user
+                $and_user = "AND (owned_user='$user' OR raised_user='$user' OR watchers LIKE '%$user%')";   
+                if ($location != '') {
+                    $and_loc = "AND loc_main='$location'";
+                };
+            };
+
+            $select = "SELECT * FROM spots WHERE company_id=$id $and_user" $and_loc;
             debug('select: '.$select);
             $result = mysqli_query($con, $select);
             $response["query"] = "$select";
