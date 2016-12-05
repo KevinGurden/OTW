@@ -186,7 +186,7 @@ if (connected($con, $response)) {
         $response['use_ceo360'] = $login_result['use_ceo360'];
         $c_id = $login_result["company_id"];
 
-        $query = "SELECT * FROM company JOIN licences ON company_id=".$c_id." WHERE id=$c_id";
+        $query = "SELECT * FROM company LEFT JOIN licences ON company_id=".$c_id." WHERE id=$c_id";
         if ($events_needed) {
             $query = $query."; SELECT * FROM events";
         };
@@ -209,7 +209,7 @@ if (connected($con, $response)) {
                 if ($events_result == false) { // no events found
                     http_response_code(204);
                     $response["query"] = $query;
-                    $response["message"] = "No initialisation match for company $company";
+                    $response["message"] = "No events for company $company";
                     $response["init"] = $init;
                 } else { // Init & events success
                     $events_store = mysqli_store_result($con);
@@ -244,5 +244,7 @@ Useful stuff:
         ssh -i otwkey.pem ec2-user@52.38.155.255 to start ssh for the server
         cd ~/../../var/log/httpd to get to the log files on opsworks stack
         sudo cat getwhistlesphp-error.log | more to show the error log
+    GIT commands
+        'git status' then 'git add <file>.php' then 'git commit -m 'message' then 'git push origin master'
  */
 ?>

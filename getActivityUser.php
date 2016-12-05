@@ -1,6 +1,6 @@
 <?php
 /*
-Get a list of activity records a particular user from the encol database.
+Get a list of activity records for a particular user from the encol database.
 
 Security: Requires JWT "Bearer <token>" 
 
