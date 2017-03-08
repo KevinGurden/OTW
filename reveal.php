@@ -59,7 +59,7 @@ if ($claims['result'] == true) { // Token was OK
             //     SET user='$user.', user_nick='$nick.', anon=0, revealed=1
             //     WHERE id=$id. AND company_id=$company_id.
             
-            $sets = "SET user='.$user.', user_nick='.$nick.', anon=0, revealed=1";
+            $sets = "SET user='$user', user_nick='$nick', anon=0, revealed=1";
             $update = "UPDATE ".$cat."s $sets WHERE id=$id AND company_id=$company_id";
             debug('update: '.$update);  
             $resultUpdate = mysqli_query($con, $update);
@@ -69,6 +69,7 @@ if ($claims['result'] == true) { // Token was OK
                 $cols = "cat, catid, type, content, fromuser, fromnick, date, anon, company_id";
                 $vals = "'$cat', $id, 'reveal', '', '$user', '$nick', '$date', 0, $company_id";
                 $insert = "INSERT INTO activity($cols) VALUES($vals)";
+                debug('insert: '.$insert);  
                 $resultInsert = mysqli_query($con, $insert);
 
                 if ($resultInsert) { // Success
