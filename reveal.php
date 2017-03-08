@@ -60,7 +60,7 @@ if ($claims['result'] == true) { // Token was OK
             //     WHERE id=$id. AND company_id=$company_id.
             
             $sets = "SET user='.$user.', user_nick='.$nick.', anon=0, revealed=1";
-            $update = "UPDATE ".$cat."S $sets WHERE id=$id AND company_id=$company_id";
+            $update = "UPDATE ".$cat."s $sets WHERE id=$id AND company_id=$company_id";
             debug('update: '.$update);  
             $resultUpdate = mysqli_query($con, $update);
 
