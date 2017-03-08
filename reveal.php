@@ -65,19 +65,34 @@ if ($claims['result'] == true) { // Token was OK
             $resultUpdate = mysqli_query($con, $update);
 
             if ($resultUpdate) { // Success
+                // Adjust the activity lines before the reveal date (and after but with no revealed value)
+                // UPDATE activity 
+                //      SET anon=0, revealed=1, fromuser= '$user', fromnick = '$nick'
+                //      WHERE cat='$cat' AND catid=$id AND company_id = $company_id AND date<'$date';
+                // UPDATE activity 
+                //      SET anon=0, revealed=0, fromuser= '$user', fromnick = '$nick'
+                //      WHERE cat='$cat' AND catid=$id AND company_id = $company_id AND date>='$date';
+                $sets = "SET anon=0, fromuser= '$user', fromnick = '$nick'";
+                $rev0 = ", revealed=0"; $rev1 = ", revealed=1";
+                $where = "WHERE cat='$cat' AND catid=$id AND company_id = $company_id";
+                $before = "date<'$date'"; $after = "date>='$date'";
+                $adjust = "UPDATE activity $sets.$rev1 $where AND $before; UPDATE activity $sets.$rev0 $where AND $after"
+                debug('adjust: '.$adjust);
+
                 // Issue the activity create
-                $cols = "cat, catid, type, content, fromuser, fromnick, date, anon, company_id";
-                $vals = "'$cat', $id, 'reveal', '', '$user', '$nick', '$date', 0, $company_id";
+                $cols = "cat, catid, type, content, fromuser, fromnick, date, anon, revealed, company_id";
+                $vals = "'$cat', $id, 'reveal', '', '$user', '$nick', '$date', 0, 0, $company_id";
                 $insert = "INSERT INTO activity($cols) VALUES($vals)";
                 debug('insert: '.$insert);  
-                $resultInsert = mysqli_query($con, $insert);
+                
+                $resultAdjIns = mysqli_query($con, $adjust $insert);
 
-                if ($resultInsert) { // Success
+                if ($resultAdjIns) { // Success
                     http_response_code(200);
                     $response["message"] = "Reveal complete";
                     $response["sqlerror"] = "";
                 } else { // Failure
-                    debug("$resultInsert: from $insert");
+                    debug("$resultAdjIns: from $insert");
                     http_response_code(403);
                     $response["message"] = "Reveal insert failed";
                     $response["sqlerror"] = mysqli_error($con);
