@@ -44,14 +44,20 @@ if ($claims['result'] == true) { // Token was OK
 
         // Get the parameters
         $id = escape($con, 'id', -1);
+        debug('id: '.$id);  
         $cat = escape($con, 'cat', '');
+        debug('cat: '.$cat);  
         $company_id = got_int('company_id', -1);
+        debug('company_id: '.$company_id);  
         $nickname = escape($con, 'nickname', '');
+        debug('nick: '.$nickname);  
         $username = escape($con, 'username', ''); 
+        debug('username: '.$username);  
         $date = escape($con, 'date', '');
+        debug('date: '.$date);  
         
-        // We have to have all fields
-        if ($id >= 0 && $cat != '' && $company_id >= 0 && $nickname != '' && $username != '' && $date != '') { 
+        // We have to have all fields except nickname
+        if ($id >= 0 && $cat != '' && $company_id >= 0 && $username != '' && $date != '') { 
             // Update the whistle/flag by issuing a database update
             // UPDATE '$cat.S'   
             //     SET user='$user.', user_nick='$nick.', anon=0, revealed=1
