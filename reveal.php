@@ -1,6 +1,6 @@
 <?php
 /*
-Update whistle/flag and set activity to reveal an anonymous user.
+Reveal an anonymous user by updating whistle/flag and setting activities.
 
 Security: Requires JWT "Bearer <token>" 
 
@@ -76,13 +76,14 @@ if ($claims['result'] == true) { // Token was OK
                 $rev0 = ", revealed=0"; $rev1 = ", revealed=1";
                 $where = "WHERE cat='$cat' AND catid=$id AND company_id = $company_id";
                 $before = "date<'$date'"; $after = "date>='$date'";
-                $adjust = "UPDATE activity $sets.$rev1 $where AND $before; UPDATE activity $sets.$rev0 $where AND $after;";
+                $adjust = "UPDATE activity $sets $rev1 $where AND $before; UPDATE activity $sets $rev0 $where AND $after;";
                 debug('adjust: '.$adjust);
 
                 // Issue the activity create
                 $cols = "cat, catid, type, content, fromuser, fromnick, date, anon, revealed, company_id";
                 $vals = "'$cat', $id, 'reveal', '', '$user', '$nick', '$date', 0, 0, $company_id";
                 $insert = "INSERT INTO activity($cols) VALUES($vals)";
+                debug('adjust/insert: '$adjust.$insert);  
                 debug('insert: '.$insert);  
                 
                 $resultAdjIns = mysqli_query($con, $adjust.$insert);
