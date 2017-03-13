@@ -83,7 +83,7 @@ if ($claims['result'] == true) { // Token was OK
                 $cols = "cat, catid, type, content, fromuser, fromnick, date, anon, revealed, company_id";
                 $vals = "'$cat', $id, 'reveal', '', '$user', '$nick', '$date', 0, 0, $company_id";
                 $insert = "INSERT INTO activity($cols) VALUES($vals)";
-                debug('adjust/insert: '$adjust.$insert);  
+                debug('adjust/insert: '.$adjust.$insert);  
                 debug('insert: '.$insert);  
                 
                 $resultAdjIns = mysqli_query($con, $adjust.$insert);
