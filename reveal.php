@@ -76,7 +76,7 @@ if ($claims['result'] == true) { // Token was OK
                 $where = "WHERE cat='$cat' AND catid=$id AND company_id=$company_id";
                 $update = "UPDATE activity $sets $rev $where; ";
                 debug('update: '.$update);
-                $resultUpdate = mysqli_query($con, $adjust);
+                $resultUpdate = mysqli_query($con, $update);
                 $updateError = mysqli_error($con);
 
                 // Issue the activity create
