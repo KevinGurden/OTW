@@ -74,7 +74,7 @@ if ($claims['result'] == true) { // Token was OK
                 $sets = "SET anon=0, fromuser='$user', fromnick='$nick'";
                 $rev = ", revealed=IF(date<'$date',1,0)";
                 $where = "WHERE cat='$cat' AND catid=$id AND company_id=$company_id";
-                $adjust = "UPDATE activity $sets $rev $where";
+                $adjust = "UPDATE activity $sets $rev $where; ";
                 debug('adjust: '.$adjust);
 
                 // Issue the activity create
