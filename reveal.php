@@ -74,27 +74,29 @@ if ($claims['result'] == true) { // Token was OK
                 $sets = "SET anon=0, fromuser='$user', fromnick='$nick'";
                 $rev = ", revealed=IF(date<'$date',1,0)";
                 $where = "WHERE cat='$cat' AND catid=$id AND company_id=$company_id";
-                $adjust = "UPDATE activity $sets $rev $where; ";
-                debug('adjust: '.$adjust);
+                $update = "UPDATE activity $sets $rev $where; ";
+                debug('update: '.$update);
+                $resultUpdate = mysqli_query($con, $adjust);
+                $updateError = mysqli_error($con);
 
                 // Issue the activity create
                 $cols = "cat, catid, type, content, fromuser, fromnick, date, anon, revealed, company_id";
                 $vals = "'$cat', $id, 'reveal', '', '$user', '$nick', '$date', 0, 0, $company_id";
                 $insert = "INSERT INTO activity($cols) VALUES($vals)";
-                debug('adjust/insert: '.$adjust.$insert);  
                 debug('insert: '.$insert);  
-                
-                $resultAdjIns = mysqli_query($con, $adjust.$insert);
+                $resultInsert = mysqli_query($con, $insert);
+                $insertError = mysqli_error($con);
 
-                if ($resultAdjIns) { // Success
+                if ($resultUpdate && $resultInsert) { // Success
                     http_response_code(200);
                     $response["message"] = "Reveal complete";
                     $response["sqlerror"] = "";
                 } else { // Failure
-                    debug(mysqli_error($con));
+                    debug("Reveal update/insert failed");
                     http_response_code(403);
-                    $response["message"] = "Reveal insert failed";
-                    $response["sqlerror"] = mysqli_error($con);
+                    $response["message"] = "Reveal update/insert failed";
+                    if (!$resultUpdate) {$response["sqlerror"] = $updateError;};
+                    if (!$resultInsert) {$response["sqlerror"] = $insertError;};
                 };
             } else { // Failure
                 debug(mysqli_error($con));
