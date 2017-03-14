@@ -67,16 +67,14 @@ if ($claims['result'] == true) { // Token was OK
             if ($resultUpdate) { // Success
                 // Adjust the activity lines before the reveal date (and after but with no revealed value)
                 // UPDATE activity 
-                //      SET anon=0, revealed=1, fromuser='$user', fromnick='$nick'
-                //      WHERE cat='$cat' AND catid=$id AND company_id = $company_id AND date<'$date';
-                // UPDATE activity 
-                //      SET anon=0, revealed=0, fromuser= '$user', fromnick = '$nick'
-                //      WHERE cat='$cat' AND catid=$id AND company_id = $company_id AND date>='$date';
+                //      SET anon=0, fromuser='$user', fromnick='$nick',
+                //          IF(date < '2017-03-14 16:40:25', 1, 0)
+                //      WHERE cat='$cat' AND catid=$id AND company_id = $company_id;
+                //
                 $sets = "SET anon=0, fromuser='$user', fromnick='$nick'";
-                $rev0 = ", revealed=0"; $rev1 = ", revealed=1";
+                $rev = ", revealed=IF(date<'$date',1,0)";
                 $where = "WHERE cat='$cat' AND catid=$id AND company_id=$company_id";
-                $before = "date<'$date'"; $after = "date>='$date'";
-                $adjust = "UPDATE activity $sets $rev1 $where AND $before; UPDATE activity $sets $rev0 $where AND $after;";
+                $adjust = "UPDATE activity $sets $rev $where";
                 debug('adjust: '.$adjust);
 
                 // Issue the activity create
