@@ -93,13 +93,13 @@ if ($claims['result'] == true) { // Token was OK
                     $response["message"] = "Reveal complete";
                     $response["sqlerror"] = "";
                 } else { // Failure
-                    debug("$resultAdjIns: from $insert");
+                    debug(mysqli_error($con));
                     http_response_code(403);
                     $response["message"] = "Reveal insert failed";
                     $response["sqlerror"] = mysqli_error($con);
                 };
             } else { // Failure
-                debug("$resultUpdate: from $update");
+                debug(mysqli_error($con));
                 http_response_code(402);
                 $response["message"] = "Reveal update failed";
                 $response["sqlerror"] = mysqli_error($con);
