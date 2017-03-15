@@ -69,11 +69,11 @@ if ($claims['result'] == true) { // Token was OK
                 // UPDATE activity 
                 //      SET anon=0, fromuser='$user', fromnick='$nick',
                 //          IF(date < '2017-03-14 16:40:25', 1, 0)
-                //      WHERE cat='$cat' AND catid=$id AND company_id = $company_id;
+                //      WHERE anon='1' AND cat='$cat' AND catid=$id AND company_id = $company_id;
                 //
                 $sets = "SET anon=0, fromuser='$user', fromnick='$nick'";
                 $rev = ", revealed=IF(date<'$date',1,0)";
-                $where = "WHERE cat='$cat' AND catid=$id AND company_id=$company_id";
+                $where = "WHERE anon='1' cat='$cat' AND catid=$id AND company_id=$company_id";
                 $update = "UPDATE activity $sets $rev $where; ";
                 debug('update: '.$update);
                 $resultUpdate = mysqli_query($con, $update);
